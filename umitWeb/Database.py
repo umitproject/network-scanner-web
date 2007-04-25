@@ -1,11 +1,13 @@
 import re
+import os
 import pickle
 try:
     from sqlite3 import dbapi2 as dbmodule
 except ImportError:
     from pysqlite2 import dbapi2 as dbmodule
 
-connection = dbmodule.connect("/home/rodox/.umit/web.db")
+#Temporary - waiting instructions about UmitConf
+__connection__ = dbmodule.connect(os.path.join("web.db"))
 
 
 class DBError(Exception):
@@ -16,11 +18,12 @@ class Model(object):
     _sqlfields = []
     
     def __init__(self, table, id_field="id"):
-        self.connection = connection
+        self._connection = __connection__
         self.table = table
         self.id_field = id_field
         self.__setattr__(self.id_field, None)
 
+    @classmethod
     def _process_result(self, cursor, result):
         cols = [e[0] for e in cursor.description]
         ret_data = {}
@@ -28,14 +31,16 @@ class Model(object):
             ret_data[cols[i]] = result[i]
 
         return ret_data
-    
+
+    @classmethod
     def get(self, id):
         """Get a single object, given its id
         """
-        cursor = self.connection.cursor()
+        cursor = __connection__.cursor()
         cursor.execute("SELECT * FROM %s where %s=?" % (self.table, self.id_field), (id,))
-        return self._process_result(cursor, cursor.fecthone())
+        return Model._process_result(cursor, cursor.fecthone())
 
+    @classmethod
     def get_list(**params):
         """Get a list of objects that match with params.
         """
@@ -65,14 +70,17 @@ class Model(object):
 
         query = "SELECT * FROM %s WHERE 1=1" % self.table
         query += " AND ".join(where_list)
-        cursor = self.connection.cursor()
+        cursor = __connection__.cursor()
         cursor.execute(query, param_list)
-        return self._process_result(cursor, cursor.fetchall())
+        return Model._process_result(cursor, cursor.fetchall())
+
+    def delete(self):
+        cursor = self._connection.cursor()
+        cursor.execute("DELETE FROM %s WHERE %s=?" % (self.table, self.id_field), self.id)
 
     def _create(self):
-        cursor = connection.cursor()
+        cursor = self._connection.cursor()
         creation_sql = "CREATE TABLE %s(%s)" % (self.table, ",\n".join(self._sqlfields))
-        print creation_sql
         cursor.execute(creation_sql)
     
 
@@ -83,16 +91,14 @@ class SessionData(Model):
         "primary key(sessid)"
         ]
     
-    def __init__(self, **kwargs):
+    def __init__(self, sessid=None, pickled_data=None):
         Model.__init__(self, "session", "sessid")
-        self.pickled_data = {}
-
-        try:
-            if kwargs:
-                self.pickled_data = pickle.loads(kwargs['pickled_data'])
-                self.id = kwargs['sessid']
-        except KeyError:
-            raise DBError("All attributes must be filled, or none.")
+        self.sessid = sessid
+        if pickled_data:
+            self.pickled_data = pickle.loads(pickled_data)
+        else:
+            self.pickled_data = {}
+        
 
     def save(self):
         if self.get(self.id):
@@ -100,7 +106,7 @@ class SessionData(Model):
         else:
             sql = "INSERT INTO session(pickled_data, sessid) VALUES (?, ?)"
 
-        cursor = connection.cursor()
+        cursor = self._connection.cursor()
         cursor.execute(sql, (pickle.dumps(self.pickled_data), self.id))
 
 
@@ -138,11 +144,11 @@ def _clean():
     drop_sql = "DROP TABLE %s"
     for Class in classes:
         obj = Class()
-        cursor = connection.cursor()
+        cursor = __connection__.cursor()
         cursor.execute(drop_sql % obj.table)
 
 def _verify():
-    cursor = connection.cursor()
+    cursor = __connection__.cursor()
     try:
         cursor.execute("SELECT * FROM session")
     except dbmodule.OperationalError, ex:

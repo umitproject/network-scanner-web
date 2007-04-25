@@ -23,7 +23,7 @@ import random
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from umitWeb.Urls import patterns
 from umitWeb.Http import HttpRequest, Http404, HttpError
-from umitWeb.Database import connection
+from umitWeb.Database import SessionData
 
 
 class URLResolver(object):
@@ -66,46 +66,45 @@ class URLResolver(object):
 class SessionWrapper(object):
     def __init__(self, sessid=None):
         self.id = None
-        junk = "çoawer09873024q3w4w98948512397&*@#$!@#*()"
+        self.modified = False
+        junk = "çoa^wer098~73°0£24q¢ßðæ3w4w98948512397&*@#$!@#*()"
         if sessid is None:
-            self.id = md5.new(str(random.randint(0, sys.maxint-1)) \
+            self.id = self.get_new_sessid()
+        else:
+            self._session = Session.get(sessid)
+            if self._session is None:
+                self._session = Session(sessid)
+                self.modified = True
+
+    def get_new_sessid(self):
+        return md5.new(str(random.randint(0, sys.maxint-1)) \
                                   + str(random.randint(1, sys.maxint-1)//2) \
                                   + junk).hexdigest()
-        else:
-            cursor = connection.cursor()
-            sql = "SELECT pickled_data FROM web_sessions WHERE sessid = ?"
-            cursor.execute(sql, (sessid,))
-            self.id = sessid
-            self._session = pickle.loads(cursor)
+    def get_sessid(self):
+        return self._session.id
 
     def __setitem__(self, name, value):
-        self._session[name] = value
-        self.save()
+        self._session.pickled_data[name] = value
+        self.modified = True
 
     def __getitem__(self, name):
-        return self._session[name]
+        return self._session.pickled_data[name]
 
     def __delitem__(self, name):
-        del self._session[name]
-        self.save()
+        del self._session.pickled_data[name]
+        self.modified = True
 
     def keys(self):
-        return self._session.keys()
+        return self._session.pickled_data.keys()
 
     def items(self):
-        return self._session.items()
+        return self._session.pickled_data.items()
 
     def get(self, name, default=None):
-        return self._session.get(name, default)
+        return self._session.pickled_data.get(name, default)
 
     def save(self):
-        cursor = connection.cursor()
-        if self.sessid:
-            sql = "UPDATE web_sessions SET pickled_data=? WHERE sessid=?"
-        else:
-            sql = "INSERT INTO web_sessions (pickled_data, sessid) VALUES(?, ?)"
-
-        cursor.execute(sql, (pickle.dumps(self._session), self.id))
+        self._session.save()
             
     
 
@@ -122,14 +121,14 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         """Processor for HTTP GET command. A shortcut for process_request()
         """
-        self.process_request()
+        self._process_request()
 
     def do_POST(self):
         """Processor for HTTP POST command. A shortcut for process_request()
         """
-        self.process_request()
+        self._process_request()
 
-    def process_request(self):
+    def _process_request(self):
         """Process the request and writes the response back to the client.
         If a HttpError occurs, the response is sent as a HTTP Error.
         """
@@ -140,6 +139,8 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
             self.session_start(request)
             
             response = resolver.resolve(request)
+            if request.session.modified:
+                request.session.save()
             self.send_response(200)
             for header in response.headers.keys():
                 self.send_header(header, response.headers[header])
@@ -151,7 +152,6 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(response.data)
         except HttpError, e:
             self.send_error(e.error_code, e.message)
-            return
 
 
     def session_start(self, request):
