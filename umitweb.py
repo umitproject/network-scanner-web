@@ -1,7 +1,7 @@
 import sys
 import os
 from signal import SIGKILL
-from umitWeb.server import UmitWebServer
+from umitWeb.Server import UmitWebServer
 
 
 if len(sys.argv) != 2:

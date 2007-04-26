@@ -67,16 +67,16 @@ class SessionWrapper(object):
     def __init__(self, sessid=None):
         self.id = None
         self.modified = False
-        junk = "çoa^wer098~73°0£24q¢ßðæ3w4w98948512397&*@#$!@#*()"
         if sessid is None:
-            self.id = self.get_new_sessid()
+            self._session = SessionData(self.get_new_sessid())
         else:
-            self._session = Session.get(sessid)
+            self._session = SessionData.get(sessid)
             if self._session is None:
-                self._session = Session(sessid)
+                self._session = SessionData(sessid)
                 self.modified = True
 
     def get_new_sessid(self):
+        junk = "çoa^wer098~73°0£24q¢ßðæ3w4w98948512397&*@#$!@#*()"
         return md5.new(str(random.randint(0, sys.maxint-1)) \
                                   + str(random.randint(1, sys.maxint-1)//2) \
                                   + junk).hexdigest()
@@ -157,11 +157,14 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
     def session_start(self, request):
         if self.COOKIE_SESSION_NAME not in request.COOKIES.keys():
             request.session = SessionWrapper()
-            request.set_cookie(self.COOKIE_SESSION_NAME, request.session.id)
+            request.set_cookie(self.COOKIE_SESSION_NAME, request.session.get_sessid())
         else:
             request.session = SessionWrapper(request.COOKIES[self.COOKIE_SESSION_NAME])
 
 
-class UmitWebServer:
+class UmitWebServer(HTTPServer):
     def __init__(self):
-        pass
+        HTTPServer.__init__(self, ("0.0.0.0", 8000), UmitRequestHandler)
+        
+    def run(self):
+        self.serve_forever()

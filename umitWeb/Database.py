@@ -1,6 +1,9 @@
 import re
 import os
 import pickle
+import gtk
+import gtk.glade
+
 try:
     from sqlite3 import dbapi2 as dbmodule
 except ImportError:
@@ -86,14 +89,14 @@ class Model(object):
 
 class SessionData(Model):
     _sqlfields = [
-        "sessid CHAR(32) not null",
+        "id CHAR(32) not null",
         "pickled_data TEXT",
-        "primary key(sessid)"
+        "primary key(id)"
         ]
     
     def __init__(self, sessid=None, pickled_data=None):
-        Model.__init__(self, "session", "sessid")
-        self.sessid = sessid
+        Model.__init__(self, "session", "id")
+        self.id = sessid
         if pickled_data:
             self.pickled_data = pickle.loads(pickled_data)
         else:
@@ -102,9 +105,9 @@ class SessionData(Model):
 
     def save(self):
         if self.get(self.id):
-            sql = "UPDATE session SET pickled_data=? WHERE sessid=?"
+            sql = "UPDATE session SET pickled_data=? WHERE id=?"
         else:
-            sql = "INSERT INTO session(pickled_data, sessid) VALUES (?, ?)"
+            sql = "INSERT INTO session(pickled_data, id) VALUES (?, ?)"
 
         cursor = self._connection.cursor()
         cursor.execute(sql, (pickle.dumps(self.pickled_data), self.id))
@@ -134,12 +137,12 @@ class User(Model):
         pass
     
 
-def _init():
+def __init():
     classes = Model.__class__.__subclasses__(Model)
     for Class in classes:
         Class()._create()
 
-def _clean():
+def __clean():
     classes = Model.__class__.__subclasses__(Model)
     drop_sql = "DROP TABLE %s"
     for Class in classes:
@@ -147,11 +150,11 @@ def _clean():
         cursor = __connection__.cursor()
         cursor.execute(drop_sql % obj.table)
 
-def _verify():
+def __verify():
     cursor = __connection__.cursor()
     try:
         cursor.execute("SELECT * FROM session")
     except dbmodule.OperationalError, ex:
-        _init()
+        __init()
 
-_verify()
+__verify()
