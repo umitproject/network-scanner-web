@@ -1,5 +1,6 @@
 from tempfile import mktemp
 from urllib import quote, unquote
+from datetime import datetime, timedelta
 
 class HttpError(Exception):
     """Send a generic HTTP Error to the server
@@ -39,7 +40,7 @@ class HttpRequest(object):
         self.headers = self.requestHandler.headers
         self._raw_cookies = {}
         
-        self.querystring = None
+        self.querystring = ""
         if "?" in self.requestHandler.path:
             self.path, self.querystring = self.requestHandler.path.split("?")
         else:
@@ -113,24 +114,6 @@ class HttpRequest(object):
         self.REQUEST.update(self.GET)
         self.REQUEST.update(self.POST)
 
-    def set_cookie(self, name, value,
-                   expires=None, domain=None,
-                   path=None, secure=False):
-        cookie = "%s=%s" % (name, value)
-        if expires:
-            cookie += "; expires=%s" % expires.strftime("%A, %d-%m-%Y %H:%M:%S %Z")
-        if domain:
-            cookie += "; domain=%s" % domain
-        if path:
-            cookie += "; path=%s" % path
-        if secure:
-            cookie += "; secure"
-
-        self._raw_cookies[name] = cookie
-
-    def get_raw_cookies(self):
-        return [x[1] for x in self._raw_cookies.items()]
-
     def get_path(self):
         """Returns the path part of a request
         """
@@ -152,6 +135,28 @@ class HttpResponse(object):
         """Appends text to the response stream
         """
         self.data += data
+        
+    def set_cookie(self, name, value,
+                   expires=None, domain=None,
+                   path=None, secure=False):
+        cookie = "%s=%s" % (name, value)
+        if expires:
+            exp = datetime.utcnow() + timedelta(seconds=expires)
+            cookie += "; expires=%s" % datetime.strftime(exp, "%A, %d-%m-%Y %H:%M:%S GMT")
+        if domain:
+            cookie += "; domain=%s" % domain
+        if path:
+            cookie += "; path=%s" % path
+        if secure:
+            cookie += "; secure"
+
+        self._raw_cookies[name] = cookie
+        
+    def remove_cookie(self, name):
+        self.set_cookie(name, "", expires=-3600)
+
+    def get_raw_cookies(self):
+        return [x[1] for x in self._raw_cookies.items()]
 
     def __setitem__(self, key, value):
         self.headers[key] = value

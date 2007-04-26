@@ -20,9 +20,10 @@ import sys
 import pickle
 import md5
 import random
+from traceback import print_exc
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from umitWeb.Urls import patterns
-from umitWeb.Http import HttpRequest, Http404, HttpError
+from umitWeb.Http import HttpRequest, Http404, HttpError, HttpResponse
 from umitWeb.Database import SessionData
 
 
@@ -55,10 +56,10 @@ class URLResolver(object):
                     module = eval(module)
                     executer = getattr(module, function)
                     return executer(request, **match.groupdict())
-                except ImportError:
-                    pass
+                except ImportError, e:
+                    raise HttpError(500, str(e))
                 break
-        
+        print "Found: ", found
         if not found:
             raise Http404
 
@@ -127,6 +128,11 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
         """Processor for HTTP POST command. A shortcut for process_request()
         """
         self._process_request()
+        
+    def send_redirect(self, path):
+        self.send_response(303)
+        response = "Location: %s\n" % path
+        self.wfile.write(response)
 
     def _process_request(self):
         """Process the request and writes the response back to the client.
@@ -134,30 +140,52 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
         """
         try:
             request = HttpRequest(self)
-            resolver = URLResolver()
-
-            self.session_start(request)
             
-            response = resolver.resolve(request)
-            if request.session.modified:
-                request.session.save()
-            self.send_response(200)
-            for header in response.headers.keys():
-                self.send_header(header, response.headers[header])
-
-            for cookie in request.get_raw_cookies():
-                self.send_header("Set-cookie", cookie)
+            if "." not in request.path.rsplit("/", 1)[-1] and \
+               not request.path.endswith("/"):
+                redirect_page = "%s/" % request.get_path()
+                if request.querystring:
+                    redirect_page += "?%s" % request.querystring
+                self.send_redirect(redirect_page)
+            else:
+                resolver = URLResolver()
+    
+                self.session_start(request)
                 
-            self.wfile.write('\n')
-            self.wfile.write(response.data)
+                response = resolver.resolve(request)
+                if response.__class__ is not HttpResponse:
+                    raise HttpError(500, "The result is not of type 'HttpResponse'")
+                if request.session.modified:
+                    request.session.save()
+                
+                response.set_cookie(self.COOKIE_SESSION_NAME, request.session.get_sessid())
+                self.send_response(200)
+                for header in response.headers.keys():
+                    self.send_header(header, response.headers[header])
+    
+                for cookie in response.get_raw_cookies():
+                    self.send_header("Set-cookie", cookie)
+                    
+                self.wfile.write('\n')
+                self.wfile.write(response.data)
         except HttpError, e:
             self.send_error(e.error_code, e.message)
+        except Exception, e:
+            self.send_error(500, str(e))
+            self.wfile.write("<h2>Exception Details:</h2><pre>")
+            print_exc(file=self.wfile)
+            self.wfile.write("</pre>")
+            
 
 
     def session_start(self, request):
         if self.COOKIE_SESSION_NAME not in request.COOKIES.keys():
             request.session = SessionWrapper()
+<<<<<<< .mine
+            #request.set_cookie(self.COOKIE_SESSION_NAME, request.session.id)
+=======
             request.set_cookie(self.COOKIE_SESSION_NAME, request.session.get_sessid())
+>>>>>>> .r602
         else:
             request.session = SessionWrapper(request.COOKIES[self.COOKIE_SESSION_NAME])
 

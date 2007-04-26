@@ -1,9 +1,6 @@
-from umitWeb.http import HttpResponse
+from umitWeb.Http import HttpResponse
 
-def index(self):
+def index(req):
     resp = HttpResponse()
-    resp.write('<?xml version="1.0"?>')
-    resp.write('<data>abc</data>')
-    resp['Content-type'] = 'text/xml'
-    resp['Set-cookie'] = 'c1=123'
+    resp.write('<h1>It Works!</h1>')
     return resp

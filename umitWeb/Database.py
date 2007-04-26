@@ -94,9 +94,15 @@ class SessionData(Model):
         "primary key(id)"
         ]
     
+<<<<<<< .mine
+    def __init__(self, id=None, pickled_data=None):
+        Model.__init__(self, "session", "id")
+        self.id = id
+=======
     def __init__(self, sessid=None, pickled_data=None):
         Model.__init__(self, "session", "id")
         self.id = sessid
+>>>>>>> .r602
         if pickled_data:
             self.pickled_data = pickle.loads(pickled_data)
         else:
