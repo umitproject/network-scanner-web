@@ -19,19 +19,22 @@ class DBError(Exception):
 
 class Model(object):
     _sqlfields = []
+    _table = None
+    _id_field = "id"
     
-    def __init__(self, table, id_field="id"):
+    def __init__(self):
         self._connection = __connection__
-        self.table = table
-        self.id_field = id_field
-        self.__setattr__(self.id_field, None)
+        self.__setattr__(self._id_field, None)
 
     @classmethod
     def _process_result(self, cursor, result):
         cols = [e[0] for e in cursor.description]
-        ret_data = {}
-        for i in len(result):
-            ret_data[cols[i]] = result[i]
+        print "DATABASE RESULT: ", result
+        ret_data = None
+        if result is not None:
+            ret_data = {}
+            for i in len(result):
+                ret_data[cols[i]] = result[i]
 
         return ret_data
 
@@ -40,8 +43,8 @@ class Model(object):
         """Get a single object, given its id
         """
         cursor = __connection__.cursor()
-        cursor.execute("SELECT * FROM %s where %s=?" % (self.table, self.id_field), (id,))
-        return Model._process_result(cursor, cursor.fecthone())
+        cursor.execute("SELECT * FROM %s where %s=?" % (self._table, self._id_field), (id,))
+        return Model._process_result(cursor, cursor.fetchone())
 
     @classmethod
     def get_list(**params):
@@ -71,7 +74,7 @@ class Model(object):
                 where_list.append(strfmt % col)
                 param_list.append(params[k])
 
-        query = "SELECT * FROM %s WHERE 1=1" % self.table
+        query = "SELECT * FROM %s WHERE 1=1" % self._table
         query += " AND ".join(where_list)
         cursor = __connection__.cursor()
         cursor.execute(query, param_list)
@@ -79,11 +82,11 @@ class Model(object):
 
     def delete(self):
         cursor = self._connection.cursor()
-        cursor.execute("DELETE FROM %s WHERE %s=?" % (self.table, self.id_field), self.id)
+        cursor.execute("DELETE FROM %s WHERE %s=?" % (self._table, self._id_field), self.id)
 
     def _create(self):
         cursor = self._connection.cursor()
-        creation_sql = "CREATE TABLE %s(%s)" % (self.table, ",\n".join(self._sqlfields))
+        creation_sql = "CREATE TABLE %s(%s)" % (self._table, ",\n".join(self._sqlfields))
         cursor.execute(creation_sql)
     
 
@@ -94,15 +97,11 @@ class SessionData(Model):
         "primary key(id)"
         ]
     
-<<<<<<< .mine
+    _table = "session"
+    
     def __init__(self, id=None, pickled_data=None):
-        Model.__init__(self, "session", "id")
+        Model.__init__(self)
         self.id = id
-=======
-    def __init__(self, sessid=None, pickled_data=None):
-        Model.__init__(self, "session", "id")
-        self.id = sessid
->>>>>>> .r602
         if pickled_data:
             self.pickled_data = pickle.loads(pickled_data)
         else:
@@ -114,33 +113,11 @@ class SessionData(Model):
             sql = "UPDATE session SET pickled_data=? WHERE id=?"
         else:
             sql = "INSERT INTO session(pickled_data, id) VALUES (?, ?)"
+            
+        print sql
 
         cursor = self._connection.cursor()
         cursor.execute(sql, (pickle.dumps(self.pickled_data), self.id))
-
-
-class User(Model):
-    _sqlfields = [
-        "id INT NOT NULL",
-        "login VARCHAR(30) NOT NULL",
-        "password CHAR(32) NOT NULL",
-        "description VARCHAR(255)",
-        "PRIMARY KEY(id)"
-        ]
-
-    def __init__(self, **kwargs):
-        Model.__init__(self, "users")
-        self.login = None
-        self.password = kwargs.get("password", None)
-        self.description = kwargs.get("description", None)
-        if kwargs:
-            try:
-                self.login = kwargs['login']
-            except KeyError:
-                raise DBError("'login' attribute must be filled.")
-
-    def save(self):
-        pass
     
 
 def __init():

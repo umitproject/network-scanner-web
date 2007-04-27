@@ -1,6 +1,5 @@
 import sys
 import os
-from signal import SIGKILL
 from umitWeb.Server import UmitWebServer
 
 
@@ -12,9 +11,11 @@ if len(sys.argv) != 2:
 elif sys.argv[1] == "start":
     server = UmitWebServer()
     try:
+        print "UmitWebServer started on 0.0.0.0:8000"
         server.run()
     except KeyboardInterrupt:
+        print "Stopping..."
         sys.exit(0)
 elif sys.argv[1] == "stop":
-    os.kill(UmitWebServer.get_pid(), SIGKILL)
+    os.kill(UmitWebServer.get_pid())
     sys.exit(0)

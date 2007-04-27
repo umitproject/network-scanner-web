@@ -38,7 +38,6 @@ class HttpRequest(object):
     def __init__(self, requestHandler):
         self.requestHandler = requestHandler
         self.headers = self.requestHandler.headers
-        self._raw_cookies = {}
         
         self.querystring = ""
         if "?" in self.requestHandler.path:
@@ -128,7 +127,9 @@ class HttpResponse(object):
     """
     def __init__(self, data="", mimeType="text/html"):
         self.headers = {}
+        self._raw_cookies = {}
         self.data = data
+        self.code = 200
         self.headers['Content-type'] = mimeType
 
     def write(self, data):
@@ -138,7 +139,7 @@ class HttpResponse(object):
         
     def set_cookie(self, name, value,
                    expires=None, domain=None,
-                   path=None, secure=False):
+                   path="/", secure=False):
         cookie = "%s=%s" % (name, value)
         if expires:
             exp = datetime.utcnow() + timedelta(seconds=expires)
@@ -149,7 +150,7 @@ class HttpResponse(object):
             cookie += "; path=%s" % path
         if secure:
             cookie += "; secure"
-
+        #print "setting cookie: ", cookie
         self._raw_cookies[name] = cookie
         
     def remove_cookie(self, name):
@@ -157,6 +158,7 @@ class HttpResponse(object):
 
     def get_raw_cookies(self):
         return [x[1] for x in self._raw_cookies.items()]
+    
 
     def __setitem__(self, key, value):
         self.headers[key] = value
@@ -167,4 +169,9 @@ class HttpResponse(object):
     def __str__(self):
         return self.data
 
-    
+
+class HttpResponseRedirect(HttpResponse):
+    def __init__(self, url):
+        HttpResponse.__init__(self)
+        self.code = 303
+        self['Location'] = url

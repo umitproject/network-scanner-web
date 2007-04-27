@@ -153,16 +153,17 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                 self.session_start(request)
                 
                 response = resolver.resolve(request)
-                if response.__class__ is not HttpResponse:
-                    raise HttpError(500, "The result is not of type 'HttpResponse'")
+                if response.__class__ is not HttpResponse and not issubclass(response.__class__, HttpResponse):
+                    raise HttpError(500, "Expected HttpResponse, got %s" % response.__class__.__name__)
                 if request.session.modified:
                     request.session.save()
                 
                 response.set_cookie(self.COOKIE_SESSION_NAME, request.session.get_sessid())
-                self.send_response(200)
+                self.send_response(response.code)
                 for header in response.headers.keys():
                     self.send_header(header, response.headers[header])
-    
+                    
+                print "COOKIES: ", response.get_raw_cookies()
                 for cookie in response.get_raw_cookies():
                     self.send_header("Set-cookie", cookie)
                     
@@ -181,11 +182,7 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
     def session_start(self, request):
         if self.COOKIE_SESSION_NAME not in request.COOKIES.keys():
             request.session = SessionWrapper()
-<<<<<<< .mine
-            #request.set_cookie(self.COOKIE_SESSION_NAME, request.session.id)
-=======
-            request.set_cookie(self.COOKIE_SESSION_NAME, request.session.get_sessid())
->>>>>>> .r602
+            request.session.modified = True
         else:
             request.session = SessionWrapper(request.COOKIES[self.COOKIE_SESSION_NAME])
 
