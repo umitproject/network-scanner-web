@@ -1,8 +1,7 @@
 import re
 import os
 import pickle
-import gtk
-import gtk.glade
+from types import ListType
 
 try:
     from sqlite3 import dbapi2 as dbmodule
@@ -29,14 +28,22 @@ class Model(object):
     @classmethod
     def _process_result(self, cursor, result):
         cols = [e[0] for e in cursor.description]
-        print "DATABASE RESULT: ", result
         ret_data = None
-        if result is not None:
-            ret_data = {}
-            for i in len(result):
-                ret_data[cols[i]] = result[i]
-
-        return ret_data
+        if result:
+            ret_data = []
+            for i in xrange(len(result)):
+                res_row = {}
+                for j in xrange(len(cols)):
+                    res_row[cols[j]] = result[i][j]
+                ret_data.append(self(**res_row))
+                
+        if ret_data:
+            if len(ret_data) == 1:
+                return ret_data[0]
+            else:
+                return ret_data
+        else:
+            return None
 
     @classmethod
     def get(self, id):
@@ -44,10 +51,10 @@ class Model(object):
         """
         cursor = __connection__.cursor()
         cursor.execute("SELECT * FROM %s where %s=?" % (self._table, self._id_field), (id,))
-        return Model._process_result(cursor, cursor.fetchone())
+        return self._process_result(cursor, cursor.fetchall())
 
     @classmethod
-    def get_list(**params):
+    def get_list(self, **params):
         """Get a list of objects that match with params.
         """
         operation_patterns = (
@@ -59,7 +66,8 @@ class Model(object):
             (r"^(?P<field>.+)__icontains$", "%s ILIKE ?"),
             (r"^.*$", "%s = ?")
         )
-
+        where_list = []
+        param_list = []
         for k in params.keys():
             
             match = None
@@ -78,11 +86,16 @@ class Model(object):
         query += " AND ".join(where_list)
         cursor = __connection__.cursor()
         cursor.execute(query, param_list)
-        return Model._process_result(cursor, cursor.fetchall())
+        result = self._process_result(cursor, cursor.fetchall())
+        if type(result) == ListType:
+            return result
+        else:
+            return [result]
 
     def delete(self):
         cursor = self._connection.cursor()
         cursor.execute("DELETE FROM %s WHERE %s=?" % (self._table, self._id_field), self.id)
+        self._connection.commit()
 
     def _create(self):
         cursor = self._connection.cursor()
@@ -113,17 +126,23 @@ class SessionData(Model):
             sql = "UPDATE session SET pickled_data=? WHERE id=?"
         else:
             sql = "INSERT INTO session(pickled_data, id) VALUES (?, ?)"
-            
-        print sql
-
+        print sql.split(" ")[0]
         cursor = self._connection.cursor()
         cursor.execute(sql, (pickle.dumps(self.pickled_data), self.id))
+        self._connection.commit()
+        
+    def delete(self):
+        if self.get(self.id):
+            cursor = self._connection.cursor()
+            cursor.execute("DELETE FROM session WHERE id=?", (self.id,))
+            self._connection.commit()
     
 
 def __init():
     classes = Model.__class__.__subclasses__(Model)
     for Class in classes:
         Class()._create()
+    __connection__.commit()
 
 def __clean():
     classes = Model.__class__.__subclasses__(Model)

@@ -59,7 +59,6 @@ class URLResolver(object):
                 except ImportError, e:
                     raise HttpError(500, str(e))
                 break
-        print "Found: ", found
         if not found:
             raise Http404
 
@@ -106,7 +105,13 @@ class SessionWrapper(object):
 
     def save(self):
         self._session.save()
-            
+        
+    @classmethod
+    def clear(self):
+        sessions = SessionData.get_list()
+        if sessions:
+            for session in sessions:
+                session.delete()
     
 
 class UmitRequestHandler(BaseHTTPRequestHandler):
@@ -155,19 +160,18 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                 response = resolver.resolve(request)
                 if response.__class__ is not HttpResponse and not issubclass(response.__class__, HttpResponse):
                     raise HttpError(500, "Expected HttpResponse, got %s" % response.__class__.__name__)
+                
                 if request.session.modified:
                     request.session.save()
                 
-                response.set_cookie(self.COOKIE_SESSION_NAME, request.session.get_sessid())
                 self.send_response(response.code)
                 for header in response.headers.keys():
                     self.send_header(header, response.headers[header])
+
+                request.COOKIES[self.COOKIE_SESSION_NAME] =  request.session.get_sessid()
+                self.wfile.write(str(request.COOKIES))
                     
-                print "COOKIES: ", response.get_raw_cookies()
-                for cookie in response.get_raw_cookies():
-                    self.send_header("Set-cookie", cookie)
-                    
-                self.wfile.write('\n')
+                self.wfile.write('\n\n')
                 self.wfile.write(response.data)
         except HttpError, e:
             self.send_error(e.error_code, e.message)
@@ -184,7 +188,7 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
             request.session = SessionWrapper()
             request.session.modified = True
         else:
-            request.session = SessionWrapper(request.COOKIES[self.COOKIE_SESSION_NAME])
+            request.session = SessionWrapper(request.COOKIES[self.COOKIE_SESSION_NAME].value)
 
 
 class UmitWebServer(HTTPServer):
@@ -192,4 +196,5 @@ class UmitWebServer(HTTPServer):
         HTTPServer.__init__(self, ("0.0.0.0", 8000), UmitRequestHandler)
         
     def run(self):
+        SessionWrapper.clear()
         self.serve_forever()

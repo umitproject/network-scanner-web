@@ -1,6 +1,7 @@
 from tempfile import mktemp
 from urllib import quote, unquote
 from datetime import datetime, timedelta
+from Cookie import SimpleCookie
 
 class HttpError(Exception):
     """Send a generic HTTP Error to the server
@@ -55,9 +56,9 @@ class HttpRequest(object):
             for arg in self.querystring.split("&"):
                 if "=" in arg:
                     key, value = arg.split("=", 1)
-                    self.GET[key] = unquote(value)
+                    self.GET[unquote(key)] = unquote(value)
                 else:
-                    self.GET[arg] = ""
+                    self.GET[unquote(arg)] = ""
 
         if self.requestHandler.command == "POST":
             length = int(self.headers['content-length'])
@@ -67,7 +68,7 @@ class HttpRequest(object):
                     pairs = pdata.split("&")
                     for pair in pairs:
                         key, value = pair.split("=", 1)
-                        self.POST[key] = value
+                        self.POST[unquote(key)] = unquote(value)
                 else:
                     try:
                         boundary = self.headers['content-type'].split(";")[1].split("=")[1].strip().lstrip()
@@ -75,7 +76,6 @@ class HttpRequest(object):
                         for field in fields:
                             field = field[2:-4]
                             header, data = field.split("\r\n", 1)
-                            print header
                             headers = {}
                             for h in header.split(";"):
                                 key, value = h.split("=")
@@ -98,17 +98,7 @@ class HttpRequest(object):
                     except IndexError:
                         print "No boundary."
                         
-            #print "POST: ", self.POST, "\n===\n"
-            #print "FILES: ", self.FILES, "===\n"
-            #print "GET: ", self.GET
-
-        if self.headers.has_key("cookie"):
-            for cookie in self.headers['cookie'].split("&"):
-                if "=" in cookie:
-                    key, value = cookie.split("=", 1)
-                    self.COOKIES[key] = unquote(value)
-                else:
-                    self.COOKIES[cookie] = ""
+        self.COOKIES = SimpleCookie(self.headers.get("cookie", ""))
 
         self.REQUEST.update(self.GET)
         self.REQUEST.update(self.POST)
@@ -117,6 +107,10 @@ class HttpRequest(object):
         """Returns the path part of a request
         """
         return self.path
+    
+    def session_destroy(self):
+        del self.COOKIES['umitsessid']
+        self.session._session.delete()
 
 
 class HttpResponse(object):
@@ -127,7 +121,6 @@ class HttpResponse(object):
     """
     def __init__(self, data="", mimeType="text/html"):
         self.headers = {}
-        self._raw_cookies = {}
         self.data = data
         self.code = 200
         self.headers['Content-type'] = mimeType
@@ -136,29 +129,6 @@ class HttpResponse(object):
         """Appends text to the response stream
         """
         self.data += data
-        
-    def set_cookie(self, name, value,
-                   expires=None, domain=None,
-                   path="/", secure=False):
-        cookie = "%s=%s" % (name, value)
-        if expires:
-            exp = datetime.utcnow() + timedelta(seconds=expires)
-            cookie += "; expires=%s" % datetime.strftime(exp, "%A, %d-%m-%Y %H:%M:%S GMT")
-        if domain:
-            cookie += "; domain=%s" % domain
-        if path:
-            cookie += "; path=%s" % path
-        if secure:
-            cookie += "; secure"
-        #print "setting cookie: ", cookie
-        self._raw_cookies[name] = cookie
-        
-    def remove_cookie(self, name):
-        self.set_cookie(name, "", expires=-3600)
-
-    def get_raw_cookies(self):
-        return [x[1] for x in self._raw_cookies.items()]
-    
 
     def __setitem__(self, key, value):
         self.headers[key] = value
