@@ -5,9 +5,10 @@ import sys
 import signal
 import BaseHTTPServer
 import urllib2
-from urllib import quote, unquote
+from urllib import quote, unquote, urlencode
+import httplib
 from tempfile import mktemp
-import cookielib
+import mimetypes
 
 sys.path += [os.path.join(os.path.dirname(__file__), "..", "")]
 
@@ -49,6 +50,64 @@ class HttpTestCase(unittest.TestCase):
             self.assertEqual(contents['GET']['get_param2'], 'value2')
         except Exception, ex:
             self.fail("Exception during content reading: %s" % str(ex))
+            
+    def testPost(self):
+        data = urlencode({'name': "A name", 'data': "Some data"})
+        req = urllib2.Request(self.info_url, data)
+        req.add_header('Content-length', len(data))
+        try:
+            contents = eval(urllib2.urlopen(req).read())
+            self.assertTrue(contents['POST'].has_key("name") and contents['POST'].has_key("data"))
+            self.assertEqual(contents['POST']['name'], 'A name')
+            self.assertEqual(contents['POST']['data'], 'Some data')
+        except SyntaxError, ex:
+            self.fail("Error reading the result")
+    
+    def testPostMultipartFormData(self):
+        fields = {'name': 'A name',
+                  'data': 'Some data'}
+        files = {}
+        content_type, body = self.getMultipartFormData(fields, files)
+        req = urllib2.Request(self.info_url, body)
+        req.add_header("Content-type", content_type)
+        try:
+            contents = eval(urllib2.urlopen(req).read())
+            self.assertTrue(contents['POST'].has_key("name") and contents['POST'].has_key("data"))
+            self.assertEqual(contents['POST']['name'], 'A name')
+            self.assertEqual(contents['POST']['data'], 'Some data')
+        except SyntaxError, ex:
+            self.fail("Error reading the result")
+        
+    
+    def getMultipartFormData(self, fields, files):
+        """Recipe extracted from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/146306
+        """
+        BOUNDARY = "--------AKinDOfBoundarY_$"
+        CRLF = "\r\n"
+        parameters = []
+        
+        for key in fields.keys():
+            parameters.append('--%s' % BOUNDARY)
+            parameters.append('Content-disposition: form-data; name=%s' % key)
+            parameters.append('')
+            parameters.append(fields[key])
+        
+        for key in files.keys():
+            parameters.append('--%s' % BOUNDARY)
+            parameters.append('Content-disposition: form-data; name=%s, filename=%s'\
+                              % (key, files[key].name))
+            parameters.append('Content-type: %s' % self.getContentType(files[key].name))
+            parameters.append('')
+            parameters.append(fields[key])
+            
+        parameters.append('--%s--' % BOUNDARY)
+        parameters.append('')
+        enctype = "Content-type: multipart/form-data; boundary=%s" % BOUNDARY
+        body = CRLF.join(parameters)
+        return enctype, body
+        
+    def getContentType(self, filename):
+        return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
 
 pid = None
 
