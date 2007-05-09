@@ -1,7 +1,28 @@
+#-*- coding: utf-8 -*-
+# Copyright (C) 2007 Adriano Monteiro Marques <py.adriano@gmail.com>
+#
+# Author: Rodolfo da Silva Carvalho <rodolfo.ueg@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+import re
 from tempfile import mktemp
-from urllib import quote, unquote
+from urllib import quote, unquote, unquote_plus
 from datetime import datetime, timedelta
 from Cookie import SimpleCookie
+from umitWeb.WebLogger import getLogger
 
 class HttpError(Exception):
     """Send a generic HTTP Error to the server
@@ -36,6 +57,9 @@ class Http403(HttpError):
 class HttpRequest(object):
     """A class to encapsulate the elements of a HTTP Request.
     """
+    
+    logger = getLogger("HttpRequest")
+    
     def __init__(self, requestHandler):
         self.requestHandler = requestHandler
         self.headers = self.requestHandler.headers
@@ -64,47 +88,70 @@ class HttpRequest(object):
             length = int(self.headers['content-length'])
             pdata = self.requestHandler.rfile.read(length)
             if pdata:
-                if "multipart/form-data" not in self.headers.get("content-type"):
-                    pairs = pdata.split("&")
-                    for pair in pairs:
-                        key, value = pair.split("=", 1)
-                        self.POST[unquote(key)] = unquote(value)
-                else:
-                    try:
-                        boundary = self.headers['content-type'].split(";")[1].split("=")[1].strip().lstrip()
-                        fields = pdata.split(boundary)[1:-1]
-                        for field in fields:
-                            field = field[2:-4]
-                            header, data = field.split("\r\n", 1)
-                            headers = {}
-                            for h in header.split(";"):
-                                key, value = h.split("=")
-                                headers.update({key: value})
-                                
-                                if headers.has_key("filename"):
-                                    self.POST[headers['name']] = ""
-                                    fd = open(mktemp(), "w+")
-                                    fd.write(data)
-                                    fd.flush()
-                                    fd.seek(0)
-                                    self.FILES[headers['name']] = {
-                                        "content-type": headers.get("content-type", "text/plain"),
-                                        "file": fd,
-                                        "size": len(data),
-                                        "name": headers.get("name", "")
-                                        }
-                                else:
-                                    self.POST[headers['name']] = data
-                    except IndexError:
-                        print "No boundary."
-                        
-        self.COOKIES = SimpleCookie(self.headers.get("cookie", ""))
+                if "multipart/form-data" not in self.headers.get('content-type', 'x-www-urlencoded'):
+                    if "+" in pdata:
+                        unquote_func = unquote_plus
+                    else:
+                        unquote_func = unquote
 
+                    for arg in pdata.split("&"):
+                        key, value = arg.split("=", 1)
+                        print "Key: %s" % unquote_func(key)
+                        print "value: %s" % unquote_func(value)
+                        self.POST[unquote_func(key)] = unquote_func(value)
+                else:
+                    #multipart/form-data form
+                    boundary = re.findall(r".*;[\s][Bb][Oo][Uu][Nn][Dd][Aa][Rr][Yy]=([^;]*).*", self.headers['content-type'])
+                    if boundary:
+                        boundary = boundary[0]
+                    form_elements = pdata.split("--%s" % boundary)[1:-1]
+                    #self.logger.debug("Form Elements: %s" % "\n###\n".join(form_elements))
+                    
+                    for element in form_elements:
+                        header, data = element.split("\r\n", 2)[1:]
+                        
+                        #self.logger.debug("Form-header: %s" % header)
+                        #self.logger.debug("Form-data: %s" % data)
+                        
+                        match_file = re.match(r".*[; ]filename=(?P<filename>[^,]+).*", header)
+                        match_text = re.match(r".*[; ]name=(?P<name>[^,]+).*", header)
+                        
+                        if match_file:
+                            #Type: File
+                            content_type, data = data.split("\r\n", 1)
+                            data = data[2:-2]           # Delete initial and final '\r\n'
+                            self.logger.debug(str(data))
+                            content_type = content_type[len("content-type:")-1:].strip()
+                            temp_name = mktemp()
+                            temp_file = open(temp_name, "w+")
+                            temp_file.write(data)
+                            
+                            self.FILES[match_text.groupdict()['name']] = {
+                                "content_type": content_type,
+                                "name": match_file.groupdict()['filename'],
+                                "temp_name": temp_name,
+                                "size": len(data),
+                                "temp_file": temp_file
+                                }
+                            self.POST[match_text.groupdict()['name']] = match_file.groupdict()['filename']
+                        else:
+                            #Type: Plain text
+                            self.POST[match_text.groupdict()['name']] = data[2:-2]
+            else:
+                print "No pdata!"
+        self.COOKIES = SimpleCookie(self.headers.get("cookie", ""))
         self.REQUEST.update(self.GET)
         self.REQUEST.update(self.POST)
+        if self.requestHandler.command == "POST":
+            self.logger.debug("POST data: %s" % str(self.POST))
+            self.logger.debug("POST path: %s" % str(self.path))
+            
+            if self.FILES:
+                for file in self.FILES.items():
+                    self.logger.debug("temp name: %s" % file[1]['temp_name'])
 
     def get_path(self):
-        """Returns the path part of a request
+        """Return the path part of a request
         """
         return self.path
     
@@ -129,6 +176,13 @@ class HttpResponse(object):
         """Appends text to the response stream
         """
         self.data += data
+        
+        
+    def __add__(self, obj):
+        if not issubclass(obj.__class__, self.__class__):
+            raise ValueError, "Cannot add object %s of type %s" % (repr(obj), repr(obj.__class__))
+        else:
+            return HttpResponse(self.data + obj.data, self.headers['Content-type'])
 
     def __setitem__(self, key, value):
         self.headers[key] = value
@@ -138,6 +192,9 @@ class HttpResponse(object):
 
     def __str__(self):
         return self.data
+    
+    #def __repr__(self):
+    #    pass
 
 
 class HttpResponseRedirect(HttpResponse):

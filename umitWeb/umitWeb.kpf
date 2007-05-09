@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Komodo Project File - DO NOT EDIT -->
-<project kpf_version="3" id="342448cf-10f5-4b45-aa25-415fe8151c2a" name="umitWeb.kpf">
+<project id="342448cf-10f5-4b45-aa25-415fe8151c2a" name="umitWeb.kpf" kpf_version="3">
 <preference-set idref="342448cf-10f5-4b45-aa25-415fe8151c2a">
   <string id="import_exclude_matches">*.*~;*.bak;*.tmp;CVS;.#*;*.pyo;*.pyc;.svn;_svn;*%*</string>
   <boolean id="import_recursive">1</boolean>
-  <string id="pythonExtraPaths">C:\Documents and Settings\rodolfo-pgt\Desktop\subversion\umitweb</string>
+  <string id="pythonExtraPaths">/home/rodox/Documentos/SoC 2007/bass_boy/</string>
   <boolean id="import_live">1</boolean>
   <string id="import_type">useFolders</string>
   <string id="import_include_matches"></string>

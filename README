@@ -1,1 +1,6 @@
-This will be a README file.
+To test the application, run (in this directory):
+python tests/runtests.py
+
+everything should be ok.
+
+Bug: send to <rodolfo.ueg@gmail.com>

@@ -1,7 +1,27 @@
+#-*- coding: utf-8 -*-
+# Copyright (C) 2007 Adriano Monteiro Marques <py.adriano@gmail.com>
+#
+# Author: Rodolfo da Silva Carvalho <rodolfo.ueg@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 import re
 import os
 import pickle
 from types import ListType
+from traceback import print_exc
 
 try:
     from sqlite3 import dbapi2 as dbmodule
@@ -89,7 +109,7 @@ class Model(object):
         result = self._process_result(cursor, cursor.fetchall())
         if type(result) == ListType:
             return result
-        else:
+        elif result is not None:
             return [result]
 
     def delete(self):
@@ -115,10 +135,12 @@ class SessionData(Model):
     def __init__(self, id=None, pickled_data=None):
         Model.__init__(self)
         self.id = id
-        if pickled_data:
+        pickled_data = pickled_data or pickle.dumps({})
+        try:
             self.pickled_data = pickle.loads(pickled_data)
-        else:
-            self.pickled_data = {}
+        except Exception, ex:
+            print_exc()
+            raise DBError("Error loading pickled data: %s" % str(ex))
         
 
     def save(self):
@@ -126,7 +148,6 @@ class SessionData(Model):
             sql = "UPDATE session SET pickled_data=? WHERE id=?"
         else:
             sql = "INSERT INTO session(pickled_data, id) VALUES (?, ?)"
-        print sql.split(" ")[0]
         cursor = self._connection.cursor()
         cursor.execute(sql, (pickle.dumps(self.pickled_data), self.id))
         self._connection.commit()
@@ -134,7 +155,8 @@ class SessionData(Model):
     def delete(self):
         if self.get(self.id):
             cursor = self._connection.cursor()
-            cursor.execute("DELETE FROM session WHERE id=?", (self.id,))
+            sql = "DELETE FROM session WHERE id=?"
+            cursor.execute(sql, (self.id,))
             self._connection.commit()
     
 

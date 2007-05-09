@@ -1,18 +1,21 @@
 #-*- coding: utf-8 -*-
-## Copyright (C) 2007 Rodolfo da Silva Carvalho
-## This program is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
-## (at your option) any later version.
-## 
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License
-## along with this program; if not, write to the Free Software
-## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# Copyright (C) 2007 Adriano Monteiro Marques <py.adriano@gmail.com>
+#
+# Author: Rodolfo da Silva Carvalho <rodolfo.ueg@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import re
 import os
@@ -21,6 +24,7 @@ import pickle
 import md5
 import random
 from traceback import print_exc
+import datetime
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from umitWeb.Urls import patterns
 from umitWeb.Http import HttpRequest, Http404, HttpError, HttpResponse
@@ -64,9 +68,16 @@ class URLResolver(object):
 
 
 class SessionWrapper(object):
+    """This class works like a UserDict.
+    Example:
+    >>> session_obj['a-key'] = 'other value'
+    to clear the attribute, simply:
+    >>> del session_obj['a-key']
+    """
     def __init__(self, sessid=None):
         self.id = None
         self.modified = False
+        self.destroyed = False
         if sessid is None:
             self._session = SessionData(self.get_new_sessid())
         else:
@@ -76,11 +87,15 @@ class SessionWrapper(object):
                 self.modified = True
 
     def get_new_sessid(self):
+        """Generates a new session ID
+        """
         junk = "çoa^wer098~73°0£24q¢ßðæ3w4w98948512397&*@#$!@#*()"
         return md5.new(str(random.randint(0, sys.maxint-1)) \
                                   + str(random.randint(1, sys.maxint-1)//2) \
                                   + junk).hexdigest()
     def get_sessid(self):
+        """Return the ID of the session
+        """
         return self._session.id
 
     def __setitem__(self, name, value):
@@ -105,6 +120,12 @@ class SessionWrapper(object):
 
     def save(self):
         self._session.save()
+        
+    def destroy(self):
+        self._session.delete()
+        self._session = None
+        self.modified = False
+        self.destroyed = True
         
     @classmethod
     def clear(self):
@@ -161,6 +182,9 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                 if response.__class__ is not HttpResponse and not issubclass(response.__class__, HttpResponse):
                     raise HttpError(500, "Expected HttpResponse, got %s" % response.__class__.__name__)
                 
+                for f in request.FILES.items():
+                    os.unlink(f[1]['temp_name'])
+                
                 if request.session.modified:
                     request.session.save()
                 
@@ -168,11 +192,15 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                 for header in response.headers.keys():
                     self.send_header(header, response.headers[header])
 
-                request.COOKIES[self.COOKIE_SESSION_NAME] =  request.session.get_sessid()
+                if not request.session.destroyed:
+                    request.COOKIES[self.COOKIE_SESSION_NAME] =  request.session.get_sessid()
+                    request.COOKIES[self.COOKIE_SESSION_NAME]['path'] = "/"
+                
                 self.wfile.write(str(request.COOKIES))
                     
                 self.wfile.write('\n\n')
                 self.wfile.write(response.data)
+                
         except HttpError, e:
             self.send_error(e.error_code, e.message)
         except Exception, e:
