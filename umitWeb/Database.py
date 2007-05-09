@@ -25,8 +25,10 @@ from traceback import print_exc
 
 try:
     from sqlite3 import dbapi2 as dbmodule
+    import sqlite3 as sqlite
 except ImportError:
     from pysqlite2 import dbapi2 as dbmodule
+    import pysqlite2 as sqlite
 
 #Temporary - waiting instructions about UmitConf
 __connection__ = dbmodule.connect(os.path.join("web.db"))
@@ -126,7 +128,7 @@ class Model(object):
 class SessionData(Model):
     _sqlfields = [
         "id CHAR(32) not null",
-        "pickled_data TEXT",
+        "pickled_data BLOB",
         "primary key(id)"
         ]
     
@@ -149,7 +151,8 @@ class SessionData(Model):
         else:
             sql = "INSERT INTO session(pickled_data, id) VALUES (?, ?)"
         cursor = self._connection.cursor()
-        cursor.execute(sql, (pickle.dumps(self.pickled_data), self.id))
+        pickled_data = sqlite.Binary(pickle.dumps(self.pickled_data))
+        cursor.execute(sql, (pickled_data, self.id))
         self._connection.commit()
         
     def delete(self):
