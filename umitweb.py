@@ -16,6 +16,7 @@ elif sys.argv[1] == "start":
     except KeyboardInterrupt:
         print "Stopping..."
         sys.exit(0)
+
 elif sys.argv[1] == "stop":
     os.kill(UmitWebServer.get_pid())
     sys.exit(0)

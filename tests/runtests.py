@@ -9,10 +9,10 @@ from urllib import quote, unquote, urlencode
 import httplib
 from tempfile import mktemp
 import mimetypes
-from umitWeb.WebLogger import getLogger
 
 sys.path += [os.path.join(os.path.dirname(__file__), "..", "")]
 
+from umitWeb.WebLogger import getLogger
 from umitWeb.Server import UmitWebServer
 
 class HttpTestCase(unittest.TestCase):

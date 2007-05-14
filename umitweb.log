@@ -209,3 +209,16 @@ text file.
 [2007-05-09 01:35:49,200] DEBUG: HttpRequest - POST path: /test/server/info/
 [2007-05-09 01:35:49,200] DEBUG: HttpRequest - temp name: /tmp/tmp1GQNPz
 [2007-05-09 01:35:49,246] INFO: UmitWeb - killing server process...
+[2007-05-09 20:54:52,348] INFO: UmitWeb - server running on pid 13938
+[2007-05-09 20:54:52,351] INFO: UmitWeb - Starting child process
+[2007-05-09 20:54:52,940] DEBUG: HttpRequest - POST data: {'data': 'Some data', 'name': 'A name'}
+[2007-05-09 20:54:52,940] DEBUG: HttpRequest - POST path: /test/server/info/
+[2007-05-09 20:54:53,036] DEBUG: HttpRequest - some
+text
+here in this
+text file.
+
+[2007-05-09 20:54:53,036] DEBUG: HttpRequest - POST data: {'arq': 'test.txt', 'data': 'Some data', 'name': 'A name'}
+[2007-05-09 20:54:53,036] DEBUG: HttpRequest - POST path: /test/server/info/
+[2007-05-09 20:54:53,037] DEBUG: HttpRequest - temp name: /tmp/tmpQGyj2_
+[2007-05-09 20:54:53,253] INFO: UmitWeb - killing server process...
