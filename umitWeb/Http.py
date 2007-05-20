@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import re
+import os
 from tempfile import mktemp
 from urllib import quote, unquote, unquote_plus
 from datetime import datetime, timedelta
@@ -96,8 +97,6 @@ class HttpRequest(object):
 
                     for arg in pdata.split("&"):
                         key, value = arg.split("=", 1)
-                        print "Key: %s" % unquote_func(key)
-                        print "value: %s" % unquote_func(value)
                         self.POST[unquote_func(key)] = unquote_func(value)
                 else:
                     #multipart/form-data form
@@ -177,6 +176,9 @@ class HttpResponse(object):
         """
         self.data += data
         
+    def loadTemplate(self, template):
+        template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+        self.data = open(os.path.join(template_dir, template)).read()
         
     def __add__(self, obj):
         if not issubclass(obj.__class__, self.__class__):

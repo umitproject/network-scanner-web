@@ -18,8 +18,27 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from umitWeb.Http import HttpResponse
+from umitCore.NmapCommand import NmapCommand
 
-def index(req):
-    resp = HttpResponse()
-    resp.write('<h1>It Works!</h1>')
-    return resp
+def new(req):
+    response = HttpResponse()
+    if req.GET.has_key("xml"):
+        response['Content-type'] = "text/xml"
+        response.write()
+    elif req.GET.has_key("plain"):
+        response['Content-type'] = "text/plain"
+        command = req.POST['command']
+        command.replace("\\", "")
+        command.replace(";", "")
+        command.replace("|", "")
+        command.replace("`", "'")
+        
+        nmapCommand = NmapCommand(command)
+        nmapCommand.run_scan()
+        
+        while nmapCommand.scan_state():
+            pass
+        response.write(nmapCommand.get_output())
+        
+        
+    return response
