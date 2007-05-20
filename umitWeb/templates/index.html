@@ -10,8 +10,8 @@
         <h2>Umit - The nmap Frontend</h2>
         <div id="main_window">
             <div><form method="post" onsubmit="return runScan()">
-                <label for="target">Target:</label><input type="text" name="target" size="25" id="target"/><br/>
-                <label for="command">Command:</label><input type="text" id="command" name="command" size="50"/><input type="SUBMIT" value="Scan now!"/>
+                <label for="target">Target:</label><input type="text" name="target" size="25" id="target" onblur="fillCommand(this.value)"/><br/>
+                <label for="command">Command:</label><input type="text" id="command" name="command" size="50" value="nmap -v <target>"/><input type="SUBMIT" value="Scan now!"/>
             </form></div>
             <div id="result">
             </div>

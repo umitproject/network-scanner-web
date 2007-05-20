@@ -1,12 +1,18 @@
 runScan = function(){
     req = getXMLHttpRequest()
+    
+    if($("target").value == ""){
+        alert("No target specified!")
+        return false
+    }
+    
     $("result").innerHTML = "loading..."
     displayResult = function(){
         if(req.readyState == 4){
             if(req.status == 200){
                 $("result").innerHTML = "<pre>" + req.responseText + "</pre>"
             }else{
-                $("result").innerHTML = "An error has occurred."
+                $("result").innerHTML = req.statusText
             }
         }
     }
