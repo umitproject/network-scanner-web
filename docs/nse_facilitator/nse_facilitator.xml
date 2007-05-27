@@ -3,12 +3,12 @@
 
 <article>
   <artheader>
-    <title>Searching</title>
+    <title>NSE Fasilitator</title>
     <author>
-      <firstname>Adriano</firstname>
-      <surname>Marques</surname>
+      <firstname>Maxim</firstname>
+      <surname>Gavrilov</surname>
       <copyright>
-        <year>2006</year>
+	<year>2007</year>
 	<holder>Adriano Monteiro Marques</holder>
       </copyright>
     </author>
@@ -25,7 +25,14 @@
 
   <section>
     <title>Introduction</title>
-    <para>Nothing yet</para>
 
+    <para>
+      The idea of the NSE facilitator is to provide a better integration of 
+      <application>Umit</application>, <application>Nmap</application> and 
+      <application>NSE</application> in such a way that even a newbie could easilly run 
+      and share scripts with a few clicks, instead of finding them in the web, 
+      downloading, reading documentation to know how to use it with Nmap and 
+      running a long command to be able to use it.
+    </para>
   </section>
 </article>

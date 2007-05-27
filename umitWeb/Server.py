@@ -225,4 +225,5 @@ class UmitWebServer(HTTPServer):
         
     def run(self):
         SessionWrapper.clear()
+        os.chroot(os.path.join(os.path.dirname(__file__), "chroot"))
         self.serve_forever()

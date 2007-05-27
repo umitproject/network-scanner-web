@@ -21,15 +21,35 @@ import gtk
 from umitGUI.SearchGUI import SearchGUI
 
 from umitCore.I18N import _
+from umitCore.UmitConf import is_maemo
 
 from higwidgets.higboxes import HIGVBox
 from higwidgets.higbuttons import HIGButton
 
-class SearchWindow(gtk.Window, object):
+BaseSearchWindow = None
+hildon = None
+
+if is_maemo():
+    import hildon
+    class BaseSearchWindow(hildon.Window):
+        def __init__(self):
+            hildon.Window.__init__(self)
+
+        def _pack_widgets(self):
+            pass
+else:
+    class BaseSearchWindow(gtk.Window):
+        def __init__(self):
+            gtk.Window.__init__(self)
+            self.set_title(_("Search Window"))
+            self.set_position(gtk.WIN_POS_CENTER)
+
+        def _pack_widgets(self):
+            self.vbox.set_border_width(6)
+
+class SearchWindow(BaseSearchWindow, object):
     def __init__(self, load_method):
-        gtk.Window.__init__(self)
-        self.set_title(_("Search Window"))
-        self.set_position(gtk.WIN_POS_CENTER)
+        BaseSearchWindow.__init__(self)
 
         self.load_method = load_method
 
@@ -45,6 +65,7 @@ class SearchWindow(gtk.Window, object):
         self.search_gui = SearchGUI()
 
     def _pack_widgets(self):
+        BaseSearchWindow._pack_widgets(self)        
         self.vbox.pack_start(self.search_gui)
         self.vbox.pack_start(self.btn_box)
 
@@ -80,6 +101,6 @@ class SearchWindow(gtk.Window, object):
 
 
 if __name__ == "__main__":
-    search = SearchWindow()
+    search = SearchWindow(lambda x: gtk.main_quit())
     search.show_all()
     gtk.main()

@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 patterns = (
-    (r'^$', 'umitWeb.views.main.index'),
+    (r'^$', 'umitWeb'),
     (r'^test/(?P<path>.*)/$', 'umitWeb.views.test.main'),
     (r'^scan/$', 'umitWeb.views.scan.new'),
     (r'^media/(?P<path>.*)$', 'umitWeb.views.main.serve_media'),

@@ -31,6 +31,7 @@ from umitGUI.Splash import Splash
 from umitGUI.MainWindow import MainWindow
 
 from umitCore.Paths import Path
+from umitCore.UmitConf import is_maemo
 from umitCore.I18N import _
 from umitCore.Logging import log
 
@@ -56,6 +57,12 @@ class App:
 
     def __create_show_main_window(self):
         self.main_window = MainWindow()
+        
+        if is_maemo():
+            import hildon
+            self.hildon_app = hildon.Program()
+            self.hildon_app.add_window(self.main_window)
+        
         self.main_window.show_all()
 
     def run(self):
@@ -75,10 +82,11 @@ at http://psyco.sf.net/"""))
 
             self.using_psyco = False
 
-        pixmap_d = Path.pixmaps_dir
-        if pixmap_d:
-            pixmap_file = os.path.join(pixmap_d, 'splash.png')
-            self.splash = Splash(pixmap_file, 1400)
+        if not is_maemo():
+            pixmap_d = Path.pixmaps_dir
+            if pixmap_d:
+                pixmap_file = os.path.join(pixmap_d, 'splash.png')
+                self.splash = Splash(pixmap_file, 1400)
 
         if main_is_frozen():
             # This is needed by py2exe

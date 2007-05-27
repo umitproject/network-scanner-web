@@ -15,30 +15,38 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+#
+# 30 April 2007 -- More generic structure
+#                  Maxim Gavrilov <lovelymax@gmail.com>
+# 16 May 2007 -- Removing specific files at clean to avoid removing help.html
+#                Adriano Monteiro Marques <py.adriano@gmail.com>
+
+VPATH = comparing_results \
+	profile_editor \
+	nse_facilitator \
+	scanning \
+	searching \
+	wizard 
+
+OUTDIR = .
+XSL = /usr/share/xml/docbook/stylesheet/nwalsh/html/docbook.xsl
+
+OUTPUTS = $(addsuffix .html, $(VPATH))
+
+%.html : %.xml
+	xsltproc -o $(OUTDIR)/$@ $(XSL) $<
+
+all: create-dir $(OUTPUTS)
+
+create-dir:
+	@mkdir -p $(OUTDIR)
+
+clean:
+	@rm -f $(OUTDIR)/comparing_results.html
+	@rm -f $(OUTDIR)/profile_editor.html
+	@rm -f $(OUTDIR)/nse_facilitator.html
+	@rm -f $(OUTDIR)/scanning.html
+	@rm -f $(OUTDIR)/searching.html
+	@rm -f $(OUTDIR)/wizard.html
 
 
-html:
-	# Comparing Results article
-	xsltproc --output comparing_results.html \
-	  /usr/share/xml/docbook/stylesheet/nwalsh/html/docbook.xsl \
-	  comparing_results/comparing_results.xml
-
-	# Profile Editor article
-	xsltproc --output profile_editor.html \
-	  /usr/share/xml/docbook/stylesheet/nwalsh/html/docbook.xsl \
-	  profile_editor/profile_editor.xml
-
-	# Scanning article
-	xsltproc --output scanning.html \
-	  /usr/share/xml/docbook/stylesheet/nwalsh/html/docbook.xsl \
-	  scanning/scanning.xml
-
-	# Searching article
-	xsltproc --output searching.html \
-	  /usr/share/xml/docbook/stylesheet/nwalsh/html/docbook.xsl \
-	  searching/searching.xml
-
-	# Wizard article
-	xsltproc --output wizard.html \
-	  /usr/share/xml/docbook/stylesheet/nwalsh/html/docbook.xsl \
-	  wizard/wizard.xml
