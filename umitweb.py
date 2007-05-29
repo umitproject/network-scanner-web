@@ -26,8 +26,8 @@ from umitWeb.Server import UmitWebServer
 ######################################
 # Setting the umit home directory
 
-#from umitCore.Paths import Path
-#Path.set_umit_conf(join(split(__file__)[0], 'config', 'umit.conf'))
+from umitCore.Paths import Path
+Path.set_umit_conf(join(split(__file__)[0], 'config', 'umit.conf'))
 ######################################
 
 if __name__ == "__main__":

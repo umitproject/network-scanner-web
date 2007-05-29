@@ -8,17 +8,26 @@ runScan = function(){
     
     $("result").innerHTML = "loading..."
     displayResult = function(){
-        if(req.readyState == 4){
-            if(req.status == 200){
-                $("result").innerHTML = "<pre>" + req.responseText + "</pre>"
-            }else{
-                $("result").innerHTML = req.statusText
+         try{
+            if(req.readyState == 4){
+                if(req.status == 200){
+                    $("result").innerHTML = "<pre>" + req.responseText + "</pre>"
+                }else{
+                    $("result").innerHTML = req.statusText
+                }
             }
+	}catch(e){
+            alert(e)
+            $("result").innerHTML = "Could not open Http Request."
         }
     }
-    
-    req.open("POST", "/scan/?plain", true)
-    req.onreadystatechange = displayResult
-    req.send("command=" + encodeURI($("command").value))
+    try{
+        req.open("POST", "/scan/?plain", true)
+        req.onreadystatechange = displayResult
+        req.send("command=" + encodeURI($("command").value))
+    }catch(e){
+        $("result").innerHTML = "Could not open Http Request."
+    }
+
     return false
 }

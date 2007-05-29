@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<security>
+    <permissions>
+        <permission id="allow-all" type="deny"/>
+        
+        <permission id="deny-all" type="allow"/>
+        
+        <permission id="p1" type="allow">
+            <description>An sample permission</description>
+            
+            <!-- One permission can encapsulate various commands -->
+            <command><![CDATA[-O]]></command>
+        </permission>
+        
+        <permission id="p2" type="deny">
+            <description>Another sample permission</description>
+            <command><![CDATA[-sV]]></command>
+            <!--Deny access to access ports from 1 to 999-->
+            <command><![CDATA[-p [0-9]{1,3}]]></command>
+        </permission>
+    </permissions>
+    
+    <roles>
+        <role id="role1">
+            <description>An example role</description>
+            <permissions>
+                <permission ref="p1"/>
+                <permission ref="p2"/>
+                <permission ref="deny-all"/>
+            </permissions>
+        </role>
+        
+        <role id="administrator">
+            <description>Administrator role</description>
+            <permissions>
+                
+            </permissions>
+        </role>
+    </roles>
+    
+    <users>
+        <user login="user1">
+            <name>Test User 1</name>
+            <role ref="role1"/>
+            
+            <!-- MD5 Hash of the pasword -->
+            <password>202cb962ac59075b964b07152d234b70</password>
+        </user>
+    </users>
+</security>
