@@ -19,25 +19,34 @@
 
 from umitWeb.Http import HttpResponse
 from umitCore.NmapCommand import NmapCommand
+import re
 
 def new(req):
     response = HttpResponse()
+
+    #Replace dangerous commands
+    command = re.sub(r"[\\;|`&]", "", req.POST['command'])
+    
+    nmapCommand = NmapCommand(command)
+    nmapCommand.run_scan()
+    
+    while nmapCommand.scan_state():
+            pass
+    
     if req.GET.has_key("xml"):
         response['Content-type'] = "text/xml"
-        response.write()
+        xml = nmapCommand.get_xml_output()
+        
+        #remove <?xsl-stylesheet?> from file
+        final_xml = re.sub(r"<\?xml-stylesheet.*\?>", "", xml)
+        response.write(final_xml)
+        
+    elif req.GET.has_key("json"):
+        response['Content-type'] = "text/plain"
+        response.write("{}")
+        
     elif req.GET.has_key("plain"):
         response['Content-type'] = "text/plain"
-        command = req.POST['command']
-        command.replace("\\", "")
-        command.replace(";", "")
-        command.replace("|", "")
-        command.replace("`", "'")
-        
-        nmapCommand = NmapCommand(command)
-        nmapCommand.run_scan()
-        
-        while nmapCommand.scan_state():
-            pass
         response.write(nmapCommand.get_output())
         
         
