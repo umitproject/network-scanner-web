@@ -1,0 +1,21 @@
+<html>
+ <head>
+  <title>Umit :: The nmap frontend</title>
+  <link rel="stylesheet" href="/media/css/common.css"/>
+  <link rel="stylesheet" href="/media/css/ajax.css"/>
+  <script type="text/javascript" src="/media/js/mootools.v1.11.js"></script>
+  <script type="text/javascript" src="/media/js/common.js"></script>
+  <script type="text/javascript" src="/media/js/ajax.js"></script>
+ </head>
+ <body>
+ <div id="login-box">
+  <h3>Login</h3>
+  <div id="error"></div>
+  <form method="post" action="/login/?json" id="frmLogin">
+   <label class="float-left">Login:</label><input type="text" size="30" name="login" class="float-right"/>
+   <label class="float-left">Password:</label><input type="password" size="28" name="password" class="float-right"/>
+   <span id="spacer" style="width: 60px" class="float-left">&nbsp;</span><input type="submit" class="float-right" value="Login"/>
+  </form>
+ </div>
+ </body>
+</html>

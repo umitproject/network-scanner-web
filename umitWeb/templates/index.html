@@ -3,15 +3,20 @@
 <html>
     <head>
         <title>Umit :: The nmap frontend</title>
+        <link rel="stylesheet" href="/media/css/common.css"/>
+        <link rel="stylesheet" href="/media/css/ajax.css"/>
+        <script type="text/javascript" src="/media/js/mootools.v1.11.js"></script>
         <script type="text/javascript" src="/media/js/common.js"></script>
         <script type="text/javascript" src="/media/js/ajax.js"></script>
     </head>
     <body>
         <h2>Umit - The nmap Frontend</h2>
         <div id="main_window">
-            <div><form method="post" onsubmit="return runScan()">
+            <!-- <div><form method="post" onsubmit="return runScan()"> -->
+            <div><form method="post" action="/scan/" id="frmScan">
                 <label for="target">Target:</label><input type="text" name="target" size="25" id="target" onblur="fillCommand(this.value)"/><br/>
-                <label for="command">Command:</label><input type="text" id="command" name="command" size="50" value="nmap -v <target>"/><input type="SUBMIT" value="Scan now!"/>
+                <label for="command">Command: </label><span class="code"><strong>nmap</strong>
+                <input type='text' id='command' name='command' size='50' value='-v <target>'/><input type="SUBMIT" value="Scan now!"/>
             </form></div>
             <div id="result">
             </div>

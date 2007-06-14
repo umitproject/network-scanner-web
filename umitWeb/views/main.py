@@ -18,12 +18,15 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from os.path import join, abspath, dirname, exists, pardir
-from umitWeb.Http import HttpResponse, Http404
+from umitWeb.Http import HttpResponse, Http404, HttpResponseRedirect
 from umitWeb.WebLogger import getLogger
+from umitWeb.Auth import authenticate, ERROR
+from umitWeb.SecurityParser import Security
 import mimetypes
 
 logger = getLogger("main")
 
+@authenticate()
 def index(req):
     response = HttpResponse()
     response.loadTemplate("index.html")
@@ -40,3 +43,24 @@ def serve_media(req, path):
     response['Content-type'] = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
     response.write(open(filename, 'r').read())
     return response
+
+def login(req):
+    resp = HttpResponse()
+    if req.POST:
+        resp['Content-type'] = "text/plain"
+        user = Security.get_user(req.POST['login'], req.POST['password'])
+        
+        if req.GET.has_key("json"):
+            if user:
+                req.session['umit_user'] = user
+                resp.write('OK')
+            else:
+                resp.write('FAIL')
+            return resp
+        else:
+            if user:
+                req.session['umit_user'] = user
+                return HttpResponseRedirect("/")
+    else:
+        resp.loadTemplate("login.html")
+        return resp

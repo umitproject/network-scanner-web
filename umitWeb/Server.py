@@ -29,6 +29,7 @@ from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from umitWeb.Urls import patterns
 from umitWeb.Http import HttpRequest, Http404, HttpError, HttpResponse
 from umitWeb.Database import SessionData
+from threading import Thread
 
 
 class URLResolver(object):
@@ -111,6 +112,9 @@ class SessionWrapper(object):
 
     def keys(self):
         return self._session.pickled_data.keys()
+    
+    def has_key(self, key):
+        return self._session.pickled_data.has_key(key)
 
     def items(self):
         return self._session.pickled_data.items()
@@ -179,8 +183,10 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                 self.session_start(request)
                 
                 response = resolver.resolve(request)
-                if response.__class__ is not HttpResponse and not issubclass(response.__class__, HttpResponse):
-                    raise HttpError(500, "Expected HttpResponse, got %s" % response.__class__.__name__)
+                if response.__class__ is not HttpResponse and not \
+                   issubclass(response.__class__, HttpResponse):
+                    raise HttpError(500, "Expected HttpResponse, got %s" % \
+                                    response.__class__.__name__)
                 
                 for f in request.FILES.items():
                     os.unlink(f[1]['temp_name'])
@@ -193,7 +199,8 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                     self.send_header(header, response.headers[header])
 
                 if not request.session.destroyed:
-                    request.COOKIES[self.COOKIE_SESSION_NAME] =  request.session.get_sessid()
+                    request.COOKIES[self.COOKIE_SESSION_NAME] = \
+                           request.session.get_sessid()
                     request.COOKIES[self.COOKIE_SESSION_NAME]['path'] = "/"
                 
                 self.wfile.write(str(request.COOKIES))
@@ -219,9 +226,52 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
             request.session = SessionWrapper(request.COOKIES[self.COOKIE_SESSION_NAME].value)
 
 
-class UmitWebServer(HTTPServer):
+class RequestThread(Thread):
+    _server = None
+    
     def __init__(self):
-        HTTPServer.__init__(self, ("0.0.0.0", 8000), UmitRequestHandler)
+        Thread.__init__(self)
+        self._request, self._client_address = self._server.get_request()
+    
+    def run(self):
+        self._server.RequestHandlerClass(self._request, self._client_address)
+
+
+class UmitWebServer(HTTPServer):
+    _resourcePool = {}
+    currentInstance = None
+    
+    def __init__(self):
+        HTTPServer.__init__(self, ("0.0.0.0", 8059), UmitRequestHandler)
+        UmitWebServer.currentInstance = self
+        
+    def close_request(self, request):
+        HTTPServer.close_request(self, request)
+        print "\n\nCLOSING REQUEST\n\n"
+    
+    def addResource(self, resource, public=False):
+        junk = "çoa^wer098~73°0£24q¢ßðæ3w4w98948512397&*@#$!@#*(1234567890*/)"
+        key = md5.new(str(random.randint(0, sys.maxint-1)) \
+                                  + str(random.randint(1, sys.maxint-1)//2) \
+                                  + junk).hexdigest()
+        self._resourcePool[key] = resource
+        return key
+    
+    def removeResource(self, resourceID):
+        if resourceID in self._resourcePool.keys():
+            del self._resourcePool[resourceID]
+            return True
+        return False
+    
+    def getResource(self, resourceID):
+        if resourceID in self._resourcePool.keys():
+            return self._resourcePool[resourceID]
+    
+    def updateResource(self, resourceID, resource):
+        if resourceID in self._resourcePool.keys():
+            self._resourcePool[resourceID] = resource
+            return True
+        return False
         
     def run(self):
         SessionWrapper.clear()

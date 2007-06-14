@@ -24,6 +24,9 @@ from urllib import quote, unquote, unquote_plus
 from datetime import datetime, timedelta
 from Cookie import SimpleCookie
 from umitWeb.WebLogger import getLogger
+from umitCore.I18N import _
+from shutil import copyfileobj
+from StringIO import StringIO
 
 class HttpError(Exception):
     """Send a generic HTTP Error to the server
@@ -38,20 +41,20 @@ class Http404(HttpError):
     """Send a 404 HTTP Error (Page not found) to the server
     """
     def __init__(self):
-        HttpError.__init__(self, 404, "Page Not Found")
+        HttpError.__init__(self, 404, _("Page Not Found"))
 
 
 class Http500(HttpError):
     """Send a 500 HTTP Error (Internal Server Error) to the server
     """
-    def __init__(self, message="Internal Server Error"):
+    def __init__(self, message=_("Internal Server Error")):
         HttpError.__init__(self, 500, message)
 
 
 class Http403(HttpError):
     """Send a 403 HTTP Error (Forbidden) to the server
     """
-    def __init__(self, message="Forbidden"):
+    def __init__(self, message=_("Forbidden")):
         HttpError.__init__(self, 403, message)
 
 
@@ -87,7 +90,10 @@ class HttpRequest(object):
 
         if self.requestHandler.command == "POST":
             length = int(self.headers['content-length'])
+            #rfile = StringIO()
+            #copyfileobj(self.requestHandler.rfile, rfile, length)
             pdata = self.requestHandler.rfile.read(length)
+            
             if pdata:
                 if "multipart/form-data" not in self.headers.get('content-type', 'x-www-urlencoded'):
                     if "+" in pdata:
@@ -104,7 +110,6 @@ class HttpRequest(object):
                     if boundary:
                         boundary = boundary[0]
                     form_elements = pdata.split("--%s" % boundary)[1:-1]
-                    #self.logger.debug("Form Elements: %s" % "\n###\n".join(form_elements))
                     
                     for element in form_elements:
                         header, data = element.split("\r\n", 2)[1:]
@@ -204,3 +209,4 @@ class HttpResponseRedirect(HttpResponse):
         HttpResponse.__init__(self)
         self.code = 303
         self['Location'] = url
+

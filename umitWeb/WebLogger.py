@@ -31,6 +31,7 @@ class WebLogger(Log):
         handler.setFormatter(self.formatter)
         
         self.addHandler(handler)
-        
+
+
 def getLogger(name="UmitWeb"):
     return WebLogger(name, LOGLEVEL)

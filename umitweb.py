@@ -33,7 +33,7 @@ Path.set_umit_conf(join(split(__file__)[0], 'config', 'umit.conf'))
 if __name__ == "__main__":
     server = UmitWebServer()
     try:
-        print "UmitWebServer started on 0.0.0.0:8000"
+        print "UmitWebServer started on 0.0.0.0:8059"
         server.run()
     except KeyboardInterrupt:
         print "Stopping..."

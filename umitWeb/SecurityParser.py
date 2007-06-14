@@ -17,11 +17,50 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from os.path import pardir, join
+from os.path import pardir, join, dirname
 from xml.dom import minidom
 from xml import xpath
+import md5
 
-CONFIG_FILE = join(pardir, "config", "security.xml")
+CONFIG_FILE = join(dirname(__file__), pardir, "config", "security.xml")
+
+
+class Constraint(object):
+    _xmlTree = None
+
+    DOMAIN = 0
+    COMMAND = 1
+    TARGET = 2
+    #add more constraints below
+    
+    __types = {"domain": DOMAIN, "command": COMMAND, "target": TARGET}
+    
+    def __init__(self, xmlNode=None):
+        if xmlNode:
+            type = xmlNode.getAttribute("type")
+            self.content = xmlNode.chilNodes[0].nodeValue
+            if type in self.__types.keys():
+                self.typecode = self.__types[type]
+            else:
+                self.type = -1
+            
+    def __get_type(self):
+        for key in self.__types.keys():
+            if self.__types[key] == self.typecode:
+                return key
+    
+    def __set_type(self, type):
+        for key in self.__types.keys():
+            if type == key:
+                self.typecode = self.__types[key]
+                return
+    
+    type = property(__get_type, __set_type)
+    
+    
+    def __repr__(self):
+        return self.__types[self.type]
+        
 
 
 class Permission(object):
@@ -30,11 +69,6 @@ class Permission(object):
         if xmlNode:
             self.type = xmlNode.getAttribute("type")
             self.id = xmlNode.getAttribute("id")
-            
-            self.commands = []
-            
-            for command in xpath.Evaluate("//permission/command", xmlNode):
-                self.commands.append(command.childNodes[0].nodeValue)
         else:
             self.type = None
             self.id = None
@@ -47,8 +81,15 @@ class Permission(object):
             roles.append(Role(node))
             
         return roles
+    
+    def __get_constraints(self):
+        search = xpath.Evaluate('//security/permissions/permission[@id="%s"]/constraint', self.id, self._xmlTree)
+        constraints = []
+        for constraint in search:
+            constraints.append(Constraint(constraint))
         
     roles = property(__get_roles)
+    constraints = property(__get_constraints)
 
 
 class Role(object):
@@ -141,6 +182,18 @@ class SecurityParser(object):
         for u in elements:
             users.append(User(u))
         return users
+    
+    def get_user(self, login, password=None):
+        elements = xpath.Evaluate('//security/users/user[@login="%s"]' % login, self.__elTree)
+        if elements:
+            user = User(elements[0])
+            
+            if not password:
+                return user
+            else:
+                passwd = md5.new(password).hexdigest()
+                if passwd == user.password:
+                    return user
     
     permissions = property(__get_permissions, doc="Get all permissions")
     roles = property(__get_roles, doc="Get all roles")

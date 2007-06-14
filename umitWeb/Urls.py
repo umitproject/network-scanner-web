@@ -19,7 +19,9 @@
 
 patterns = (
     (r'^$', 'umitWeb.views.main.index'),
+    (r'^login/$', 'umitWeb.views.main.login'),
     (r'^test/(?P<path>.*)/$', 'umitWeb.views.test.main'),
     (r'^scan/$', 'umitWeb.views.scan.new'),
+    (r'^scan/(?P<resource_id>[0-9a-fA-F]{32,32})/check/$', 'umitWeb.views.scan.check'),
     (r'^media/(?P<path>.*)$', 'umitWeb.views.main.serve_media'),
 )

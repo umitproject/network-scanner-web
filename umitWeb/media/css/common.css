@@ -1,0 +1,45 @@
+body, table{
+   font-family: sans;
+   font-size: 10pt;
+}
+
+input{
+   margin-top: 3px;
+   margin-bottom: 3px;
+}
+
+label{
+   margin-right: 2pt;
+   margin-top: 4px;
+   margin-bottom: 4px;
+}
+
+h3{
+   margin: 0;
+   margin-bottom: 5px;
+}
+
+#login-box{
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   margin-left: -160px;
+   margin-top: -54px;
+   width: 320px;
+   border: solid 1px black;
+   padding: 3px;
+   height: 108px;
+}
+
+.code {
+   font-family: monospace;
+   font-size: 11pt;
+}
+
+.float-left{
+   float: left;
+}
+
+.float-right{
+   float: right;
+}

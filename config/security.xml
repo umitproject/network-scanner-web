@@ -9,14 +9,14 @@
             <description>An sample permission</description>
             
             <!-- One permission can encapsulate various commands -->
-            <command><![CDATA[-O]]></command>
+            <constraint type="command"><![CDATA[-O]]></constraint>
         </permission>
         
         <permission id="p2" type="deny">
             <description>Another sample permission</description>
-            <command><![CDATA[-sV]]></command>
+            <constraint type="command"><![CDATA[-sV]]></constraint>
             <!--Deny access to access ports from 1 to 999-->
-            <command><![CDATA[-p [0-9]{1,3}]]></command>
+            <constraint type="command"><![CDATA[-p [0-9]{1,3}]]></constraint>
         </permission>
     </permissions>
     
@@ -33,15 +33,24 @@
         <role id="administrator">
             <description>Administrator role</description>
             <permissions>
-                
+                <permission ref="allow-all"/>
             </permissions>
         </role>
     </roles>
     
     <users>
+        <user login="admin">
+            <name>Umit's Administrator</name>
+            <roles>
+                <role ref="administrator"/>
+            </roles>
+        </user>
+        
         <user login="user1">
             <name>Test User 1</name>
-            <role ref="role1"/>
+            <roles>
+                <role ref="role1"/>
+            </roles>
             
             <!-- MD5 Hash of the pasword -->
             <password>202cb962ac59075b964b07152d234b70</password>

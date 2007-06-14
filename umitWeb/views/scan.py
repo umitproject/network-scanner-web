@@ -17,37 +17,57 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from umitWeb.Http import HttpResponse
+from umitWeb.Http import HttpResponse, Http404
+from umitWeb.Auth import authenticate, ERROR
+from umitWeb.Server import UmitWebServer as server
+from umitWeb.WebLogger import getLogger
 from umitCore.NmapCommand import NmapCommand
 import re
 
+logger = getLogger(__name__)
+
+@authenticate(ERROR)
 def new(req):
     response = HttpResponse()
-
+    response['Content-type'] = "text/plain"
+    
     #Replace dangerous commands
     command = re.sub(r"[\\;|`&]", "", req.POST['command'])
+    print "\n\nReceiving command: %s\n\n" % command
+    try:
+        nmapCommand = NmapCommand(command)
+        print "\n\nCommand created: %s\n\n" % str(nmapCommand)
+        nmapCommand.run_scan()
+        print "\n\nCommand is now running!\n\n"
+        resourceID = server.currentInstance.addResource(nmapCommand)
+        print "\n\nResource added on the resource pool."
+        #del nmapCommand
+        
+        response.write("{'result': 'OK', 'status': 'RUNNING', 'id': '%s'}" % resourceID)
+    except Exception, e:
+        response.write("{'result': 'FAIL', 'status': '%s'}" % str(e).replace("'", "\\'"))
+    return response
+
+@authenticate(ERROR)
+def check(req, resource_id):
+    response = HttpResponse()
+    response['Content-type'] = "text/plain"
     
-    nmapCommand = NmapCommand(command)
-    nmapCommand.run_scan()
+    nmapCommand = server.currentInstance.getResource(resource_id)
+
+    logger.debug("server status: " % server.currentInstance._resourcePool)
     
-    while nmapCommand.scan_state():
-            pass
+    if not nmapCommand:
+        raise Http404
     
-    if req.GET.has_key("xml"):
-        response['Content-type'] = "text/xml"
-        xml = nmapCommand.get_xml_output()
-        
-        #remove <?xsl-stylesheet?> from file
-        final_xml = re.sub(r"<\?xml-stylesheet.*\?>", "", xml)
-        response.write(final_xml)
-        
-    elif req.GET.has_key("json"):
-        response['Content-type'] = "text/plain"
-        response.write("{}")
-        
-    elif req.GET.has_key("plain"):
-        response['Content-type'] = "text/plain"
-        response.write(nmapCommand.get_output())
-        
-        
+    output = nmapCommand.get_output()
+    if nmapCommand.scan_state():
+        response.write("{'result': 'OK', 'status': 'RUNNING', " + \
+                       "'output': {'text': '%s'}}" % output.replace("'", "\\'").replace("\n", "\\n' + \n'"))
+    else:
+        xml_out = nmapCommand.get_xml_output().replace('"', '\\"').\
+                replace("'", "\\'").replace("\n", "\\n' + \n'")
+        text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
+        response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
+                       " {'xml': '%s', 'plain': '%s'}}" % (xml_out, text_out))
     return response

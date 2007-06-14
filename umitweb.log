@@ -53,3 +53,626 @@
 [2007-05-20 01:03:51,541] DEBUG: HttpRequest - POST path: /scan/
 [2007-05-27 11:17:03,898] DEBUG: HttpRequest - POST data: {'command': 'nmap -v 127.0.0.1'}
 [2007-05-27 11:17:03,905] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-01 22:10:15,795] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-01 22:10:15,796] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-02 23:24:36,114] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-02 23:24:36,114] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-02 23:28:35,741] DEBUG: HttpRequest - ['__class__', '__del__', '__delattr__', '__doc__', '__getattribute__', '__hash__', '__init__', '__iter__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__slots__', '__str__', '_close', '_get_wbuf_len', '_getclosed', '_rbuf', '_rbufsize', '_sock', '_wbuf', '_wbufsize', 'bufsize', 'close', 'closed', 'default_bufsize', 'fileno', 'flush', 'mode', 'name', 'next', 'read', 'readline', 'readlines', 'softspace', 'write', 'writelines']
+[2007-06-02 23:28:35,742] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-02 23:28:35,742] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-02 23:29:28,855] DEBUG: HttpRequest - ['__class__', '__del__', '__delattr__', '__doc__', '__getattribute__', '__hash__', '__init__', '__iter__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__slots__', '__str__', '_close', '_get_wbuf_len', '_getclosed', '_rbuf', '_rbufsize', '_sock', '_wbuf', '_wbufsize', 'bufsize', 'close', 'closed', 'default_bufsize', 'fileno', 'flush', 'mode', 'name', 'next', 'read', 'readline', 'readlines', 'softspace', 'write', 'writelines']
+[2007-06-02 23:29:28,855] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-02 23:29:28,855] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-02 23:30:42,021] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-02 23:30:42,021] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-04 22:55:48,827] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-04 22:55:48,827] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-05 23:42:04,074] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-05 23:42:04,075] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-05 23:45:22,097] DEBUG: HttpRequest - POST data: {'command': '-v -sV 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-05 23:45:22,101] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-05 23:56:08,791] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-05 23:56:08,792] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-05 23:58:58,784] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-05 23:58:58,784] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-05 23:59:23,159] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-05 23:59:23,161] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-06 00:00:58,662] DEBUG: HttpRequest - POST data: {'command': '-v -sV 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-06 00:00:58,663] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-06 00:07:17,718] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-06 00:07:17,718] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-06 00:08:04,419] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-06 00:08:04,419] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-07 14:08:04,342] DEBUG: HttpRequest - POST data: {'command': '-v -sV 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-07 14:08:04,342] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-07 17:42:10,588] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-07 17:42:10,589] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-07 18:20:24,744] DEBUG: umitWeb.Auth - Destination: <function index at 0xb7a69844>
+[2007-06-07 18:20:24,744] DEBUG: umitWeb.Auth - Destination: <function serve_media at 0xb7a69bfc>
+[2007-06-07 18:20:39,701] DEBUG: umitWeb.Auth - Destination: <function index at 0xb7aa4844>
+[2007-06-07 18:20:39,701] DEBUG: umitWeb.Auth - Destination: <function serve_media at 0xb7aa4bfc>
+[2007-06-07 19:57:34,856] DEBUG: HttpRequest - POST data: {'login': '', 'password': ''}
+[2007-06-07 19:57:34,856] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 20:50:27,324] DEBUG: HttpRequest - POST data: {'login': 'abc', 'password': 'fdsaf'}
+[2007-06-07 20:50:27,324] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 22:14:45,326] DEBUG: HttpRequest - POST data: {'login': 'abda', 'password': '123'}
+[2007-06-07 22:14:45,327] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 22:21:05,792] DEBUG: HttpRequest - POST data: {'login': 'abc', 'password': 'gsd'}
+[2007-06-07 22:21:05,792] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 23:47:08,052] DEBUG: HttpRequest - POST data: {'login': 'abda', 'password': 'fdasfsa'}
+[2007-06-07 23:47:08,053] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 23:52:19,364] DEBUG: HttpRequest - POST data: {'login': 'abc', 'password': 'sdf'}
+[2007-06-07 23:52:19,364] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 23:53:01,043] DEBUG: HttpRequest - POST data: {'login': 'abc', 'password': 'asdfs'}
+[2007-06-07 23:53:01,043] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 23:53:46,891] DEBUG: HttpRequest - POST data: {'login': 'dsaf', 'password': 'fasd'}
+[2007-06-07 23:53:46,891] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 23:54:35,196] DEBUG: HttpRequest - POST data: {'login': 'dsaf', 'password': 'fsadfs'}
+[2007-06-07 23:54:35,197] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 23:55:56,483] DEBUG: HttpRequest - POST data: {'login': 'abda', 'password': 'fdsafsda'}
+[2007-06-07 23:55:56,483] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 23:58:57,664] DEBUG: HttpRequest - POST data: {'login': 'fadsfsa', 'password': 'fasdf'}
+[2007-06-07 23:58:57,665] DEBUG: HttpRequest - POST path: /login/
+[2007-06-07 23:59:13,282] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-07 23:59:13,282] DEBUG: HttpRequest - POST path: /login/
+[2007-06-10 09:53:13,785] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-10 09:53:13,798] DEBUG: HttpRequest - POST path: /login/
+[2007-06-10 09:53:25,248] DEBUG: HttpRequest - POST data: {'command': '-v localhost', 'target': 'localhost'}
+[2007-06-10 09:53:25,248] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-10 09:53:37,187] DEBUG: HttpRequest - POST data: {'command': '-v --traceroute localhost', 'target': 'localhost'}
+[2007-06-10 09:53:37,200] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-10 09:54:08,890] DEBUG: HttpRequest - POST data: {'command': '-v localhost', 'target': 'localhost'}
+[2007-06-10 09:54:08,890] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-10 09:55:10,247] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-10 09:55:10,248] DEBUG: HttpRequest - POST path: /login/
+[2007-06-10 09:56:44,665] DEBUG: HttpRequest - POST data: {'command': '-v -O 200.181.105.94', 'target': '200.181.105.94'}
+[2007-06-10 09:56:44,665] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-10 09:57:40,463] DEBUG: HttpRequest - POST data: {'command': '-v -O 200.181.105.94', 'target': '200.181.105.94'}
+[2007-06-10 09:57:40,463] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-10 09:58:00,990] DEBUG: HttpRequest - POST data: {'command': '-v -O www.google.com.br', 'target': 'www.google.com.br'}
+[2007-06-10 09:58:00,990] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-10 11:28:47,941] DEBUG: HttpRequest - POST data: {'login': 'admin', 'password': 'dafsd'}
+[2007-06-10 11:28:47,941] DEBUG: HttpRequest - POST path: /login/
+[2007-06-10 11:29:03,024] DEBUG: HttpRequest - POST data: {'login': 'admin', 'password': 'dafsd'}
+[2007-06-10 11:29:03,025] DEBUG: HttpRequest - POST path: /login/
+[2007-06-10 11:29:28,411] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-10 11:29:28,411] DEBUG: HttpRequest - POST path: /login/
+[2007-06-10 11:29:58,917] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-10 11:29:58,918] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-10 11:36:33,244] DEBUG: HttpRequest - POST data: {'command': '-v -O -sV 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-10 11:36:33,245] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-11 22:19:13,565] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-11 22:19:13,578] DEBUG: HttpRequest - POST path: /login/
+[2007-06-11 22:19:25,081] DEBUG: HttpRequest - POST data: {'command': '-v -O 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-11 22:19:25,081] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-11 22:20:42,556] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-11 22:20:42,557] DEBUG: HttpRequest - POST path: /login/
+[2007-06-11 22:20:47,960] DEBUG: HttpRequest - POST data: {'command': '-v 200.181.105.93', 'target': '200.181.105.93'}
+[2007-06-11 22:20:47,961] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-11 22:21:48,871] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-11 22:21:48,872] DEBUG: HttpRequest - POST path: /login/
+[2007-06-11 22:21:54,031] DEBUG: HttpRequest - POST data: {'command': '-v 200.181.105.93', 'target': '200.181.105.93'}
+[2007-06-11 22:21:54,032] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-12 07:27:46,996] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-12 07:27:46,996] DEBUG: HttpRequest - POST path: /login/
+[2007-06-12 07:27:54,212] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-12 07:27:54,212] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 13:20:54,115] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 13:20:54,125] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 13:21:31,005] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 13:21:31,006] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 13:24:48,449] DEBUG: HttpRequest - POST data: {'command': '-v -O 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 13:24:48,450] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 13:24:50,130] DEBUG: HttpRequest - POST data: {'command': '-v -O 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 13:24:50,130] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 13:27:18,375] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 13:27:18,375] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 13:27:44,796] DEBUG: HttpRequest - POST data: {'command': '-v 201.14.127.12', 'target': '201.14.127.12'}
+[2007-06-13 13:27:44,797] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 13:38:39,359] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 13:38:39,360] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 13:38:54,232] DEBUG: HttpRequest - POST data: {'command': '-v -sV 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 13:38:54,233] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 13:40:12,046] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 13:40:12,046] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 13:40:23,997] DEBUG: HttpRequest - POST data: {'command': '-v -sV 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 13:40:23,998] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 13:41:30,888] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 13:41:30,888] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 13:41:52,297] DEBUG: HttpRequest - POST data: {'command': '-v 201.14.127.12', 'target': '201.14.127.12'}
+[2007-06-13 13:41:52,297] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 21:58:07,720] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 21:58:07,720] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 21:59:36,207] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 21:59:36,207] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:00:20,132] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:00:20,132] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:01:04,813] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:01:04,813] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:01:23,725] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:01:23,725] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:02:04,693] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:02:04,693] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:02:29,412] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:02:29,412] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:02:50,066] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:02:50,066] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:03:33,465] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:03:33,465] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:03:58,508] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:03:58,509] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:06:27,271] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:06:27,272] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:06:27,450] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:06:27,450] DEBUG: HttpRequest - POST path: /scan/04597f250f4af1dacfffb2766cfb5b17/check/
+[2007-06-13 22:06:27,452] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:07:40,138] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:07:40,139] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:07:46,113] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:07:46,114] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:07:46,313] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:07:46,314] DEBUG: HttpRequest - POST path: /scan/b5375abe1cc1d23a8f491360c4dfbe1a/check/
+[2007-06-13 22:07:46,315] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:10:48,905] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:10:48,906] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:10:49,051] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:10:49,052] DEBUG: HttpRequest - POST path: /scan/8d99735eea5f5cef9b529ec50a58d9b7/check/
+[2007-06-13 22:10:49,055] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:11:04,754] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:11:04,754] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:11:09,134] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:11:09,134] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:11:09,284] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:11:09,285] DEBUG: HttpRequest - POST path: /scan/1525b71a9afd1a13e6cd7362096a7ee4/check/
+[2007-06-13 22:11:09,286] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:13:16,092] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:13:16,092] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:13:16,301] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:13:16,301] DEBUG: HttpRequest - POST path: /scan/302a2191c4b482738c36d01b20d63e02/check/
+[2007-06-13 22:13:16,304] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:14:44,895] DEBUG: HttpRequest - POST data: {'command': '-v -O 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:14:44,895] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:14:46,458] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:14:46,458] DEBUG: HttpRequest - POST path: /scan/52b0b243921f897058a7bf6805d08891/check/
+[2007-06-13 22:14:46,461] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:16:35,668] DEBUG: HttpRequest - POST data: {'command': '-v -O -sV 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:16:35,670] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:16:43,339] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:16:43,340] DEBUG: HttpRequest - POST path: /scan/3cf971eb4ca626590741c6ff1c4333c8/check/
+[2007-06-13 22:16:43,341] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:18:29,714] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:18:29,714] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:18:41,034] DEBUG: HttpRequest - POST data: {'command': '-v -O -sV 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:18:41,034] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:18:48,609] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:18:48,609] DEBUG: HttpRequest - POST path: /scan/5dc9cda4a84ae5d0f9c906e1e9992f0b/check/
+[2007-06-13 22:18:48,610] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:20:20,035] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:20:20,036] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:20:27,773] DEBUG: HttpRequest - POST data: {'command': '-v -O 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:20:27,773] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:20:29,343] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:20:29,343] DEBUG: HttpRequest - POST path: /scan/d5f435aaf709f75e2ebb07930b697649/check/
+[2007-06-13 22:20:29,345] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:26:37,345] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:26:37,345] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:26:37,563] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:26:37,563] DEBUG: HttpRequest - POST path: /scan/f5dc7ce90f3498ebff1e096903a11346/check/
+[2007-06-13 22:26:37,565] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:28:50,070] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:28:50,070] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:28:55,506] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:28:55,506] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:28:55,683] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:28:55,684] DEBUG: HttpRequest - POST path: /scan/530702f219c2e28846bc90c8b3f4d9e9/check/
+[2007-06-13 22:28:55,685] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:29:34,716] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:29:34,717] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:29:34,887] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:29:34,888] DEBUG: HttpRequest - POST path: /scan/aeee997f4a392a5174c2960ace67b4bc/check/
+[2007-06-13 22:29:34,889] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:30:57,724] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:30:57,728] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:31:03,386] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:31:03,387] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:31:03,559] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:31:03,560] DEBUG: HttpRequest - POST path: /scan/2817d5f11e006f02d6daa6b84122cb8c/check/
+[2007-06-13 22:31:03,561] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:31:06,232] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:31:06,233] DEBUG: HttpRequest - POST path: /scan/2817d5f11e006f02d6daa6b84122cb8c/check/
+[2007-06-13 22:31:06,234] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:31:55,747] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:31:55,747] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:31:59,898] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:31:59,898] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:32:00,069] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:32:00,070] DEBUG: HttpRequest - POST path: /scan/f47ecbe2fd4dfb82c749e64eeba4278a/check/
+[2007-06-13 22:32:00,071] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:32:01,080] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:32:01,081] DEBUG: HttpRequest - POST path: /scan/f47ecbe2fd4dfb82c749e64eeba4278a/check/
+[2007-06-13 22:32:01,082] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:32:08,756] DEBUG: HttpRequest - POST data: {'command': '-v -O 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:32:08,756] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:32:20,858] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:32:20,860] DEBUG: HttpRequest - POST path: /scan/c127e4569dd91b7fd69c0e3695240f92/check/
+[2007-06-13 22:32:20,861] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:33:17,633] DEBUG: HttpRequest - POST data: {'command': '-v -O 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 22:33:17,633] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:34:03,980] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:34:03,980] DEBUG: HttpRequest - POST path: /scan/9aa535bb1d7e6253ac988d09321551bf/check/
+[2007-06-13 22:34:03,982] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:36:49,450] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:36:49,451] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:36:55,334] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 22:36:55,335] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:38:01,615] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:38:01,615] DEBUG: HttpRequest - POST path: /scan/1087cedfb5921e7ed65e8e368642bd80/check/
+[2007-06-13 22:38:01,617] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:39:41,756] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:39:41,757] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:39:47,082] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 22:39:47,083] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:40:15,763] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:40:15,763] DEBUG: HttpRequest - POST path: /scan/d42c4e9e5463f1743781c8e8f0f153cf/check/
+[2007-06-13 22:40:15,765] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:40:48,147] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 22:40:48,147] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:41:17,507] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:41:17,507] DEBUG: HttpRequest - POST path: /scan/c9985a495f3f10bdd82111842c7f8306/check/
+[2007-06-13 22:41:17,508] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:42:41,360] DEBUG: HttpRequest - POST data: {'command': '-v -v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 22:42:41,360] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:43:10,110] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:43:10,111] DEBUG: HttpRequest - POST path: /scan/0f9fe4cd2f29f25ea21b5d83a26c44ee/check/
+[2007-06-13 22:43:10,113] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:47:00,959] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:47:00,959] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:47:12,419] DEBUG: HttpRequest - POST data: {'command': '-v -v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 22:47:12,419] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:47:41,092] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:47:41,092] DEBUG: HttpRequest - POST path: /scan/3850e25fdab854e113f3be733c607818/check/
+[2007-06-13 22:47:41,094] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:50:02,821] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 22:50:02,821] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:50:05,461] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:50:05,461] DEBUG: HttpRequest - POST path: /scan/52b0ca7e1ef14327d00dc0421cb99b27/check/
+[2007-06-13 22:50:05,463] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:50:37,734] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 22:50:37,735] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:51:06,658] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:51:06,659] DEBUG: HttpRequest - POST path: /scan/5c77545fbeee03a22f373e4d44f6ccd9/check/
+[2007-06-13 22:51:06,660] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:52:27,743] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 22:52:27,743] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:53:05,028] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:53:05,029] DEBUG: HttpRequest - POST path: /scan/56e59fa23e1d84dcfa1f22ac2405a202/check/
+[2007-06-13 22:53:05,030] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 22:54:51,022] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 22:54:51,022] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 22:54:59,107] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 22:54:59,107] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 22:55:38,064] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 22:55:38,065] DEBUG: HttpRequest - POST path: /scan/f78bab2db5f0debbd470ab85d6f74166/check/
+[2007-06-13 22:55:38,066] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:08:19,294] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 23:08:19,294] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 23:08:24,571] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 23:08:24,572] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:08:53,524] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:08:53,525] DEBUG: HttpRequest - POST path: /scan/8c89439fc83da284b9df72036debd747/check/
+[2007-06-13 23:08:53,526] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:09:13,321] DEBUG: HttpRequest - POST data: {'command': '-v -v -O 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 23:09:13,322] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:09:22,366] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 23:09:22,366] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:09:41,625] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 23:09:41,626] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:09:41,823] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:09:41,823] DEBUG: HttpRequest - POST path: /scan/8b378410b7a95b5f62a79598676ccecc/check/
+[2007-06-13 23:09:41,824] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:09:51,135] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:09:51,135] DEBUG: HttpRequest - POST path: /scan/97a1acb3b63aadc041bdd9f92d23f683/check/
+[2007-06-13 23:09:51,137] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:10:10,267] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:10:10,267] DEBUG: HttpRequest - POST path: /scan/51094d5cc50bdcb57c000e2eb32825fe/check/
+[2007-06-13 23:10:10,268] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:11:08,784] DEBUG: HttpRequest - POST data: {'command': '-v -sV 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 23:11:08,784] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:11:30,547] DEBUG: HttpRequest - POST data: {'command': '-v 200.181.105.89', 'target': '200.181.105.84'}
+[2007-06-13 23:11:30,551] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:11:48,256] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 23:11:48,257] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:11:48,415] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:11:48,416] DEBUG: HttpRequest - POST path: /scan/911af31bd5ca25c466849ac8bd5fd6bb/check/
+[2007-06-13 23:11:48,417] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:11:49,677] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:11:49,677] DEBUG: HttpRequest - POST path: /scan/4288b25e45d1fbd6532b38fdfc24b1ee/check/
+[2007-06-13 23:11:49,678] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:23,638] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 23:18:23,638] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:18:32,934] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:32,935] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:32,936] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:33,969] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:33,970] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:33,971] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:35,119] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:35,119] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:35,120] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:36,183] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:36,183] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:36,184] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:37,347] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:37,347] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:37,348] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:38,398] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:38,398] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:38,400] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:39,537] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:39,537] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:39,538] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:40,580] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:40,580] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:40,582] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:41,754] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:41,754] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:41,755] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:42,802] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:42,802] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:42,803] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:43,994] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:43,994] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:43,995] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:45,047] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:45,047] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:45,049] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:46,166] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:46,166] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:46,167] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:47,215] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:47,215] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:47,216] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:48,347] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:48,347] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:48,348] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:49,430] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:49,431] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:49,432] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:50,561] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:50,561] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:50,562] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:51,614] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:51,615] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:51,616] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:18:52,788] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:18:52,788] DEBUG: HttpRequest - POST path: /scan/035fbe913ebecd657dc4db31503c7811/check/
+[2007-06-13 23:18:52,789] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:14,897] DEBUG: HttpRequest - POST data: {'command': '-v -v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 23:19:14,897] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:19:15,773] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:15,773] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:15,774] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:16,820] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:16,821] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:16,822] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:17,942] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:17,942] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:17,943] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:18,985] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:18,986] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:18,988] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:20,177] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:20,177] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:20,178] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:21,264] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:21,265] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:21,266] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:22,397] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:22,397] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:22,398] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:23,453] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:23,454] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:23,455] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:24,584] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:24,584] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:24,586] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:25,619] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:25,619] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:25,620] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:26,654] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:26,655] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:26,657] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:27,855] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:27,855] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:27,858] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:28,991] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:28,991] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:28,992] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:30,086] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:30,086] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:30,088] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:31,222] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:31,222] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:31,224] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:32,258] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:32,258] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:32,259] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:33,402] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:33,403] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:33,404] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:34,432] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:34,433] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:34,434] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:35,582] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:35,583] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:35,584] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:36,614] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:36,615] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:36,616] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:37,649] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:37,649] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:37,650] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:38,849] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:38,849] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:38,850] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:39,978] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:39,979] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:39,980] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:41,011] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:41,012] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:41,013] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:42,162] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:42,162] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:42,164] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:43,191] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:43,194] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:43,197] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:19:44,358] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:19:44,359] DEBUG: HttpRequest - POST path: /scan/8a2908fbdc6bb0824bf38c477ac1e87d/check/
+[2007-06-13 23:19:44,360] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:21:57,118] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '12'}
+[2007-06-13 23:21:57,118] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 23:22:06,288] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '12'}
+[2007-06-13 23:22:06,288] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 23:22:21,352] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123%2'}
+[2007-06-13 23:22:21,353] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 23:22:50,144] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 23:22:50,144] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 23:23:14,027] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 23:23:14,028] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 23:23:24,564] DEBUG: HttpRequest - POST data: {'command': '-v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 23:23:24,564] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:23:24,792] DEBUG: HttpRequest - POST data: {'json': 'nul'}
+[2007-06-13 23:23:24,793] DEBUG: HttpRequest - POST path: /scan/f94f60d9c5db44d66ef0e55b905d4306/check/
+[2007-06-13 23:23:24,794] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:23:45,542] DEBUG: HttpRequest - POST data: {'command': '-v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 23:23:45,542] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:24:14,295] DEBUG: HttpRequest - POST data: {'json': 'nul'}
+[2007-06-13 23:24:14,295] DEBUG: HttpRequest - POST path: /scan/a4fa1172705a75a569f2c1c242eb6ef5/check/
+[2007-06-13 23:24:14,296] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:38:02,604] DEBUG: HttpRequest - POST data: {}
+[2007-06-13 23:38:02,604] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 23:45:23,120] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-13 23:45:23,127] DEBUG: HttpRequest - POST path: /login/
+[2007-06-13 23:45:34,130] DEBUG: HttpRequest - POST data: {'command': '-v -O -sV -v -v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 23:45:34,130] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:45:52,747] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:45:52,747] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:45:52,749] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:45:53,774] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:45:53,775] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:45:53,776] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:45:54,848] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:45:54,848] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:45:54,849] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:45:55,881] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:45:55,882] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:45:55,883] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:45:56,979] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:45:56,979] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:45:56,980] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:45:58,013] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:45:58,013] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:45:58,014] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:45:59,100] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:45:59,100] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:45:59,101] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:00,126] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:00,127] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:00,129] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:01,225] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:01,225] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:01,227] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:02,268] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:02,269] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:02,270] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:03,338] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:03,339] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:03,340] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:04,367] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:04,368] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:04,369] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:05,470] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:05,470] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:05,472] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:06,514] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:06,515] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:06,516] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:07,604] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:07,605] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:07,606] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:08,628] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:08,629] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:08,630] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:09,735] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:09,735] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:09,736] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:10,756] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:10,757] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:10,758] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:11,850] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:11,850] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:11,851] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:12,872] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:12,873] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:12,874] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:13,967] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:13,967] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:13,968] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:14,988] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:14,988] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:14,990] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:16,077] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:16,077] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:16,079] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:17,096] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:17,096] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:17,097] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:18,213] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:18,213] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:18,214] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:19,236] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:19,237] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:19,238] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:20,375] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:20,376] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:20,377] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:21,400] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:21,400] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:21,402] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:22,499] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:22,499] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:22,500] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:23,520] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:23,520] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:23,522] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:24,618] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:24,619] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:24,620] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:25,644] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:25,645] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:25,646] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:26,741] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:26,741] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:26,743] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:27,783] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:27,784] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:27,785] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:46:28,856] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:46:28,857] DEBUG: HttpRequest - POST path: /scan/4ee97d423ef82c13de3c72c6b8be1f3a/check/
+[2007-06-13 23:46:28,858] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:47:13,243] DEBUG: HttpRequest - POST data: {'command': '-v -O -sV -v -v 10.0.0.1-20', 'target': '10.0.0.1-20'}
+[2007-06-13 23:47:13,244] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:48:17,522] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:48:17,523] DEBUG: HttpRequest - POST path: /scan/6f0fa6518c73c544cc9a9f5ef98dc015/check/
+[2007-06-13 23:48:17,524] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:49:15,812] DEBUG: HttpRequest - POST data: {'command': '-v -O -sV -v -v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 23:49:15,812] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:49:23,368] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:49:23,368] DEBUG: HttpRequest - POST path: /scan/df74bf30954558125629df0a451b9edd/check/
+[2007-06-13 23:49:23,370] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-13 23:49:44,532] DEBUG: HttpRequest - POST data: {'command': '-v -O -sV -v -v 127.0.0.1', 'target': '127.0.0.1'}
+[2007-06-13 23:49:44,533] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-13 23:50:02,635] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-13 23:50:02,635] DEBUG: HttpRequest - POST path: /scan/8485ae3c1d3e7d97e11bf10fca91c9dc/check/
+[2007-06-13 23:50:02,636] DEBUG: umitWeb.views.scan - server status: 
