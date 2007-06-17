@@ -676,3 +676,10 @@
 [2007-06-13 23:50:02,635] DEBUG: HttpRequest - POST data: {'json': 'null'}
 [2007-06-13 23:50:02,635] DEBUG: HttpRequest - POST path: /scan/8485ae3c1d3e7d97e11bf10fca91c9dc/check/
 [2007-06-13 23:50:02,636] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-14 07:44:08,411] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-14 07:44:08,418] DEBUG: HttpRequest - POST path: /login/
+[2007-06-14 07:44:44,357] DEBUG: HttpRequest - POST data: {'command': '-v -P0 -O -sV 10.0.0.1-254', 'target': '10.0.0.1-254'}
+[2007-06-14 07:44:44,357] DEBUG: HttpRequest - POST path: /scan/
+[2007-06-14 07:46:29,409] DEBUG: HttpRequest - POST data: {'json': 'null'}
+[2007-06-14 07:46:29,410] DEBUG: HttpRequest - POST path: /scan/87c7d252923c3fec064026c7b928635b/check/
+[2007-06-14 07:46:29,412] DEBUG: umitWeb.views.scan - server status: 

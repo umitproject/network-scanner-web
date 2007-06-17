@@ -247,7 +247,6 @@ class UmitWebServer(HTTPServer):
         
     def close_request(self, request):
         HTTPServer.close_request(self, request)
-        print "\n\nCLOSING REQUEST\n\n"
     
     def addResource(self, resource, public=False):
         junk = "çoa^wer098~73°0£24q¢ßðæ3w4w98948512397&*@#$!@#*(1234567890*/)"

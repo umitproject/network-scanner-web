@@ -19,7 +19,7 @@
 
 from os.path import pardir, join, dirname
 from xml.dom import minidom
-from xml import xpath
+#from xml import xpath
 import md5
 
 CONFIG_FILE = join(dirname(__file__), pardir, "config", "security.xml")
@@ -36,9 +36,10 @@ class Constraint(object):
     __types = {"domain": DOMAIN, "command": COMMAND, "target": TARGET}
     
     def __init__(self, xmlNode=None):
+        self.xmlNode = xmlNode
         if xmlNode:
             type = xmlNode.getAttribute("type")
-            self.content = xmlNode.chilNodes[0].nodeValue
+            self.content = xmlNode.childNodes[0].nodeValue
             if type in self.__types.keys():
                 self.typecode = self.__types[type]
             else:
@@ -59,13 +60,14 @@ class Constraint(object):
     
     
     def __repr__(self):
-        return self.__types[self.type]
+        return "<Constraint type: %s \"%s\">" % (self.type, self.content)
         
 
 
 class Permission(object):
     _xmlTree = None
     def __init__(self, xmlNode=None):
+        self.xmlNode = xmlNode
         if xmlNode:
             self.type = xmlNode.getAttribute("type")
             self.id = xmlNode.getAttribute("id")
@@ -73,22 +75,14 @@ class Permission(object):
             self.type = None
             self.id = None
             self.commands = []
-            
-    def __get_roles(self):
-        search = xpath.Evaluate('//security/roles/role[permissions/permission/@ref="%s"]' % self.id, self._xmlTree)
-        roles = []
-        for node in search:
-            roles.append(Role(node))
-            
-        return roles
     
     def __get_constraints(self):
-        search = xpath.Evaluate('//security/permissions/permission[@id="%s"]/constraint', self.id, self._xmlTree)
+        search = self.xmlNode.getElementsByTagName("constraint")
         constraints = []
         for constraint in search:
             constraints.append(Constraint(constraint))
+        return constraints
         
-    roles = property(__get_roles)
     constraints = property(__get_constraints)
 
 
@@ -97,9 +91,11 @@ class Role(object):
     def __init__(self, xmlNode=None):
         if xmlNode:
             self.id = xmlNode.getAttribute("id")
-            self.description = xpath.Evaluate("//role/description", xmlNode)[0].\
-                                             childNodes[0].nodeValue
-            self.__perm_refs = [e.value for e in xpath.Evaluate("//role/permissions/permission/@ref", xmlNode)]
+            #self.description = xpath.Evaluate("//role/description", xmlNode)[0].\
+            #                                 childNodes[0].nodeValue
+            #self.__perm_refs = [e.value for e in xpath.Evaluate("//role/permissions/permission/@ref", xmlNode)]
+            self.description = ""
+            self.__perm_refs = []
         else:
             self.id = None
             self.description = None
@@ -107,17 +103,17 @@ class Role(object):
         
     def __get_permissions(self):
         perms = []
-        for p in self.__perm_refs:
-            search = xpath.Evaluate('//security/permissions/permission[@id="%s"]' % p, self._xmlTree)
-            if node:
-                perms.append(Permission(search[0]))
+        #for p in self.__perm_refs:
+        #    search = xpath.Evaluate('//security/permissions/permission[@id="%s"]' % p, self._xmlTree)
+        #    if node:
+        #        perms.append(Permission(search[0]))
+        return perms
                 
     def __get_users(self):
-        search = xpath.Evaluate('//security/users/user[role/@ref="%s"]' % self.id, self._xmlTree)
+        #search = xpath.Evaluate('//security/users/user[role/@ref="%s"]' % self.id, self._xmlTree)
         users = []
-        for node in search:
-            users.append(User(node))
-            
+        #for node in search:
+        #    users.append(User(node))
         return users
     
     permissions = property(__get_permissions)
@@ -129,20 +125,20 @@ class User(object):
     def __init__(self, xmlNode=None):
         if xmlNode:
             self.login = xmlNode.getAttribute("login")
-            self.name = xpath.Evaluate("//user/name", xmlNode)[0].\
-                                       childNodes[0].nodeValue
-            self.password = xpath.Evaluate("//user/password", xmlNode)[0].\
-                                           childNodes[0].nodeValue
+            self.name = xmlNode.getElementsByTagName("name")[0].childNodes[0].nodeValue
+            self.password = xmlNode.getElementsByTagName("password")[0].childNodes[0].nodeValue
             
-            self.__role_ref = xpath.Evaluate("//user/role/@ref", xmlNode)
+            #self.__role_ref = xpath.Evaluate("//user/role/@ref", xmlNode)
+            self.__role_ref = []
             
-    def __get_role(self):
-        search = xpath.Evaluate('//security/roles/role[@id="%s"]' % \
-                                self.__role_ref, self._xmlTree)
+    def __get_roles(self):
+        #search = xpath.Evaluate('//security/roles/role[@id="%s"]' % \
+        #                        self.__role_ref, self._xmlTree)
+        search = []
         if search:
             return Role(search[0])
     
-    role = property(__get_role)
+    roles = property(__get_roles)
 
 
 class SecurityParser(object):
@@ -156,7 +152,10 @@ class SecurityParser(object):
         if not self.__elTree:
             return []
         
-        elements = xpath.Evaluate("//security/permissions/permission", self.__elTree)
+        elements = [p for p in self.__elTree.getElementsByTagName("permissions")\
+                    if p.parentNode.nodeName=="security"][0].childNodes
+        elements = [fe for fe in elements if fe.__class__ is minidom.Element \
+                    and fe.nodeName=="permission"]
         permissions = []
         for p in elements:
             permissions.append(Permission(p))
@@ -167,7 +166,8 @@ class SecurityParser(object):
         if not self.__elTree:
             return []
         
-        elements = xpath.Evaluate("//security/roles/role", self.__elTree)
+        #elements = xpath.Evaluate("//security/roles/role", self.__elTree)
+        elements = []
         roles = []
         for r in elements:
             roles.append(Role(r))
@@ -177,14 +177,16 @@ class SecurityParser(object):
         if not self.__elTree:
             return []
         
-        elements = xpath.Evaluate("//security/users/user", self.__elTree)
+        #elements = xpath.Evaluate("//security/users/user", self.__elTree)
+        elements = []
         users = []
         for u in elements:
             users.append(User(u))
         return users
     
     def get_user(self, login, password=None):
-        elements = xpath.Evaluate('//security/users/user[@login="%s"]' % login, self.__elTree)
+        #elements = xpath.Evaluate('//security/users/user[@login="%s"]' % login, self.__elTree)
+        elements = []
         if elements:
             user = User(elements[0])
             
