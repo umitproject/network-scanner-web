@@ -28,7 +28,7 @@ h3{
    width: 320px;
    border: solid 1px black;
    padding: 3px;
-   height: 108px;
+   height: 130px;
 }
 
 .code {
@@ -42,4 +42,16 @@ h3{
 
 .float-right{
    float: right;
+}
+
+.hide{
+   display: none;
+}
+
+#error {
+   border:dashed 1px;
+   background:#FFFFE0;
+   color:#FF0000;
+   padding:2px;
+   height:17px;
 }

@@ -19,7 +19,6 @@
 
 from os.path import pardir, join, dirname
 from xml.dom import minidom
-#from xml import xpath
 import md5
 
 CONFIG_FILE = join(dirname(__file__), pardir, "config", "security.xml")
@@ -185,17 +184,14 @@ class SecurityParser(object):
         return users
     
     def get_user(self, login, password=None):
-        #elements = xpath.Evaluate('//security/users/user[@login="%s"]' % login, self.__elTree)
-        elements = []
-        if elements:
-            user = User(elements[0])
-            
-            if not password:
-                return user
-            else:
-                passwd = md5.new(password).hexdigest()
-                if passwd == user.password:
-                    return user
+        users = [User(userElement) for userElement in self.__elTree.getElementsByTagName("users")[0].childNodes \
+                  if userElement.nodeName == "user" and userElement.getAttribute("login") == login]
+        
+        if users and password:
+            if users[0].password == md5.new(password).hexdigest():
+                return users[0]
+        elif users:
+            return users[0]
     
     permissions = property(__get_permissions, doc="Get all permissions")
     roles = property(__get_roles, doc="Get all roles")

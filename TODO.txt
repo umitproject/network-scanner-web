@@ -1,0 +1,44 @@
+ToDo List
+
+= [X] Web server
+=== [X] GET arguments
+=== [X] POST arguments (including multipart/form-data)
+=== [X] Session
+=== [X] Resource pool
+
+= [*] Security Layer
+=== [X] security.xml schema
+=== [*] security.xml parser
+=== [X] authentication mechanism (ajax)
+=== [ ] authentication mechanism (pure html)
+=== [ ] authorization mechanism
+===== [ ] nmap command analisys
+===== [ ] allow/deny command execution
+
+= [*] AJAX interface
+=== [*] HTML templates
+=== [*] Javascript functionality
+===== [*] AJAX functions
+===== [*] JSON functions
+===== [ ] XSL Transformation functions
+=== [ ] CSS stylesheet
+=== [ ] XSL stylesheet
+===== [ ] research about nmap default xsl stylesheet
+===== [ ] designt of the UmitWeb XSL stylesheet
+
+= [ ] HTML interface
+=== [ ] Template engine
+=== [ ] templates
+
+= [ ] result comparision
+= [ ] nmap colored output (for raw output)
+= [ ] profile XML parser (if needed)
+= [ ] command wizard (if needed in this version)
+= [ ] .usr files' import
+= [ ] .xml config import
+= [ ] result search engine
+
+Subtitles:
+[X] = done
+[*] = working on it =)
+[ ] = not started yet

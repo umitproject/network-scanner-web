@@ -47,7 +47,7 @@ doLogin = function(e){
 	if(result == "OK"){
 	    location = "/"
 	}else{
-	    $("error").setText("Incorrect username or password")
+	    $("error").empty().removeClass("hide").setText("Incorrect username or password")
 	}
     }
     new Event(e).stop();

@@ -683,3 +683,13 @@
 [2007-06-14 07:46:29,409] DEBUG: HttpRequest - POST data: {'json': 'null'}
 [2007-06-14 07:46:29,410] DEBUG: HttpRequest - POST path: /scan/87c7d252923c3fec064026c7b928635b/check/
 [2007-06-14 07:46:29,412] DEBUG: umitWeb.views.scan - server status: 
+[2007-06-17 13:25:56,742] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-17 13:25:56,742] DEBUG: HttpRequest - POST path: /login/
+[2007-06-17 13:56:13,463] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '15465'}
+[2007-06-17 13:56:13,481] DEBUG: HttpRequest - POST path: /login/
+[2007-06-17 13:58:52,737] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': 'fsadfsa'}
+[2007-06-17 13:58:52,738] DEBUG: HttpRequest - POST path: /login/
+[2007-06-17 14:06:23,480] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': 'fasd'}
+[2007-06-17 14:06:23,482] DEBUG: HttpRequest - POST path: /login/
+[2007-06-17 14:10:19,504] DEBUG: HttpRequest - POST data: {'login': 'user1', 'password': '123'}
+[2007-06-17 14:10:19,505] DEBUG: HttpRequest - POST path: /login/
