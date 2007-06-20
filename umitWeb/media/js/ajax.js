@@ -4,7 +4,7 @@ checkScanStatus = function(scanID){
     checkUrl = "/scan/" + scanID + "/check/"
     new Json.Remote(checkUrl, {onComplete: function(result){
 					if(result.result == "OK"){
-					    resultBox = $("result_box").empty();
+					    resultBox = $("nmap-output").empty();
 					    if(result.status == "FINISHED"){
 						resultBox.removeClass("ajax-loading")
 						resultBox.empty().setText(result.output.plain)
@@ -20,8 +20,7 @@ checkScanStatus = function(scanID){
 
 runScan = function(e){
 	    new Event(e).stop();
-	    result = $("result").empty()
-	    result_box = new Element("pre", {"id": "result_box"}).injectInside(result);
+	    result_box = $("nmap-output");
 	    result_box.empty().addClass("ajax-loading");
 	    this.send({onComplete: function(tResult){
 			    result = Json.evaluate(tResult);
@@ -43,6 +42,7 @@ window.addEvent("domready", function(){
 
 
 doLogin = function(e){
+    new Event(e).stop();
     processResult = function(result){
 	if(result == "OK"){
 	    location = "/"
@@ -50,12 +50,12 @@ doLogin = function(e){
 	    $("error").empty().removeClass("hide").setText("Incorrect username or password")
 	}
     }
-    new Event(e).stop();
     this.send({onComplete: processResult});
+    return false;
 }
 
-window.addEvent("domready", function(){
+window.addEvent("load", function(){
     if($defined($("frmLogin"))){
-	$("frmLogin").addEvent("submit", doLogin);
+        $("frmLogin").addEvent("submit", doLogin);
     }
 });

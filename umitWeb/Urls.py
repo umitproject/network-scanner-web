@@ -20,6 +20,7 @@
 patterns = (
     (r'^$', 'umitWeb.views.main.index'),
     (r'^login/$', 'umitWeb.views.main.login'),
+    (r'^logout/$', 'umitWeb.views.main.logout'),
     (r'^test/(?P<path>.*)/$', 'umitWeb.views.test.main'),
     (r'^scan/$', 'umitWeb.views.scan.new'),
     (r'^scan/(?P<resource_id>[0-9a-fA-F]{32,32})/check/$', 'umitWeb.views.scan.check'),

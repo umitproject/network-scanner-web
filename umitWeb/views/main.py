@@ -64,3 +64,8 @@ def login(req):
     else:
         resp.loadTemplate("login.html")
         return resp
+    
+def logout(req):
+    if req.session.has_key("umit_user"):
+        del req.session['umit_user']
+    return HttpResponseRedirect("/")

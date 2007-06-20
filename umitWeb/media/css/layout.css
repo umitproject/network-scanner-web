@@ -1,0 +1,108 @@
+body{
+    margin: 0;
+}
+
+#hosts_services{
+    float: left;
+    width: 15%;
+    padding: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    /*border: 1px solid black;*/
+}
+
+#result_tabs{
+    float: left;
+    padding: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    /*border: 1px solid black;*/
+    width: 81%;
+}
+
+#hosts_services .menu{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+#hosts_services .menu li a{
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+#body{
+    margin: 0;
+    width: 95%;
+    position: absolute;
+    left: 50%;
+    margin-left: -47.5%;
+}
+
+#nmap-output{
+    width: 98%;
+    height: 295px;
+    overflow: auto;
+    border: 1px solid #DDD;
+    padding: 4px;
+    padding-left: 0px;
+}
+
+#nmap-output-preferences{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#options{
+    position: absolute;
+    left: 95%;
+    margin-left: -10px;
+    width: 50px;
+    border: #DDD solid 1px;
+}
+
+#options ul{
+    list-style: none;
+    margin:0px;
+    padding: 0;
+    display: inline;
+}
+
+
+.hide{
+    display: none;
+}
+
+.std_table{
+    border-collapse: collapse;
+    border-width: 0;
+    padding: 0;
+    margin: 0;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    width: 99%
+}
+
+.std_table thead tr th{
+    padding-left: 4px;
+    padding-right: 4px;
+    height: 25px;
+}
+
+.std_table tbody tr td{
+    padding: 2px;
+}
+
+.nmap-output{
+    height: 400px;
+    overflow: auto;
+}
+
+.tab-placeholder{
+    overflow:auto;
+    height:350px;
+}
