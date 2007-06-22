@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from os.path import join, abspath, dirname, exists, pardir
+import sys
 from umitWeb.Http import HttpResponse, Http404, HttpResponseRedirect
 from umitWeb.WebLogger import getLogger
 from umitWeb.Auth import authenticate, ERROR
@@ -41,7 +42,14 @@ def serve_media(req, path):
         raise Http404
     
     response['Content-type'] = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
-    response.write(open(filename, 'r').read())
+    response['Content-type'] += '; charset=utf-8'
+    cntFile = None
+    if sys.platform == 'win32':
+        if response['Content-type'].startswith("text"):
+            cntFile = open(filename, 'r')
+        else:
+            cntFile = open(filename, 'rb')
+    response.write(cntFile.read())
     return response
 
 def login(req):
