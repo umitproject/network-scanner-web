@@ -49,6 +49,8 @@ def serve_media(req, path):
             cntFile = open(filename, 'r')
         else:
             cntFile = open(filename, 'rb')
+    else:
+        cntFile = open(filename, 'r')
     response.write(cntFile.read())
     return response
 
