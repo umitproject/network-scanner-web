@@ -89,10 +89,21 @@ class HttpRequest(object):
                     self.GET[unquote(arg)] = ""
 
         if self.requestHandler.command == "POST":
-            length = int(self.headers['content-length'])
+            length = int(self.headers.get('content-length', 0))
             #rfile = StringIO()
-            #copyfileobj(self.requestHandler.rfile, rfile, length)
+            #rf = self.requestHandler.request.makefile()
+            #pdata = self.requestHandler.rfile.flush()
             pdata = self.requestHandler.rfile.read(length)
+            #rfd = os.dup(self.requestHandler.rfile.fileno())
+            #rf = os.fdopen(rfd, 'rb')
+            #pdata = self.get_rfile(self.requestHandler.rfile, size=length-1)
+            #pdata = rf.read(length)
+            #rf.close()
+            #pdata = rf.read(length)
+            #print "PDATA: %s\n\n" % pdata
+            
+            #pdata = ""
+            #self.POST['command'] = "-v -v -v -O -sV 10.0.0.254"
             
             if pdata:
                 if "multipart/form-data" not in self.headers.get('content-type', 'x-www-urlencoded'):
@@ -153,6 +164,18 @@ class HttpRequest(object):
             if self.FILES:
                 for file in self.FILES.items():
                     self.logger.debug("temp name: %s" % file[1]['temp_name'])
+                    
+    def get_rfile(self, rfile, length=16*1024, size=0):
+        if not size:
+            return
+        r = ""
+        while size > 0:
+            buf = rfile.read(min(length, size))
+            if not buf:
+                break
+            r += buf
+            size -= len(buf)
+        return r
 
     def get_path(self):
         """Return the path part of a request

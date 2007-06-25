@@ -60,7 +60,9 @@ class URLResolver(object):
                     exec "import %s" % module
                     module = eval(module)
                     executer = getattr(module, function)
-                    return executer(request, **match.groupdict())
+                    ret = executer(request, **match.groupdict())
+                    del executer
+                    return ret
                 except ImportError, e:
                     raise HttpError(500, str(e))
                 break
@@ -203,10 +205,11 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                            request.session.get_sessid()
                     request.COOKIES[self.COOKIE_SESSION_NAME]['path'] = "/"
                 
-                self.wfile.write(str(request.COOKIES))
+                self.wfile.write(str(request.COOKIES) + '\n')
                     
-                self.wfile.write('\n\n')
+                self.end_headers()
                 self.wfile.write(response.data)
+                self.close_connection = 1
                 
         except HttpError, e:
             self.send_error(e.error_code, e.message)
@@ -226,27 +229,22 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
             request.session = SessionWrapper(request.COOKIES[self.COOKIE_SESSION_NAME].value)
 
 
-class RequestThread(Thread):
-    _server = None
-    
-    def __init__(self):
-        Thread.__init__(self)
-        self._request, self._client_address = self._server.get_request()
-    
-    def run(self):
-        self._server.RequestHandlerClass(self._request, self._client_address)
-
-
 class UmitWebServer(HTTPServer):
     _resourcePool = {}
     currentInstance = None
     
     def __init__(self):
-        HTTPServer.__init__(self, ("0.0.0.0", 8059), UmitRequestHandler)
+        HTTPServer.__init__(self, ("127.0.0.1", 8059), UmitRequestHandler)
         UmitWebServer.currentInstance = self
+        
+    def finish_request(self, *args, **kwargs):
+        HTTPServer.finish_request(self, *args, **kwargs)
+        print "+-+-+-+-+ REQUEST FINALIZED\n\n"
         
     def close_request(self, request):
         HTTPServer.close_request(self, request)
+        request.close()
+        del request
     
     def addResource(self, resource, public=False):
         junk = "çoa^wer098~73°0£24q¢ßðæ3w4w98948512397&*@#$!@#*(1234567890*/)"

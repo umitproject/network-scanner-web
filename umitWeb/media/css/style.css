@@ -105,3 +105,6 @@ h4 a:hover{
     padding-left: 14px;
 }
 
+.selected{
+	background-color: #CCC;
+}

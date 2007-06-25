@@ -30,7 +30,12 @@ from umitCore.Paths import Path
 Path.set_umit_conf(join(split(__file__)[0], 'config', 'umit.conf'))
 ######################################
 
-if __name__ == "__main__":
+def main():
+    if sys.platform.startswith("linux"):
+        if os.getuid() != 0:
+            #pass
+            raise Exception, "Server MUST run as root."
+        
     server = UmitWebServer()
     try:
         print "UmitWebServer started on 0.0.0.0:8059"
@@ -38,3 +43,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print "Stopping..."
         sys.exit(0)
+        
+    
+if __name__ == "__main__":
+    main()
