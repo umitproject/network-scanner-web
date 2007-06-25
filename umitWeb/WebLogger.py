@@ -34,4 +34,4 @@ class WebLogger(Log):
 
 
 def getLogger(name="UmitWeb"):
-    return WebLogger(name, ERROR)
+    return WebLogger(name, 40)

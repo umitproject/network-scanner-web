@@ -44,7 +44,7 @@ def new(req):
         response.write("{'result': 'OK', 'status': 'RUNNING', 'id': '%s'}" % resourceID)
     except Exception, e:
         response.write("{'result': 'FAIL', 'status': '%s'}" % str(e).replace("'", "\\'"))
-    #return response
+    return response
 
 @authenticate(ERROR)
 def check(req, resource_id):
