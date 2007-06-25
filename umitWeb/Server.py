@@ -212,7 +212,11 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                     
                 self.end_headers()
                 self.wfile.write(response.data)
-                self.close_connection = 1
+                self.wfile.flush()
+                self.rfile.flush()
+                self.wfile.close()
+                self.rfile.close()
+                return
                 
         except HttpError, e:
             self.logger.error("Status code: %d - Message: %s", (e.error_code, e.message))
@@ -223,6 +227,7 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write("<h2>Exception Details:</h2><pre>")
             self.wfile.write("<h2>Exception Details:</h2><pre>")
             print_exc(file=error)
+            error.flush()
             errMSG = error.read()
             self.logger.error(errMSG)
             self.wfile.write(errMSG)
@@ -248,7 +253,6 @@ class UmitWebServer(HTTPServer):
         
     def finish_request(self, *args, **kwargs):
         HTTPServer.finish_request(self, *args, **kwargs)
-        print "+-+-+-+-+ REQUEST FINALIZED\n\n"
         
     def close_request(self, request):
         HTTPServer.close_request(self, request)
@@ -276,6 +280,14 @@ class UmitWebServer(HTTPServer):
     def updateResource(self, resourceID, resource):
         if resourceID in self._resourcePool.keys():
             self._resourcePool[resourceID] = resource
+            return True
+        return False
+    def fireResourceEvent(self, resourceID, eventName):
+        if resourceID in self._resourcePool.keys():
+            if hasattr(self._resourcePool[resourceID], eventName):
+                target = getattr(self._resourcePool[resourceID], eventName)
+                th = Thread(target=target)
+                th.start()
             return True
         return False
         

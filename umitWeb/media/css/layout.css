@@ -37,10 +37,10 @@ body{
 
 #body{
     margin: 0;
-    width: 95%;
+    width: 100%;
     position: absolute;
-    left: 50%;
-    margin-left: -47.5%;
+    /*left: 50%;
+    margin-left: -47.5%;*/
 }
 
 #nmap-output{

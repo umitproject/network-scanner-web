@@ -55,7 +55,8 @@ window.addEvent("domready", function(){
         div.style.height = (size[1]-200) + "px";
     });
 	
-	$("hosts").style.height = (getViewportSize()[1]-185) + "px"
+	if($defined($("hosts")))
+	    $("hosts").style.height = (getViewportSize()[1]-185) + "px"
     
     if($defined($("nmap-output"))){
         $("nmap-output").style.height = getViewportSize()[1]-260 + "px";

@@ -25,6 +25,7 @@ from umitWeb.WebLogger import getLogger
 from umitCore.NmapCommand import NmapCommand
 from umitCore.NmapParser import NmapParser, HostInfo
 import re
+from threading import Thread
 
 logger = getLogger(__name__)
 
@@ -37,9 +38,10 @@ def new(req):
     command = re.sub(r"[\\;|`&]", "", req.POST['command'])
     try:
         nmapCommand = NmapCommand(command)
-        nmapCommand.run_scan()
         resourceID = server.currentInstance.addResource(nmapCommand)
-        del nmapCommand
+        server.currentInstance.fireResourceEvent(resourceID, "run_scan")
+        #th = Thread(target=nmapCommand.run_scan())
+        #th.start()
         
         response.write("{'result': 'OK', 'status': 'RUNNING', 'id': '%s'}" % resourceID)
     except Exception, e:
@@ -52,8 +54,6 @@ def check(req, resource_id):
     response['Content-type'] = "text/javascript"
     
     nmapCommand = server.currentInstance.getResource(resource_id)
-
-    logger.debug("server status: " % server.currentInstance._resourcePool)
     
     if not nmapCommand:
         raise Http404

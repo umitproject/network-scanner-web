@@ -248,7 +248,13 @@ checkScanStatus = function(scanID){
 					}else{
 					    resultBox.addClass("ajax-error").setText(result.status);
 					}
-			      }}).send();
+			      },
+			      onFailure: function(req){
+			        $("nmap-output").removeClass("ajax-loading");
+			        $("hosts_table").getElement("tbody").empty();
+			        $("nmap-output").setHTML(req.resposeText);
+			      }
+			      }).send();
 }
 
 runScan = function(e){
@@ -265,6 +271,10 @@ runScan = function(e){
 		tr.adopt(td2);
 		tbHosts.adopt(tr);
 		
+		$("ports_table").getElement("tbody").empty();
+		$("hosts_tab").empty();
+		$("scan_details").empty();
+		
 	    this.send({onComplete: function(tResult){
 			    result = Json.evaluate(tResult);
 			    if(result.result == "OK"){
@@ -275,8 +285,9 @@ runScan = function(e){
 			    }
 		      },
 		      onFailure: function(error){
-			result_box.removeClass("ajax-loading");
-			result_box.setHTML(error.responseText);
+                result_box.removeClass("ajax-loading");
+                $("hosts_table").getElement("tbody").empty();
+                result_box.setHTML(error.responseText);
 		      }
 		      });
 }
