@@ -24,11 +24,13 @@ import pickle
 import md5
 import random
 from traceback import print_exc
+from StringIO import StringIO
 import datetime
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from umitWeb.Urls import patterns
 from umitWeb.Http import HttpRequest, Http404, HttpError, HttpResponse
 from umitWeb.Database import SessionData
+from umitWeb.WebLogger import getLogger
 from threading import Thread
 
 
@@ -146,6 +148,7 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
     """
 
     COOKIE_SESSION_NAME = "umitsessid"
+    logger = getLogger("UmitRequestHandler")
 
     def __init__(self, request, client_address, server):
         self.server = server
@@ -212,11 +215,17 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                 self.close_connection = 1
                 
         except HttpError, e:
+            self.logger.error("Status code: %d - Message: %s", (e.error_code, e.message))
             self.send_error(e.error_code, e.message)
         except Exception, e:
+            error = StringIO(0)
             self.send_error(500, str(e))
             self.wfile.write("<h2>Exception Details:</h2><pre>")
-            print_exc(file=self.wfile)
+            self.wfile.write("<h2>Exception Details:</h2><pre>")
+            print_exc(file=error)
+            errMSG = error.read()
+            self.logger.error(errMSG)
+            self.wfile.write(errMSG)
             self.wfile.write("</pre>")
             
 

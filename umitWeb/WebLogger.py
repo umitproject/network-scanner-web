@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from umitCore.Logging import Log, LOGLEVEL
-from logging import FileHandler
+from logging import FileHandler, ERROR
 
 class WebLogger(Log):
     
@@ -34,4 +34,4 @@ class WebLogger(Log):
 
 
 def getLogger(name="UmitWeb"):
-    return WebLogger(name, LOGLEVEL)
+    return WebLogger(name, ERROR)

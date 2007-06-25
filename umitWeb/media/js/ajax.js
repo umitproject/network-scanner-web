@@ -273,8 +273,12 @@ runScan = function(e){
 					result_box.removeClass("ajax-loading").addClass("ajax-error");
 					result_box.setText(result.status);
 			    }
-		      }}
-		    );
+		      },
+		      onFailure: function(error){
+			result_box.removeClass("ajax-loading");
+			result_box.setHTML(error.responseText);
+		      }
+		      });
 }
 
 window.addEvent("domready", function(){
