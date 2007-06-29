@@ -20,7 +20,7 @@ loadHosts = function(hosts){
 				"freebsd": "freebsd",
 				"macos x": "macosx",
 				"openbsd": "openbsd",
-				"windows": "windows",
+				"windows": "win",
 				"ubuntu": "ubuntu", 
 				"red hat": "redhat"}
 			for(k in oses){
@@ -139,7 +139,7 @@ loadHostsTab = function(hostset){
 				"freebsd": "freebsd",
 				"macos x": "macosx",
 				"openbsd": "openbsd",
-				"windows": "windows",
+				"windows": "win",
 				"ubuntu": "ubuntu", 
 				"red hat": "redhat"}
 			for(k in oses){
@@ -149,7 +149,18 @@ loadHostsTab = function(hostset){
 			}
 		}
 		imgOS = new Element("img", {'src': img_src})
-		imgStatus = new Element("img", {'src': '/media/images/vl_1_48.png'})
+		open_ports = parseInt(h.openned_ports)
+		img_src = 'vl_5'
+		if(open_ports < 3){
+		    img_src = 'vl_1'
+		}else if(open_ports < 5){
+		    img_src = 'vl_2'
+		}else if(open_ports < 7){
+		    img_src = 'vl_3'
+		}else if(open_ports < 9){
+		    img_src = 'vl_4'
+		}
+		imgStatus = new Element("img", {'src': '/media/images/' + img_src + '_48.png'})
 		addTableRow(tbl, ["<b>State:</b>", h.state, {"attrs": {"rowSpan": "4"}, "value": imgOS}])
 		addTableRow(tbl, ["<b>Open ports:</b>", h.openned_ports])
 		addTableRow(tbl, ["<b>Filtered ports:</b>", h.filtered_ports])
@@ -180,9 +191,9 @@ loadHostsTab = function(hostset){
 		hostsTab.adopt(tgDiv);
 		
 		//Host names
-		/*if(h.hostnames.length > 0){
+		if(h.hostnames.length > 0){
 			head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + "-hostnames-switch"})
-			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-addresses")', 'href': '#'});
+			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-hostnames")', 'href': '#'});
 			lnk.setText("Hostnames");
 			head.adopt(lnk);
 			tgDiv.adopt(head);
@@ -192,14 +203,14 @@ loadHostsTab = function(hostset){
 			desc = "<b>Name - Type:</b>"
 			for(k = 0; k < h.hostnames.length; k++){
 				hn = h.hostnames[k]
-				addTableRow(tbl, [desc, hn.hostname, hn.hostname_type]);
+				addTableRow(tbl, [desc, hn.hostname + " - " + hn.hostname_type]);
 			}
-			//hostnameDiv.adopt(tbl);
-			//tgDiv.adopt(hostnameDiv);
-			//hostsTab.adopt(tgDiv); 
-                        //slides[txt + '-hostnames'] = new Fx.Slide(hostnameDiv);
-                        //slides[txt + '-hostnames'].hide();
-		}*/
+			hostnameDiv.adopt(tbl);
+			tgDiv.adopt(hostnameDiv);
+			hostsTab.adopt(tgDiv); 
+            slides[txt + '-hostnames'] = new Fx.Slide(hostnameDiv);
+            slides[txt + '-hostnames'].hide();
+		}
 	}
 }
 
@@ -248,7 +259,7 @@ loadScanInfo = function(scan){
 	for(i = 0; i < scan.scaninfo.length; i++){
 		info = scan.scaninfo[i];
 		txt = "scaninfo-" + info.type
-		head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + "-switch"})
+		head = new Element("h4", {'class': 'sw-expanded', 'id': txt + "-switch"})
 		lnk = new Element("a", {'onclick': 'toggle("'+ txt +'")', 'href': '#'});
 		lnk.setText("Scan Info - " + info.type);
 		head.adopt(lnk);
