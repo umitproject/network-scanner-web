@@ -24,11 +24,11 @@ h3{
    left: 50%;
    top: 50%;
    margin-left: -160px;
-   margin-top: -54px;
-   width: 320px;
-   border: solid 1px black;
+   margin-top: -115px;
+   width: 340px;
+   border: solid 1px #DDD;
    padding: 3px;
-   height: 130px;
+   height: 215px;
 }
 
 .code {
@@ -54,4 +54,5 @@ h3{
    color:#FF0000;
    padding:2px;
    height:17px;
+   margin: 3px;
 }

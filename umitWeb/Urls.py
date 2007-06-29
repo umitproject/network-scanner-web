@@ -19,6 +19,7 @@
 
 patterns = (
     (r'^$', 'umitWeb.views.main.index'),
+    (r'^favicon.ico$', 'umitWeb.views.main.show_favicon'),
     (r'^login/$', 'umitWeb.views.main.login'),
     (r'^logout/$', 'umitWeb.views.main.logout'),
     (r'^test/(?P<path>.*)/$', 'umitWeb.views.test.main'),

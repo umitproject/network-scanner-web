@@ -3,19 +3,34 @@
   <title>Umit :: The nmap frontend</title>
   <link rel="stylesheet" href="/media/css/common.css"/>
   <link rel="stylesheet" href="/media/css/ajax.css"/>
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
   <script type="text/javascript" src="/media/js/mootools.v1.11.js"></script>
   <script type="text/javascript" src="/media/js/common.js"></script>
-  <script type="text/javascript" src="/media/js/ajax.js"></script>
+  <script type="text/javascript" src="/media/js/login.js"></script>
  </head>
  <body>
  <div id="login-box">
-  <h3>Login</h3>
-  <div id="error" class="hide"></div>
   <form method="post" action="/login/?json" id="frmLogin">
-   <label class="float-left">Login:</label><input type="text" size="30" name="login" class="float-right"/>
-   <label class="float-left">Password:</label><input type="password" size="28" name="password" class="float-right"/>
-   <span id="spacer" style="width: 60px" class="float-left">&nbsp;</span><input type="submit" class="float-right" value="Login"/>
+   <div style="text-align:center">
+   <img src="/media/images/logo.png"/>
+   <div id="error" class="hide"></div>
+   <div id="spacer" style="height: 29px">&nbsp;</div>
+   <table>
+    <tr>
+     <td><label class="float-left">Login:</label></td>
+     <td><input type="text" size="30" name="login" class="float-right"/></td>
+    </tr>
+    <tr>
+     <td><label class="float-left">Password:</label></td>
+     <td><input type="password" size="28" name="password" class="float-right"/></td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td align="right"><input type="submit" class="float-right" value="Login"/></td>
+    </tr>
+   </table>
   </form>
+  </div>
  </div>
  </body>
 </html>

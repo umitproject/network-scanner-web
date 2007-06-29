@@ -1,4 +1,5 @@
 last_host_scanned = "<target>"
+slides = {}
 
 fillCommand = function(value){
     $('command').value = $('command').value.replace(last_host_scanned, value)
@@ -7,8 +8,12 @@ fillCommand = function(value){
 
 toggle = function(target){
     tgDiv = $(target + "-detail")
+    if(!slides[target]){
+	slides[target] = new Fx.Slide(target + "-detail")
+    }
     tgSwitcher = $(target + "-switch")
-    tgDiv.toggleClass("hide")
+    slides[target].toggle()
+
     if(tgSwitcher.hasClass("sw-collapsed")){
         tgSwitcher.removeClass("sw-collapsed")
         tgSwitcher.addClass("sw-expanded")

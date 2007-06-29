@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from types import ListType, StringType, DictionaryType, UnicodeType
+from types import *
 from umitWeb.Http import HttpResponse, Http404
 from umitWeb.Auth import authenticate, ERROR
 from umitWeb.Server import UmitWebServer as server
@@ -40,8 +40,7 @@ def new(req):
         nmapCommand = NmapCommand(command)
         resourceID = server.currentInstance.addResource(nmapCommand)
         server.currentInstance.fireResourceEvent(resourceID, "run_scan")
-        #th = Thread(target=nmapCommand.run_scan())
-        #th.start()
+        #nmapCommand.run_scan()
         
         response.write("{'result': 'OK', 'status': 'RUNNING', 'id': '%s'}" % resourceID)
     except Exception, e:
@@ -58,19 +57,23 @@ def check(req, resource_id):
     if not nmapCommand:
         raise Http404
     
-    output = nmapCommand.get_output()
-    if nmapCommand.scan_state():
+    try:
+        output = nmapCommand.get_output()
+        if nmapCommand.scan_state():
+            response.write("{'result': 'OK', 'status': 'RUNNING', " + \
+                           "'output': {'text': '%s'}}" % output.replace("'", "\\'").replace("\n", "\\n' + \n'"))
+        else:
+            parser = NmapParser()
+            parser.set_xml_file(nmapCommand.get_xml_output_file())
+            parser.parse()
+            parsed_scan = __scan_to_json(parser)
+            text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
+            response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
+                           " {'full': %s, 'plain': '%s'}}" % (parsed_scan, text_out))
+            server.currentInstance.removeResource(resource_id)
+    except Exception:
         response.write("{'result': 'OK', 'status': 'RUNNING', " + \
-                       "'output': {'text': '%s'}}" % output.replace("'", "\\'").replace("\n", "\\n' + \n'"))
-    else:
-        parser = NmapParser()
-        parser.set_xml_file(nmapCommand.get_xml_output_file())
-        parser.parse()
-        print "OS: ", parser.hosts[0].osmatch
-        parsed_scan = __scan_to_json(parser)
-        text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
-        response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
-                       " {'full': %s, 'plain': '%s'}}" % (parsed_scan, text_out))
+                       "'output': {'text': ''}}")
     return response
 
 
@@ -82,42 +85,42 @@ def __scan_to_json(scan):
     
     for attr in attrs:
         realAttribute = getattr(scan, attr)
-        if type(realAttribute) == StringType or type(realAttribute) == UnicodeType:
-            ret[attr] = str(realAttribute)
-        elif type(realAttribute) == ListType:
+        if type(realAttribute) == ListType or type(realAttribute) == TupleType:
             ret[attr] = __list_to_json(realAttribute)
         elif type(realAttribute) == DictionaryType:
             ret[attr] = __dict_to_json(realAttribute)
         elif realAttribute.__class__ == HostInfo:
             ret[attr] = __hostinfo_to_json(realAttribute)
+        else:
+            ret[attr] = str(realAttribute)
             
     return str(ret)
 
 def __list_to_json(list):
     ret = []
     for x in list:
-        if type(x) == StringType or type(x) == UnicodeType:
-            ret.append(str(x))
-        elif type(x) == ListType:
+        if type(x) == ListType or type(x) == TupleType:
             ret.append(__list_to_json(x))
         elif type(x) == DictionaryType:
             ret.append(__dict_to_json(x))
         elif x.__class__ == HostInfo:
             ret.append(__hostinfo_to_json(x))
+        else:
+            ret.append(str(x))
             
     return ret
 
 def __dict_to_json(dic):
     ret = {}
     for k in dic.keys():
-        if type(dic[k]) == StringType or type(dic[k]) == UnicodeType:
-            ret[k] = str(dic[k])
-        elif type(dic[k]) == ListType:
+        if type(dic[k]) == ListType:
             ret[k] = __list_to_json(dic[k])
         elif type(dic[k]) == DictionaryType:
             ret[k] = __dict_to_json(dic[k])
         elif dic[k].__class__ == HostInfo:
             ret[k] = __hostinfo_to_json(dic[k])
+        else:
+            ret[k] = str(dic[k])
     return ret
 
 def __hostinfo_to_json(host):
@@ -126,10 +129,14 @@ def __hostinfo_to_json(host):
     ret = {}
     for k in attrs:
         attr = getattr(host, k)
-        if type(attr) == StringType or type(attr) == UnicodeType:
-            ret[k] = str(attr)
-        elif type(attr) == ListType:
+        if type(attr) == ListType or type(attr) == TupleType:
             ret[k] = __list_to_json(attr)
         elif type(attr) == DictionaryType:
             ret[k] = __dict_to_json(attr)
+        else:
+            ret[k] = str(attr)
+    ret['openned_ports'] = str(host.get_openned_ports())
+    ret['filtered_ports'] = str(host.get_filtered_ports())
+    ret['closed_ports'] = str(host.get_closed_ports())
+    ret['scanned_ports'] = str(host.get_scanned_ports())
     return ret
