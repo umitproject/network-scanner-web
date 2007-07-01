@@ -31,7 +31,7 @@ from higwidgets.higbuttons import HIGButton
 from umitCore.Diff import Diff
 from umitCore.UmitConf import UmitConf, DiffColors
 from umitCore.NmapParser import NmapParser, HostInfo
-from umitCore.Paths import Search
+from umitCore.Paths import check_access
 from umitCore.Logging import log
 from umitCore.I18N import _
 
@@ -140,7 +140,7 @@ class ScanChooser(HIGVBox):
         file_chosen = file_chooser.get_filename()
         file_chooser.destroy()
 
-        if Search.check_access(file_chosen, os.R_OK):
+        if check_access(file_chosen, os.R_OK):
             try:
                 parser = NmapParser(file_chosen)
                 parser.parse()
@@ -679,8 +679,8 @@ class DiffTree(HIGVBox, object):
         section = _("Scan Info")
         parent = self.append_parent(None, section, "")
         
-        self.diff_it(parent, "", _("Openned Ports"), parsed1.openned_ports,
-                     parsed2.openned_ports)
+        self.diff_it(parent, "", _("Open Ports"), parsed1.open_ports,
+                     parsed2.open_ports)
         self.diff_it(parent, "", _("Filtered Ports"), parsed1.filtered_ports,
                      parsed2.filtered_ports)
         self.diff_it(parent, "", _("Closed Ports"), parsed1.closed_ports,
