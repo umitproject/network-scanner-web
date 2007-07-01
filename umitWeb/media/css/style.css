@@ -77,6 +77,20 @@ a:hover{
     border: 1px solid #303030;
 }
 
+.progress-bar{
+    color: white;
+    background-image: url(/media/images/progress.png);
+    background-repeat: no-repeat;
+    background-color: #AAA;
+    height: 25px;
+    width: 180px;
+    font-size: 10pt;
+    font-weight: bold;
+    text-align: center;
+    padding: 0;
+    padding-top: 6px;
+}
+
 h4 {
     margin: 0;
     margin-top: 4px;
@@ -94,14 +108,14 @@ h4 a:hover{
 }
 
 .sw-expanded{
-    background-image: url(/media/images/gtk-remove.png);
+    background-image: url(/media/images/minus.png);
     padding-left: 14px;
     background-repeat: no-repeat;
     font-size: 11px;
 }
 
 .sw-collapsed{
-    background-image: url(/media/images/gtk-add.png);
+    background-image: url(/media/images/plus.png);
     padding-left: 14px;
     font-size: 11px;
     background-repeat: no-repeat;

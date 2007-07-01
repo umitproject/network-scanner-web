@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from types import *
-from umitWeb.Http import HttpResponse, Http404
+from umitWeb.Http import HttpResponse, Http404, Http500
 from umitWeb.Auth import authenticate, ERROR
 from umitWeb.Server import UmitWebServer as server
 from umitWeb.WebLogger import getLogger
@@ -71,9 +71,12 @@ def check(req, resource_id):
             response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
                            " {'full': %s, 'plain': '%s'}}" % (parsed_scan, text_out))
             server.currentInstance.removeResource(resource_id)
-    except Exception:
-        response.write("{'result': 'OK', 'status': 'RUNNING', " + \
-                       "'output': {'text': ''}}")
+    except Exception, e:
+        if "running" in str(e).lower():
+            response.write("{'result': 'OK', 'status': 'RUNNING', " + \
+                           "'output': {'text': ''}}")
+        else:
+            raise Http500("Nmap command raised an exception!\n%s" % str(e))
     return response
 
 
