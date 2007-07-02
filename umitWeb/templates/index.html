@@ -13,6 +13,7 @@
         <script type="text/javascript" src="/media/js/common.js"></script>
         <script type="text/javascript" src="/media/js/ajax.js"></script>
         <script type="text/javascript" src="/media/js/tabber.js"></script>
+        <script type="text/javascript" src="/media/js/output_highlight.js"/>
     </head>
     <body>
         <div id="body">
@@ -24,7 +25,8 @@
             <h2 id="umit-title">The nmap Frontend</h2>
             <!-- <div><form method="post" onsubmit="return runScan()"> -->
             <div><form method="post" action="/scan/" id="frmScan">
-                <label for="target">Target:</label><input type="text" name="target" size="25" id="target" onblur="fillCommand(this.value)"/><br/>
+                <label for="target">Target:</label><input type="text" name="target" size="25" id="target" onblur="fillCommand(this.value)"/>
+                &nbsp;&nbsp;&nbsp;<label for="profiles">Profile:</label><select id="profiles" style="width:294px;"></select><br/>
                 <label for="command">Command: </label><span class="code"><strong>nmap</strong></span>
                 <input type='text' id='command' name='command' size='50' value='-v <target>'/><input type="SUBMIT" value="Scan now!"/>
             </form></div>
@@ -96,9 +98,9 @@
                         <h3>Nmap Output</h3>
                         <div id="nmap-output" class="code"></div>
                         <div id="nmap-output-preferences">
-                            <label><input type="checkbox" checked="checked"/> Enable/Disable Nmap output highlight</label>
-                            <input type="button" value="Preferences"/>
-                            <input type="button" value="Refresh"/>
+                            <label><input type="checkbox" checked="checked" id="highlight_out"/> Enable/Disable Nmap output highlight</label>
+                            <!-- <input type="button" value="Preferences"/>
+                            <input type="button" value="Refresh"/> -->
                         </div>
                     </div>
                     

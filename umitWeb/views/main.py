@@ -19,6 +19,10 @@
 
 from os.path import join, abspath, dirname, exists, pardir
 import sys
+from types import DictionaryType, StringType, ListType
+from math import floor, sqrt
+from umitCore.NmapOutputHighlight import NmapOutputHighlight
+from umitCore.UmitConf import CommandProfile
 from umitWeb.Http import HttpResponse, Http404, HttpResponseRedirect
 from umitWeb.WebLogger import getLogger
 from umitWeb.Auth import authenticate, ERROR
@@ -31,6 +35,42 @@ logger = getLogger("main")
 def index(req):
     response = HttpResponse()
     response.loadTemplate("index.html")
+    return response
+
+@authenticate(ERROR)
+def output_highlight(req):
+    response = HttpResponse()
+    response['Content-type'] = "text/javascript; charset=utf-8"
+    highlight = NmapOutputHighlight()
+    attrDic = {}
+    """
+setts:['bold', 'italic', 'underline', 'text', 'highlight', 'regex']
+    """
+    response.write("highlights = {};\n")
+    for attr in ["closed_port", "date", "details", "filtered_port",
+                 "hostname", "ip", "open_port", "port_list"]:
+        attribute = getattr(highlight, attr)
+        response.write("highlights['%s'] = {};\n" % attr)
+        for index, value in enumerate(['bold', 'italic', 'underline', 'text', 'highlight', 'regex']):
+            if type(attribute[index]) == ListType:
+                propValue = "#%s%s%s" % tuple(map(lambda value: "%0.2x" % floor(sqrt(value)), attribute[index]))
+            elif type(attribute[index]) == StringType:
+                propValue = attribute[index].replace("\\", "\\\\")
+            else:
+                propValue = attribute[index]
+            response.write("highlights['%s']['%s'] = '%s';\n" % (attr, value, propValue))
+    return response
+
+#@authenticate(ERROR)
+def get_profiles(req):
+    profile = CommandProfile()
+    profiles = profile.sections()
+    response = HttpResponse()
+    response['Content-type'] = "text/plain"
+    ret = []
+    for section in profiles:
+        ret.append([section, profile.get_command(section) % "<target>"])
+    response.write(str(ret))
     return response
 
 def serve_media(req, path):

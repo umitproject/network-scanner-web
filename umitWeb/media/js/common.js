@@ -45,7 +45,7 @@ getViewportSize = function(){
 }
 
 window.addEvent("domready", function(){
-    $$("input[type=text]", "input[type=password]").each(function(element){
+    $$("input[type=text]", "input[type=password]", "select").each(function(element){
         element.style.borderStyle = "solid";
         element.style.borderWidth = "1px";
         element.style.borderColor = "#303030";

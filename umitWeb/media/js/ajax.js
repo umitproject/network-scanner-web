@@ -5,6 +5,7 @@ scanLock = false;
 lastHost = null;
 lastService = null;
 var scanEvent = null;
+var nmapOutput = "";
 var sSlide;
 var hSlide;
 
@@ -635,6 +636,35 @@ loadScanData = function(scan){
 	selectHost(scanEvent, hosts, 0);
 }
 
+formatNmapOutput = function(txt_out){
+	result = txt_out;
+	for(k in highlights){
+		txt_temp = txt_out
+		hg = highlights[k]
+		regex = new RegExp(hg.regex);
+		
+		style = "color:" + hg.text + ";";
+		style += "background-color:" + hg.highlight + ";"
+		if(hg.bold == '1'){
+			style += "font-weight:bold;"
+		}
+		if(hg.underline == '1'){
+			style += "text-decoration:underline;";
+		}
+		
+		if(hg.italic == '1'){
+			style += 'font-style:italic';
+		}
+		
+		while(txt_temp.match(regex)){
+			m = txt_temp.match(regex)[0]
+			result = result.replace(m, "<span style='" + style + "'>" + m + "</span>");
+			txt_temp = txt_temp.substring(txt_temp.search(regex) + txt_temp.match(regex)[0].length)
+		}
+	}
+	return result;
+}
+
 checkScanStatus = function(scanID){
     checkUrl = "/scan/" + scanID + "/check/"
     new Json.Remote(checkUrl, {onComplete: function(result){
@@ -642,12 +672,22 @@ checkScanStatus = function(scanID){
 				    resultBox = $("nmap-output");
 				    if(result.status == "FINISHED"){
 						resultBox.removeClass("ajax-loading")
-						resultBox.setText(result.output.plain)
+						nmapOutput = result.output.plain
+						if(!$("highlight_out").checked){
+							resultBox.setText(nmapOutput)
+						}else{
+							resultBox.setHTML(formatNmapOutput(nmapOutput))
+						}
 						varData = result.output.full
 						loadScanData(result.output.full)
 				    }else if(result.status == "RUNNING"){
 						setTimeout("checkScanStatus('" + scanID + "')", 1000)
-						resultBox.empty().setText(result.output.text)
+						nmapOutput = result.output.text
+						if(!$("highlight_out").checked){
+							resultBox.empty().setText(nmapOutput)
+						}else{
+							resultBox.empty().setHTML(formatNmapOutput(nmapOutput))
+						}
 				    }
 				}else{
 				    resultBox.addClass("ajax-error").setText(result.status);
@@ -739,7 +779,40 @@ window.addEvent("domready", function(){
 	
 	$("toggleHosts").addClass("active");
 	$("services").setStyle("display", "none");
+	
+	new Json.Remote("/scan/profiles/", {onComplete: function(result){
+		for(i = 0; i < result.length; i++){
+			opt = new Element("option", {"value": result[i][1]})
+			opt.setText(result[i][0]);
+			$("profiles").adopt(opt);
+		}
+		cmd = $("profiles").options[0].value;
+		if($("target").value != ""){
+			cmd = cmd.replace("<target>", $("target").value);
+		}
+		$("command").value = cmd;
+	}}).send();
+	
+	$("profiles").addEvent("change", function(event){
+		new Event(event).stop();
+		cmd = this.options[this.selectedIndex].value;
+		if($("target").value != ""){
+			cmd = cmd.replace("<target>", $("target").value);
+		}
+		$("command").value = cmd;
+	});
     }
+});
+
+window.addEvent("load", function(){
+	$("highlight_out").addEvent("change", function(e){
+		new Event(e).stop();
+		if(this.checked){
+			$("nmap-output").setHTML(formatNmapOutput(nmapOutput));
+		}else{
+			$("nmap-output").setText(nmapOutput);
+		}
+	});
 });
 
 tabberOptions = {
