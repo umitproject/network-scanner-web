@@ -2,6 +2,10 @@ body{
     margin: 0;
 }
 
+td a{
+  display: block;
+}
+
 #hosts_services{
     float: left;
     width: 15%;
