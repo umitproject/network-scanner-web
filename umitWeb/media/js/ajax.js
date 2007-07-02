@@ -3,7 +3,10 @@ var varData = ""
 scanLock = false;
 
 lastHost = null;
+lastService = null;
 var scanEvent = null;
+var sSlide;
+var hSlide;
 
 loadHosts = function(hosts){
 	if(!window.ie){
@@ -51,6 +54,8 @@ loadHosts = function(hosts){
 selectHost = function(event, sHosts, index){
 	event.stop();
 	arr = new Array();
+	$("ports_table").setStyle("display", null);
+	$("hosts_s_table").setStyle("display", "none");
 	indexArr = new Array();
 	if($defined($("host-" + index))){
 		$("host-" + index).toggleClass("selected");
@@ -87,10 +92,8 @@ selectHost = function(event, sHosts, index){
 			start = lastHost
 			end = index;
 		}
-		//alert(start + " - " + end);
 		
 		for(x = start; x <= end; x++){
-			//alert("host-" + x);
 			$("host-" + x).addClass("selected");
 			indexArr.include(x);
 		}
@@ -246,7 +249,7 @@ loadHostsTab = function(hostset){
 			}
 		}
 		imgOS = new Element("img", {'src': img_src})
-		open_ports = parseInt(h.openned_ports)
+		open_ports = parseInt(h.open_ports)
 		img_src = 'vl_5'
 		if(open_ports < 3){
 		    img_src = 'vl_1'
@@ -259,7 +262,7 @@ loadHostsTab = function(hostset){
 		}
 		imgStatus = new Element("img", {'src': '/media/images/' + img_src + '_48.png'})
 		addTableRow(tbl, ["<b>State:</b>", h.state, {"attrs": {"rowSpan": "4"}, "value": imgOS}])
-		addTableRow(tbl, ["<b>Open ports:</b>", h.openned_ports])
+		addTableRow(tbl, ["<b>Open ports:</b>", h.open_ports])
 		addTableRow(tbl, ["<b>Filtered ports:</b>", h.filtered_ports])
 		addTableRow(tbl, ["<b>Closed ports:</b>", h.closed_ports])
 		addTableRow(tbl, ["<b>Scanned ports:</b>", h.scanned_ports, {"attrs": {"rowSpan": "3"}, "value": imgStatus}])
@@ -361,7 +364,6 @@ loadHostsTab = function(hostset){
 				accurDiv = new Element("div", {'class': 'progress-bar'});
 				accurDiv.setText(osc.accuracy + "%");
 				position = 180 - (parseInt(osc.accuracy)/100 * 180);
-				alert(position)
 				accurDiv.style.backgroundPosition = "" + position + "px 0px";
 				addTableRow(tb, [osc.type, osc.vendor, osc.osfamily,
 						osc.osgen, accurDiv]);
@@ -488,7 +490,7 @@ loadScanInfo = function(scan){
 	addTableRow(tbl, ["<b>Hosts up:</b>", scan.runstats.hosts_up]);
 	addTableRow(tbl, ["<b>Hosts down:</b>", scan.runstats.hosts_down]);
 	addTableRow(tbl, ["<b>Hosts scanned:</b>", scan.runstats.hosts_scanned]);
-	addTableRow(tbl, ["<b>Open ports:</b>", scan.openned_ports]);
+	addTableRow(tbl, ["<b>Open ports:</b>", scan.open_ports]);
 	addTableRow(tbl, ["<b>Filtered ports:</b>", scan.filtered_ports]);
 	addTableRow(tbl, ["<b>Closed ports:</b>", scan.closed_ports]);
 	
@@ -525,9 +527,110 @@ loadScanInfo = function(scan){
 	}
 }
 
+selectService = function(scan, service_id, event){
+	event.stop();
+	services = new Array();
+	hosts = new Array();
+	
+	if($defined($("service-" + service_id))){
+		$("service-" + service_id).toggleClass("selected");
+	}
+	
+	if(event.control === false){
+		services.include(service_id);
+	}else if(event.control == true && event.shift == false){
+		lines = $("services_table").getElement("tbody").getElements("tr[class=selected]");
+		for(x = 0; x < lines.length; x++){
+			tr = lines[x];
+			_id = tr.id.substring("service-".length)
+			services.include(_id);
+		}
+	}
+	
+	if(services.length == 0){
+		services.include(service_id);
+	}
+	
+	/*if(event.shift === true && lastService != null && $defined(lastService)){
+		if(service_id < lastService){
+			start = index;
+			end = lastHost;
+		}else if(index > lastHost){
+			start = lastHost
+			end = index;
+		}
+		
+		for(x = start; x <= end; x++){
+			$("host-" + x).addClass("selected");
+			indexArr.include(x);
+		}
+	}*/
+	
+	scan.hosts.each(function(host){
+		for(i = 0; i < host.ports.length; i++){
+			host.ports[0].port.each(function(port){
+				services.each(function(service){
+					if(port.service_name == service){
+						hosts.include([host, port]);
+					}
+				});
+			});
+		}
+	});
+	
+	$("services_table").getElement("tBody").getElements("tr").each(function(el){
+		el.removeClass("selected");
+	});
+	
+	services.each(function(s){
+		$("service-" + s).addClass("selected");
+	});
+	
+	if(!window.ie){
+		st = $("hosts_s_table").getElement("tbody").empty();
+	}
+	$("hosts_s_table").setStyle("display", null);
+	$("ports_table").setStyle("display", "none");
+	$("tabber-result").tabber.tabShow(0);
+	
+	hosts.each(function(host){
+		$("service-" + host[1].service_name).addClass("selected");
+		hostname = host[0].ip.addr;
+		if(host[0].hostnames.length > 0)
+			hostname = host[0].hostnames[0].hostname + " " + hostname
+		
+		src = (host[1].port_state == "open")? "open.png" : "closed.png";
+		img = new Element("img", {'src': '/media/images/' + src});
+		
+		portid = host[1].portid
+		protocol = host[1].protocol;
+		state = host[1].port_state;
+		product = host[1].service_product;
+		version = host[1].service_version;
+		addTableRow(st, [img, hostname, portid, protocol, state, product, version]);
+	});
+}
+
+loadServices = function(scan){
+	ports = scan.list_port;
+	ports.each(function(port){
+		if(!window.ie){
+			st = $("services_table").getElement("tbody");
+		}
+		lnk = new Element("a", {"href": "#"});
+		lnk.setText(port.service_name);
+		lnk.addEvent("click", function(e){
+			e = new Event(e);
+			selectService(scan, port.service_name, e);
+		});
+		addTableRow(st, [lnk], {"id": "service-" + port.service_name});
+	})
+}
+
 loadScanData = function(scan){
 	hosts = scan.hosts
 	loadHosts(hosts);
+	loadServices(scan);
 	loadScanInfo(scan);
 	selectHost(scanEvent, hosts, 0);
 }
@@ -585,6 +688,7 @@ runScan = function(e){
 	$("hosts_tab").empty();
 	$("scan_details").empty();
 	$("tabber-result").tabber.tabShow(1);
+	$("services_table").getElement("tbody").empty();
 	
 	this.send({onComplete: function(tResult){
 			result = Json.evaluate(tResult);
@@ -607,5 +711,42 @@ runScan = function(e){
 window.addEvent("domready", function(){
     if($defined($("frmScan"))){
 	$("frmScan").addEvent("submit", runScan);
+	hSlide = new Fx.Slide("hosts", {mode: 'horizontal'});
+	sSlide = new Fx.Slide("services", {mode: 'horizontal'});
+	/*$("services").setStyle("position", "relative");*/
+	
+	$("toggleHosts").addEvent("click", function(e){
+		new Event(e).stop();
+		if(!this.hasClass("active")){
+		    ts = $("toggleServices");
+		    this.addClass("active");
+		    ts.removeClass("active");
+		    $("hosts").setStyle("display", null);
+		    $("services").setStyle("display", "none");
+		}
+	});
+	
+	$("toggleServices").addEvent("click", function(e){
+		new Event(e).stop();
+		if(!this.hasClass("active")){
+		    th = $("toggleHosts");
+		    this.addClass("active");
+		    th.removeClass("active");
+		    $("hosts").setStyle("display", "none");
+		    $("services").setStyle("display", null);
+		}
+	});
+	
+	$("toggleHosts").addClass("active");
+	$("services").setStyle("display", "none");
     }
 });
+
+tabberOptions = {
+	'onClick': function(args){
+		new Event(args.event).stop();
+		i = args.index;
+		tabber = args.tabber;
+		XX = tabber.tabs[i];
+	}
+}

@@ -138,7 +138,7 @@ def __hostinfo_to_json(host):
             ret[k] = __dict_to_json(attr)
         else:
             ret[k] = str(attr)
-    ret['openned_ports'] = str(host.get_openned_ports())
+    ret['open_ports'] = str(host.get_open_ports())
     ret['filtered_ports'] = str(host.get_filtered_ports())
     ret['closed_ports'] = str(host.get_closed_ports())
     ret['scanned_ports'] = str(host.get_scanned_ports())

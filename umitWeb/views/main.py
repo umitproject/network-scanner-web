@@ -37,7 +37,6 @@ def serve_media(req, path):
     response = HttpResponse()
     
     filename = join(dirname(__file__), pardir, 'media', *(path.split("/")))
-    print filename
     
     if not exists(filename):
         raise Http404

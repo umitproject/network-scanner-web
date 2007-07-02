@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="/media/css/layout.css"/>
         <link rel="stylesheet" href="/media/css/tabber.css"/>
         <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
-        <script type="text/javascript" src="/media/js/mootools.v1.11.js"></script>
+        <script type="text/javascript" src="/media/js/mootools.v1.11-old.js"></script>
         <script type="text/javascript" src="/media/js/common.js"></script>
         <script type="text/javascript" src="/media/js/ajax.js"></script>
         <script type="text/javascript" src="/media/js/tabber.js"></script>
@@ -28,35 +28,31 @@
                 <label for="command">Command: </label><span class="code"><strong>nmap</strong></span>
                 <input type='text' id='command' name='command' size='50' value='-v <target>'/><input type="SUBMIT" value="Scan now!"/>
             </form></div>
-            <div id="result_window">
+        <div id="result_window">
             <div id="hosts_services">
                 <ul class="menu">
-                    <li><a href="#" class="active">Hosts</a></li>
-                    <li><a href="#">Services</a></li>
+                    <li><a href="#" id="toggleHosts">Hosts</a></li>
+                    <li><a href="#" id="toggleServices">Services</a></li>
                 </ul>
-                <div id="hosts" style="overflow:auto">
-                 <table class="std_table" id="hosts_table">
-                  <thead>
-                   <tr>
-                    <th width="0">OS</th>
-                    <th width="100%">Host</th>
-                   </tr>
-                  </thead>
-                  <tbody>
-                  <!--
-                    <tr>
-                     <td><img src="/media/images/linux_32.png" width="25"/></td>
-                     <td><a href="#">10.0.0.1</a></td>
-                    </tr>
-                    <tr>
-                     <td><img src="/media/images/unknown_32.png" width="25"/></td>
-                     <td><a href="#">10.0.0.4</a></td>
-                    </tr>
-                   -->
-                  </tbody>
-                 </table>
+                <div id="hosts" style="overflow:auto;">
+                    <table class="std_table" id="hosts_table">
+                        <thead>
+                            <tr>
+                                <th width="0">OS</th>
+                                <th width="100%">Host</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
-                <div id="services" class="hide">
+                <div id="services" style="overflow:auto;">
+                    <table class="std_table" id="services_table">
+                        <thead>
+                            <tr><th width="100%">Service</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
             <div id="result_tabs">
@@ -77,6 +73,20 @@
                             </thead>
                             <tbody>
                             </tbody>
+                        </table>
+                        <table class="std_table" id="hosts_s_table" style="display: none">
+                            <thead>
+                                <tr>
+                                    <th width="0">&nbsp;</th>
+                                    <th width="0">Hostname</th>
+                                    <th width="0">Port</th>
+                                    <th width="0">Protocol</th>
+                                    <th width="0">State</th>
+                                    <th width="0"><nobr>Server product</nobr></th>
+                                    <th width="100%">Version</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
                         </table>
                         </div>
                     </div>

@@ -21,7 +21,7 @@ import cPickle
 import os.path
 
 def create_os_dump(os_db, os_fingerprints, os_dump):
-    os_dump = os.path.join("config", os_dump)
+    os_dump = os.path.join("misc", os_dump)
     
     osd = {}
     os_db_file = open(os_db, "r")
@@ -77,8 +77,8 @@ def load_dumped_os():
     return osd
 
 if __name__ == "__main__":
-    os_db = "nmap-os-db"
-    os_fingerprints = "nmap-os-fingerprints"
-    os_dump = "os_db.dmp"
+    os_db = os.path.join("utils", "nmap-os-db")
+    os_fingerprints = os.path.join("utils", "nmap-os-fingerprints")
+    os_dump = os.path.join("utils", "os_db.dmp")
 
     create_os_dump(os_db, os_fingerprints, os_dump)

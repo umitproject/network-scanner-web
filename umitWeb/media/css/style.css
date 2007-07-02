@@ -82,13 +82,13 @@ a:hover{
     background-image: url(/media/images/progress.png);
     background-repeat: no-repeat;
     background-color: #AAA;
-    height: 25px;
+    height: 14px;
     width: 180px;
     font-size: 10pt;
     font-weight: bold;
     text-align: center;
     padding: 0;
-    padding-top: 6px;
+    padding-top: 1px;
 }
 
 h4 {
