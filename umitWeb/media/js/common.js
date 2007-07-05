@@ -1,5 +1,5 @@
 last_host_scanned = "<target>"
-slides = {}
+var slides = {}
 
 fillCommand = function(value){
     $('command').value = $('command').value.replace(last_host_scanned, value)
@@ -57,7 +57,11 @@ window.addEvent("domready", function(){
     
     $$("div[class='tab-placeholder']").each(function(div){
         size = getViewportSize();
-        div.style.height = (size[1]-200) + "px";
+	if(!window.ie){
+	    div.style.height = (size[1]-200) + "px";
+	}else{
+	    div.style.height = (size[1]-250) + "px";
+	}
     });
 	
 	if($defined($("hosts")))

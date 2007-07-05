@@ -13,7 +13,8 @@
         <script type="text/javascript" src="/media/js/common.js"></script>
         <script type="text/javascript" src="/media/js/ajax.js"></script>
         <script type="text/javascript" src="/media/js/tabber.js"></script>
-        <script type="text/javascript" src="/media/js/output_highlight.js"/>
+        <script type="text/javascript" src="/media/js/output_highlight.js"></script>
+        
     </head>
     <body>
         <div id="body">
@@ -63,6 +64,8 @@
                     <div class="tabbertab">
                         <h3>Ports/hosts</h3>
                         <div class="tab-placeholder">
+                            
+                        <div id="ports_table_placeholder">
                         <table class="std_table" id="ports_table">
                             <thead>
                                 <tr>
@@ -76,7 +79,9 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <table class="std_table" id="hosts_s_table" style="display: none">
+                        </div>
+                        <div id="hosts_s_table_placeholder">
+                        <table class="std_table" id="hosts_s_table">
                             <thead>
                                 <tr>
                                     <th width="0">&nbsp;</th>
@@ -90,6 +95,7 @@
                             </thead>
                             <tbody></tbody>
                         </table>
+                        </div>
                         </div>
                     </div>
                     <!-- ................................................... -->

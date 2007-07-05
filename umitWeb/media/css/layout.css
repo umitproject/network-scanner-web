@@ -6,6 +6,7 @@ td a{
   display: block;
 }
 
+
 #hosts_services{
     float: left;
     width: 15%;
@@ -40,7 +41,7 @@ td a{
 }
 
 #body{
-    margin: 0;
+    margin: 5px;
     width: 100%;
     position: absolute;
     /*left: 50%;

@@ -10,9 +10,7 @@ var sSlide;
 var hSlide;
 
 loadHosts = function(hosts){
-	if(!window.ie){
-		tbHosts = $("hosts_table").getElement("tbody").empty();
-	}
+	tbHosts = $("hosts_table").getElement("tbody").empty();
 	for(iH = 0; iH < hosts.length; iH++){
 		h = hosts[iH]
 		if(h.hostnames.length > 0){
@@ -32,6 +30,7 @@ loadHosts = function(hosts){
 				"windows": "win",
 				"ubuntu": "ubuntu", 
 				"red hat": "redhat"}
+			img_src = "/media/images/default_24.png"
 			for(k in oses){
 				if(h.osmatch.name.toLowerCase().contains(k)){
 					img_src = "/media/images/" + oses[k] + "_24.png"
@@ -53,10 +52,9 @@ loadHosts = function(hosts){
 }
 
 selectHost = function(event, sHosts, index){
-	event.stop();
 	arr = new Array();
-	$("ports_table").setStyle("display", null);
-	$("hosts_s_table").setStyle("display", "none");
+	$("ports_table_placeholder").setStyle("display", "block");
+	$("hosts_s_table_placeholder").setStyle("display", "none");
 	indexArr = new Array();
 	if($defined($("host-" + index))){
 		$("host-" + index).toggleClass("selected");
@@ -116,6 +114,7 @@ selectHost = function(event, sHosts, index){
 		loadPortsTab(arr);
 		lastHost = index;
 	}
+	event.stop();
 }
 
 addTableRow = function(table, row, lineAttrs){
@@ -143,13 +142,12 @@ addTableRow = function(table, row, lineAttrs){
 		}
 		tr.adopt(td)
 	}
+	//alert(table)
 	table.adopt(tr)
 }
 
 loadPortsTab = function(pHosts){
-	if(!window.ie){
-		tbody = $("ports_table").getElement("tbody").empty();
-	}
+	tbody = $("ports_table").getElement("tbody").empty();
 	lines = new Array();
 	count = 0;
 	for(k = 0; k < pHosts.length; k++){
@@ -192,11 +190,15 @@ loadHostsTab = function(hostset){
 			txt = h.hostnames[0].hostname + " " + txt
 		
 		head = new Element("h4", {'class': 'sw-expanded', 'id': txt + "-switch"});
-		lnk = new Element("a", {'onclick': 'toggle("' + txt + '")', 'href': '#'});
-		lnk.setText(txt);
-		head.adopt(lnk);
+		lnk = new Element("a", {'href': '#'});
+		lnk.addEvent("click", function(e){
+			new Event(e).stop();
+			toggle(txt);
+		})
+		head.setText(txt);
+		lnk.adopt(head);
 		
-		hostsTab.adopt(head);
+		hostsTab.adopt(lnk);
 		
 		tgDiv = new Element("div", {'id': txt + "-detail", 'class': 'frame-div'});
 		hostsTab.adopt(tgDiv);
@@ -209,10 +211,14 @@ loadHostsTab = function(hostset){
 		
 		//Comment
 		head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + "-comment-switch"})
-		lnk = new Element("a", {'onclick': 'toggle("' + txt + '-comment")', 'href': '#'});
-		lnk.setText("Comment");
-		head.adopt(lnk);
-		tgDiv.adopt(head);
+		lnk = new Element("a", {'href': '#'});
+		lnk.addEvent("click", function(e){
+			new Event(e).stop();
+			toggle(txt + '-comment');
+		})
+		head.setText("Comment");
+		lnk.adopt(head);
+		tgDiv.adopt(lnk);
 		
 		commentDiv = new Element("div", {'id': txt + "-comment-detail", 'class': 'frame-div'})
 		comment = new Element("textarea", {'rows':"5", 'cols':"60", 'class': "flat-field"})
@@ -223,10 +229,14 @@ loadHostsTab = function(hostset){
 		
 		//Host Status
 		head = new Element("h4", {'class': 'sw-expanded', 'id': txt + "-status-switch"})
-		lnk = new Element("a", {'onclick': 'toggle("' + txt + '-status")', 'href': '#'});
-		lnk.setText("Host Status");
-		head.adopt(lnk);
-		tgDiv.adopt(head);
+		lnk = new Element("a", {'href': '#'});
+		lnk.addEvent("click", function(e){
+			new Event(e).stop();
+			toggle(txt + '-status');
+		})
+		head.setText("Host Status");
+		lnk.adopt(head);
+		tgDiv.adopt(lnk);
 		statusDiv = new Element("div", {'id': txt + "-status-detail", 'class': 'frame-div'});
 		tgDiv.adopt(statusDiv);
 		
@@ -243,6 +253,7 @@ loadHostsTab = function(hostset){
 				"windows": "win",
 				"ubuntu": "ubuntu", 
 				"red hat": "redhat"}
+			img_src = "/media/images/default_48.png";
 			for(k in oses){
 				if(h.osmatch.name.toLowerCase().contains(k)){
 					img_src = "/media/images/" + oses[k] + "_48.png"
@@ -275,10 +286,14 @@ loadHostsTab = function(hostset){
 		
 		//Addresses
 		head = new Element("h4", {'class': 'sw-expanded', 'id': txt + "-addresses-switch"})
-		lnk = new Element("a", {'onclick': 'toggle("' + txt + '-addresses")', 'href': '#'});
-		lnk.setText("Addresses");
-		head.adopt(lnk);
-		tgDiv.adopt(head);
+		lnk = new Element("a", {'href': '#'});
+		lnk.addEvent("click", function(e){
+			new Event(e).stop();
+			toggle(txt + '-addresses');
+		})
+		head.setText("Addresses");
+		lnk.adopt(head);
+		tgDiv.adopt(lnk);
 		addrDiv = new Element("div", {'id': txt + "-addresses-detail", 'class': 
 										 'frame-div'});
 		tbl = new Element("table");
@@ -292,10 +307,14 @@ loadHostsTab = function(hostset){
 		//Host names
 		if(h.hostnames.length > 0){
 			head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + "-hostnames-switch"})
-			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-hostnames")', 'href': '#'});
-			lnk.setText("Hostnames");
-			head.adopt(lnk);
-			tgDiv.adopt(head);
+			lnk = new Element("a", {'href': '#'});
+			lnk.addEvent("click", function(e){
+				new Event(e).stop();
+				toggle(txt + '-hostnames');
+			})
+			head.setText("Hostnames");
+			lnk.adopt(head);
+			tgDiv.adopt(lnk);
 			hostnameDiv = new Element("div", {'id': txt + "-hostnames-detail", 'class': 
 										 'frame-div'});
 			tbl = new Element("table");
@@ -313,10 +332,14 @@ loadHostsTab = function(hostset){
 		
 		if(h.osclasses.length > 0 && h.osmatch.name){
 			head = new Element("h4", {'class': 'sw-expanded', 'id': txt + "-os-switch"})
-			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-os")', 'href': '#'});
-			lnk.setText("Operating System");
-			head.adopt(lnk);
-			tgDiv.adopt(head);
+			lnk = new Element("a", {'href': '#'});
+			lnk.addEvent("click", function(e){
+				new Event(e).stop();
+				toggle(txt + '-os');
+			})
+			head.setText("Operating System");
+			lnk.adopt(head);
+			tgDiv.adopt(lnk);
 			
 			osDiv = new Element("div", {'id': txt + "-os-detail", 'class': 'frame-div'});
 			tgDiv.adopt(osDiv);
@@ -333,9 +356,13 @@ loadHostsTab = function(hostset){
 	
 			head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + '-os-ports-switch'})
 			portDiv = new Element("div", {'id': txt + "-os-ports-detail", 'class': 'frame-div'});
-			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-os-ports")', 'href': '#'});
-			lnk.setText("Ports Used");
-			head.adopt(lnk);
+			lnk = new Element("a", {'href': '#'});
+			lnk.addEvent("click", function(e){
+				new Event(e).stop();
+				toggle(txt + '-os-ports');
+			})
+			head.setText("Ports Used");
+			lnk.adopt(head);
 	
 			tb = new Element("table");
 			desc = "<b>Port - Protocol - State:</b>"
@@ -344,7 +371,7 @@ loadHostsTab = function(hostset){
 				addTableRow(tb, [desc, [pu.portid, pu.proto, pu.state].join(" - ")])
 			}
 			portDiv.adopt(tb);
-			osDiv.adopt(head);
+			osDiv.adopt(lnk);
 			osDiv.adopt(portDiv);
 			slides[txt + '-os-ports'] = new Fx.Slide(portDiv);
 			slides[txt + '-os-ports'].hide();
@@ -352,8 +379,12 @@ loadHostsTab = function(hostset){
 			head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + '-os-osclass-switch'})
 			classDiv = new Element("div", {'id': txt + "-os-osclass-detail", 'class': 'frame-div'});
 			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-os-osclass")', 'href': '#'});
-			lnk.setText("OS Class");
-			head.adopt(lnk);
+			lnk.addEvent("click", function(e){
+				new Event(e).stop();
+				toggle(txt + '-os-osclass');
+			})
+			head.setText("OS Class");
+			lnk.adopt(head);
 			
 			tb = new Element("table");
 			addTableRow(tb, ["<b>Type</b>", "<b>Vendor</b>",
@@ -371,7 +402,7 @@ loadHostsTab = function(hostset){
 			}
 			classDiv.adopt(tb);
 			
-			osDiv.adopt(head);
+			osDiv.adopt(lnk);
 			osDiv.adopt(classDiv);
 			slides[txt + '-os-osclass'] = new Fx.Slide(classDiv);
 			slides[txt + '-os-osclass'].hide();
@@ -380,10 +411,14 @@ loadHostsTab = function(hostset){
 		// TCP Sequence
 		if(h.tcpsequence.values){
 			head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + "-tcpsequence-switch"})
-			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-tcpsequence")', 'href': '#'});
-			lnk.setText("TCP Sequence");
-			head.adopt(lnk);
-			tgDiv.adopt(head);
+			lnk = new Element("a", {'href': '#'});
+			lnk.addEvent("click", function(e){
+				new Event(e).stop();
+				toggle(txt + '-tcpsequence');
+			})
+			head.setText("TCP Sequence");
+			lnk.adopt(head);
+			tgDiv.adopt(lnk);
 			
 			tcpDiv = new Element("div", {'id': txt + "-tcpsequence-detail", 'class': 'frame-div'});
 			tb = new Element("table");
@@ -395,7 +430,7 @@ loadHostsTab = function(hostset){
 				opt.setText(list[x]);
 				selectValues.adopt(opt);
 			}
-			addTableRow(tb, ["<b>Class:</b>", h.tcpsequence.class]);
+			addTableRow(tb, ["<b>Class:</b>", h.tcpsequence['class']]);
 			addTableRow(tb, ["<b>Difficulty:</b>", h.tcpsequence.difficulty]);
 			addTableRow(tb, ["<b>Index:</b>", h.tcpsequence.index]);
 			addTableRow(tb, ["<b>Values:</b>", selectValues]);
@@ -407,10 +442,14 @@ loadHostsTab = function(hostset){
 		//IP ID Sequence
 		if(h.ipidsequence.values){
 			head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + "-ipidsequence-switch"})
-			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-ipidsequence")', 'href': '#'});
-			lnk.setText("IP ID Sequence");
-			head.adopt(lnk);
-			tgDiv.adopt(head);
+			lnk = new Element("a", {'href': '#'});
+			lnk.addEvent("click", function(e){
+				new Event(e).stop();
+				toggle(txt + '-ipidsequence');
+			})
+			head.setText("IP ID Sequence");
+			lnk.adopt(head);
+			tgDiv.adopt(lnk);
 			
 			tcpDiv = new Element("div", {'id': txt + "-ipidsequence-detail", 'class': 'frame-div'});
 			tb = new Element("table");
@@ -422,7 +461,7 @@ loadHostsTab = function(hostset){
 				opt.setText(list[x]);
 				selectValues.adopt(opt);
 			}
-			addTableRow(tb, ["<b>Class:</b>", h.ipidsequence.class]);
+			addTableRow(tb, ["<b>Class:</b>", h.ipidsequence['class']]);
 			addTableRow(tb, ["<b>Values:</b>", selectValues]);
 			tgDiv.adopt(tcpDiv);
 			slides[txt + '-ipidsequence'] = new Fx.Slide(tcpDiv);
@@ -432,10 +471,14 @@ loadHostsTab = function(hostset){
 		//TCP TS Sequence
 		if(h.tcptssequence.values){
 			head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + "-tcptssequence-switch"})
-			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-tcptssequence")', 'href': '#'});
-			lnk.setText("TCP TS Sequence");
-			head.adopt(lnk);
-			tgDiv.adopt(head);
+			lnk = new Element("a", {'href': '#'});
+			lnk.addEvent("click", function(e){
+				new Event(e).stop();
+				toggle(txt + '-tcptssequence');
+			})
+			head.setText("TCP TS Sequence");
+			lnk.adopt(head);
+			tgDiv.adopt(lnk);
 			
 			tcpDiv = new Element("div", {'id': txt + "-tcptssequence-detail", 'class': 'frame-div'});
 			tb = new Element("table");
@@ -447,7 +490,7 @@ loadHostsTab = function(hostset){
 				opt.setText(list[x]);
 				selectValues.adopt(opt);
 			}
-			addTableRow(tb, ["<b>Class:</b>", h.tcptssequence.class]);
+			addTableRow(tb, ["<b>Class:</b>", h.tcptssequence['class']]);
 			addTableRow(tb, ["<b>Values:</b>", selectValues]);
 			tgDiv.adopt(tcpDiv);
 			slides[txt + '-tcptssequence'] = new Fx.Slide(tcpDiv);
@@ -460,10 +503,14 @@ loadScanInfo = function(scan){
 	scanTab = $("scan_details").empty();
 	
 	head = new Element("h4", {'class': 'sw-expanded', 'id': "command-info-switch"})
-	lnk = new Element("a", {'onclick': 'toggle("command-info")', 'href': '#'});
-	lnk.setText("Command Info");
-	head.adopt(lnk);
-	scanTab.adopt(head);
+	lnk = new Element("a", {'href': '#'});
+	lnk.addEvent("click", function(e){
+		new Event(e).stop();
+		toggle('command-info');
+	})
+	head.setText("Command Info");
+	lnk.adopt(head);
+	scanTab.adopt(lnk);
 	cmdDiv = new Element("div", {'id': "command-info-detail", 'class': 'frame-div'});
 	tbl = new Element("table");
 	
@@ -479,10 +526,14 @@ loadScanInfo = function(scan){
 	//
 	
 	head = new Element("h4", {'class': 'sw-expanded', 'id': "general-info-switch"})
-	lnk = new Element("a", {'onclick': 'toggle("general-info")', 'href': '#'});
-	lnk.setText("General Info");
-	head.adopt(lnk);
-	scanTab.adopt(head);
+	lnk = new Element("a", {'href': '#'});
+	lnk.addEvent("click", function(e){
+		new Event(e).stop();
+		toggle('general-info');
+	})
+	head.setText("General Info");
+	lnk.adopt(head);
+	scanTab.adopt(lnk);
 	cmdDiv = new Element("div", {'id': "general-info-detail", 'class': 'frame-div'});
 	tbl = new Element("table");
 	
@@ -500,13 +551,17 @@ loadScanInfo = function(scan){
 		
 	for(i = 0; i < scan.scaninfo.length; i++){
 		info = scan.scaninfo[i];
-		txt = "scaninfo-" + info.type
-		head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + "-switch"})
-		lnk = new Element("a", {'onclick': 'toggle("'+ txt +'")', 'href': '#'});
-		lnk.setText("Scan Info - " + info.type);
-		head.adopt(lnk);
-		scanTab.adopt(head);
-		scanDiv = new Element("div", {'id': txt + "-detail", 'class': 'frame-div'});
+		txts = "scaninfo-" + info.type
+		head = new Element("h4", {'class': 'sw-collapsed', 'id': txts + "-switch"})
+		lnk = new Element("a", {'href': '#'});
+		lnk.addEvent("click", function(e){
+			toggle(txts);
+			new Event(e).stop();
+		})
+		head.setText("Scan Info - " + info.type);
+		lnk.adopt(head);
+		scanTab.adopt(lnk);
+		scanDiv = new Element("div", {'id': txts + "-detail", 'class': 'frame-div'});
 		tbl = new Element("table");
 		addTableRow(tbl, ["<b>Scan type:</b>", info.type]);
 		addTableRow(tbl, ["<b>Protocol:</b>", info.protocol]);
@@ -514,42 +569,43 @@ loadScanInfo = function(scan){
 
 		selectServices = new Element("select");
 		
-		services = info.services.split(",")
-		for(j = 0; j < services.length; j++){
+		info.services.split(",").each(function(el){
 			opt = new Element("option");
-			opt.setText(services[j]);
+			opt.setText(el);
 			selectServices.adopt(opt);
-		}
+		});
+		
 		addTableRow(tbl, ["<b>Services:</b>", selectServices]);
 		scanDiv.adopt(tbl);
 		scanTab.adopt(scanDiv);
-		slides[txt] = new Fx.Slide(scanDiv);
-		slides[txt].hide();
+		slides[txts] = new Fx.Slide(scanDiv);
+		slides[txts].hide();
 	}
 }
 
 selectService = function(scan, service_id, event){
-	event.stop();
-	services = new Array();
-	hosts = new Array();
+	
+	
+	sServices = new Array();
+	sHosts = new Array();
 	
 	if($defined($("service-" + service_id))){
 		$("service-" + service_id).toggleClass("selected");
 	}
 	
 	if(event.control === false){
-		services.include(service_id);
+		sServices.include(service_id);
 	}else if(event.control == true && event.shift == false){
 		lines = $("services_table").getElement("tbody").getElements("tr[class=selected]");
 		for(x = 0; x < lines.length; x++){
 			tr = lines[x];
 			_id = tr.id.substring("service-".length)
-			services.include(_id);
+			sServices.include(_id);
 		}
 	}
 	
-	if(services.length == 0){
-		services.include(service_id);
+	if(sServices.length == 0){
+		sServices.include(service_id);
 	}
 	
 	/*if(event.shift === true && lastService != null && $defined(lastService)){
@@ -570,9 +626,9 @@ selectService = function(scan, service_id, event){
 	scan.hosts.each(function(host){
 		for(i = 0; i < host.ports.length; i++){
 			host.ports[0].port.each(function(port){
-				services.each(function(service){
+				sServices.each(function(service){
 					if(port.service_name == service){
-						hosts.include([host, port]);
+						sHosts.include([host, port]);
 					}
 				});
 			});
@@ -583,18 +639,16 @@ selectService = function(scan, service_id, event){
 		el.removeClass("selected");
 	});
 	
-	services.each(function(s){
+	sServices.each(function(s){
 		$("service-" + s).addClass("selected");
 	});
 	
-	if(!window.ie){
-		st = $("hosts_s_table").getElement("tbody").empty();
-	}
-	$("hosts_s_table").setStyle("display", null);
-	$("ports_table").setStyle("display", "none");
+	st = $("hosts_s_table").getElement("tbody").empty();
+	$("hosts_s_table_placeholder").setStyle("display", "block");
+	$("ports_table_placeholder").setStyle("display", "none");
 	$("tabber-result").tabber.tabShow(0);
 	
-	hosts.each(function(host){
+	sHosts.each(function(host){
 		$("service-" + host[1].service_name).addClass("selected");
 		hostname = host[0].ip.addr;
 		if(host[0].hostnames.length > 0)
@@ -610,14 +664,13 @@ selectService = function(scan, service_id, event){
 		version = host[1].service_version;
 		addTableRow(st, [img, hostname, portid, protocol, state, product, version]);
 	});
+	event.stop();
 }
 
 loadServices = function(scan){
 	ports = scan.list_port;
 	ports.each(function(port){
-		if(!window.ie){
-			st = $("services_table").getElement("tbody");
-		}
+		st = $("services_table").getElement("tbody");
 		lnk = new Element("a", {"href": "#"});
 		lnk.setText(port.service_name);
 		lnk.addEvent("click", function(e){
@@ -628,8 +681,8 @@ loadServices = function(scan){
 	})
 }
 
-loadScanData = function(scan){
-	hosts = scan.hosts
+function loadScanData(scan){
+	var hosts = scan['hosts'];
 	loadHosts(hosts);
 	loadServices(scan);
 	loadScanInfo(scan);
@@ -656,10 +709,16 @@ formatNmapOutput = function(txt_out){
 			style += 'font-style:italic';
 		}
 		
+		found = false;
 		while(txt_temp.match(regex)){
+			found = true;
 			m = txt_temp.match(regex)[0]
-			result = result.replace(m, "<span style='" + style + "'>" + m + "</span>");
-			txt_temp = txt_temp.substring(txt_temp.search(regex) + txt_temp.match(regex)[0].length)
+			txt_rpl = txt_temp.substring(0, txt_temp.search(regex) + txt_temp.match(regex)[0].length);
+			result += txt_rpl.replace(m, "<span style='" + style + "'>" + m + "</span>");
+			txt_temp = txt_temp.substring(txt_temp.search(regex) + txt_temp.match(regex)[0].length);
+		}
+		if(!found){
+			result += txt_temp;
 		}
 	}
 	return result;
@@ -673,6 +732,10 @@ checkScanStatus = function(scanID){
 				    if(result.status == "FINISHED"){
 						resultBox.removeClass("ajax-loading")
 						nmapOutput = result.output.plain
+						if(window.ie){
+							nmapOutput = nmapOutput.replace("\r", "<br/>\r")
+							//alert(nmapOutput)
+						}
 						if(!$("highlight_out").checked){
 							resultBox.setText(nmapOutput)
 						}else{
@@ -683,6 +746,9 @@ checkScanStatus = function(scanID){
 				    }else if(result.status == "RUNNING"){
 						setTimeout("checkScanStatus('" + scanID + "')", 1000)
 						nmapOutput = result.output.text
+						if(window.ie){
+							nmapOutput = nmapOutput.replace("\n", "<br/>\n")
+						}
 						if(!$("highlight_out").checked){
 							resultBox.empty().setText(nmapOutput)
 						}else{
@@ -705,16 +771,12 @@ checkScanStatus = function(scanID){
 
 runScan = function(e){
 	e = new Event(e);
-	e.stop();
+	
 	scanEvent = e;
 	result_box = $("nmap-output");
 	result_box.empty().addClass("ajax-loading");
 	tbHosts = $("hosts_table").getElement("tbody");
-	if(!window.ie){
-		tbHosts.empty();
-	}else{
-		while(tbHosts.rows > 0) tbHosts.deleteRow(0);
-	}
+	tbHosts.empty();
 	tr = new Element("tr");
 	td1 = new Element("td");
 	td1.adopt(new Element("img", {'src': '/media/images/spinner.gif'}));
@@ -746,6 +808,7 @@ runScan = function(e){
 		    scanLock = false;
 		  }
 		  });
+	e.stop();
 }
 
 window.addEvent("domready", function(){
@@ -756,25 +819,25 @@ window.addEvent("domready", function(){
 	/*$("services").setStyle("position", "relative");*/
 	
 	$("toggleHosts").addEvent("click", function(e){
-		new Event(e).stop();
 		if(!this.hasClass("active")){
 		    ts = $("toggleServices");
 		    this.addClass("active");
 		    ts.removeClass("active");
-		    $("hosts").setStyle("display", null);
+		    $("hosts").setStyle("display", "block");
 		    $("services").setStyle("display", "none");
 		}
+		new Event(e).stop();
 	});
 	
 	$("toggleServices").addEvent("click", function(e){
-		new Event(e).stop();
 		if(!this.hasClass("active")){
 		    th = $("toggleHosts");
 		    this.addClass("active");
 		    th.removeClass("active");
 		    $("hosts").setStyle("display", "none");
-		    $("services").setStyle("display", null);
+		    $("services").setStyle("display", "block");
 		}
+		new Event(e).stop();
 	});
 	
 	$("toggleHosts").addClass("active");
@@ -794,18 +857,34 @@ window.addEvent("domready", function(){
 	}}).send();
 	
 	$("profiles").addEvent("change", function(event){
-		new Event(event).stop();
 		cmd = this.options[this.selectedIndex].value;
 		if($("target").value != ""){
 			cmd = cmd.replace("<target>", $("target").value);
 		}
 		$("command").value = cmd;
+		new Event(event).stop();
 	});
     }
 });
 
-window.addEvent("load", function(){
-	$("highlight_out").addEvent("change", function(e){
+window.addEvent("domready", function(){
+	if(window.ie){
+		ts = $$("table", "tbody", "thead", "tfoot")
+		ts.each(function(el){
+			el.empty = function(){
+				this.innerText = "";
+				return this;
+			};
+		});
+	}
+	
+	evt = "";
+	if(!window.ie){
+		evt = "change";
+	}else{
+		evt = "change";
+	}
+	$("highlight_out").addEvent(evt, function(e){
 		new Event(e).stop();
 		if(this.checked){
 			$("nmap-output").setHTML(formatNmapOutput(nmapOutput));
@@ -815,11 +894,11 @@ window.addEvent("load", function(){
 	});
 });
 
-tabberOptions = {
+/*tabberOptions = {
 	'onClick': function(args){
 		new Event(args.event).stop();
 		i = args.index;
 		tabber = args.tabber;
 		XX = tabber.tabs[i];
 	}
-}
+}*/
