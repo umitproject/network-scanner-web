@@ -79,6 +79,7 @@ class SessionWrapper(object):
     to clear the attribute, simply:
     >>> del session_obj['a-key']
     """
+    user = property(lambda self: self.get("umit_user"))
     def __init__(self, sessid=None):
         self.id = None
         self.modified = False
@@ -130,6 +131,8 @@ class SessionWrapper(object):
         self._session.save()
         
     def destroy(self):
+        """Destroy the current session
+        """
         self._session.delete()
         self._session = None
         self.modified = False
@@ -137,6 +140,8 @@ class SessionWrapper(object):
         
     @classmethod
     def clear(self):
+        """Class method to clear all data in the database
+        """
         sessions = SessionData.get_list()
         if sessions:
             for session in sessions:

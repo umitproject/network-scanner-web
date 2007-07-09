@@ -61,7 +61,7 @@ setts:['bold', 'italic', 'underline', 'text', 'highlight', 'regex']
             response.write("highlights['%s']['%s'] = '%s';\n" % (attr, value, propValue))
     return response
 
-#@authenticate(ERROR)
+@authenticate(ERROR)
 def get_profiles(req):
     profile = CommandProfile()
     profiles = profile.sections()
@@ -117,6 +117,15 @@ def login(req):
     else:
         resp.loadTemplate("login.html")
         return resp
+    
+def test_ajax(req):
+    if req.POST:
+        return HttpResponse(req.FILES['file']['name'], 'text/plain')
+    else:
+        r = HttpResponse()
+        r['Content-type'] = "text/plain"
+        r.loadTemplate('ajax_form.html')
+        return r
     
 def logout(req):
     if req.session.has_key("umit_user"):

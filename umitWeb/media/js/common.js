@@ -8,11 +8,10 @@ fillCommand = function(value){
 
 toggle = function(target){
     tgDiv = $(target + "-detail")
-    if(!slides[target]){
-	slides[target] = new Fx.Slide(tgDiv)
-    }
+    
     tgSwitcher = $(target + "-switch")
-    slides[target].toggle()
+    
+    tgDiv.toggleClass("hide");
 
     if(tgSwitcher.hasClass("sw-collapsed")){
         tgSwitcher.removeClass("sw-collapsed")
