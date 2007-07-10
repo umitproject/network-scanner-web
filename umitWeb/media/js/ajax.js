@@ -65,11 +65,6 @@ function selectHost(event, sHosts, index){
 	}
 	if(h.hostnames.length > 0)
 		txt = h.hostnames[0].hostname + " " + txt
-	for(k in slides){
-		if(k != "command-info" && k != "general-info" && k.substring(0, "scaninfo-".length) != "scaninfo-"){
-			delete slides[k]
-		}
-	}
 	
 	if(event.control === false){
 		for(i = 0; i < sHosts.length; i++){
@@ -116,6 +111,13 @@ function selectHost(event, sHosts, index){
 		loadPortsTab(arr);
 		lastHost = index;
 	}
+	$$("a[class=expander]").each(function(lnk){
+		lnk.addEvent("click", function(e){
+			tgId = this.getElement("h4").id;
+			toggle(tgId.substring(0, tgId.length - "-switch".length));
+			new Event(e).stop();
+		})
+	});
 	event.stop();
 }
 
@@ -294,7 +296,7 @@ function loadHostsTab(hostset){
 			lnk.adopt(head);
 			tgDiv.adopt(lnk);
 			hostnameDiv = new Element("div", {'id': txt + "-hostnames-detail", 'class': 
-										 'frame-div'});
+										 'frame-div hide'});
 			tbl = new Element("table");
 			desc = "<b>Name - Type:</b>"
 			for(k = 0; k < h.hostnames.length; k++){
@@ -304,8 +306,6 @@ function loadHostsTab(hostset){
 			hostnameDiv.adopt(tbl);
 			tgDiv.adopt(hostnameDiv);
 			hostsTab.adopt(tgDiv); 
-			slides[txt + '-hostnames'] = new Fx.Slide(hostnameDiv);
-			slides[txt + '-hostnames'].hide();
 		}
 		
 		if(h.osclasses.length > 0 && h.osmatch.name){
@@ -322,14 +322,14 @@ function loadHostsTab(hostset){
 
 			accurDiv = new Element("div", {'class': 'progress-bar'});
 			accurDiv.setText(h.osmatch.accuracy + "%");
-			position = 180 - (parseInt(h.osmatch.accuracy)/100 * 180);
+			position = -(180 - (parseInt(h.osmatch.accuracy)/100 * 180));
 			accurDiv.style.backgroundPosition = "" + position + "px 0px";
 			
 			addTableRow(tb, ["<b>Accuracy:</b>", accurDiv]);
 			osDiv.adopt(tb);
 	
 			head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + '-os-ports-switch'})
-			portDiv = new Element("div", {'id': txt + "-os-ports-detail", 'class': 'frame-div'});
+			portDiv = new Element("div", {'id': txt + "-os-ports-detail", 'class': 'frame-div hide'});
 			lnk = new Element("a", {'href': '#', 'class': 'expander'});
 			head.setText("Ports Used");
 			lnk.adopt(head);
@@ -343,11 +343,9 @@ function loadHostsTab(hostset){
 			portDiv.adopt(tb);
 			osDiv.adopt(lnk);
 			osDiv.adopt(portDiv);
-			slides[txt + '-os-ports'] = new Fx.Slide(portDiv);
-			slides[txt + '-os-ports'].hide();
 			
 			head = new Element("h4", {'class': 'sw-collapsed', 'id': txt + '-os-osclass-switch'})
-			classDiv = new Element("div", {'id': txt + "-os-osclass-detail", 'class': 'frame-div'});
+			classDiv = new Element("div", {'id': txt + "-os-osclass-detail", 'class': 'frame-div hide'});
 			lnk = new Element("a", {'onclick': 'toggle("' + txt + '-os-osclass")', 'href': '#'});
 			head.setText("OS Class");
 			lnk.adopt(head);
@@ -370,8 +368,6 @@ function loadHostsTab(hostset){
 			
 			osDiv.adopt(lnk);
 			osDiv.adopt(classDiv);
-			slides[txt + '-os-osclass'] = new Fx.Slide(classDiv);
-			slides[txt + '-os-osclass'].hide();
 		}	
 		
 		// TCP Sequence
@@ -382,7 +378,7 @@ function loadHostsTab(hostset){
 			lnk.adopt(head);
 			tgDiv.adopt(lnk);
 			
-			tcpDiv = new Element("div", {'id': txt + "-tcpsequence-detail", 'class': 'frame-div'});
+			tcpDiv = new Element("div", {'id': txt + "-tcpsequence-detail", 'class': 'frame-div hide'});
 			tb = new Element("table");
 			tcpDiv.adopt(tb);
 			selectValues = new Element("select");
@@ -397,8 +393,6 @@ function loadHostsTab(hostset){
 			addTableRow(tb, ["<b>Index:</b>", h.tcpsequence.index]);
 			addTableRow(tb, ["<b>Values:</b>", selectValues]);
 			tgDiv.adopt(tcpDiv);
-			slides[txt + '-tcpsequence'] = new Fx.Slide(tcpDiv);
-			slides[txt + '-tcpsequence'].hide();
 		}
 		
 		//IP ID Sequence
@@ -409,7 +403,7 @@ function loadHostsTab(hostset){
 			lnk.adopt(head);
 			tgDiv.adopt(lnk);
 			
-			tcpDiv = new Element("div", {'id': txt + "-ipidsequence-detail", 'class': 'frame-div'});
+			tcpDiv = new Element("div", {'id': txt + "-ipidsequence-detail", 'class': 'frame-div hide'});
 			tb = new Element("table");
 			tcpDiv.adopt(tb);
 			selectValues = new Element("select");
@@ -422,8 +416,6 @@ function loadHostsTab(hostset){
 			addTableRow(tb, ["<b>Class:</b>", h.ipidsequence['class']]);
 			addTableRow(tb, ["<b>Values:</b>", selectValues]);
 			tgDiv.adopt(tcpDiv);
-			slides[txt + '-ipidsequence'] = new Fx.Slide(tcpDiv);
-			slides[txt + '-ipidsequence'].hide();
 		}
 		
 		//TCP TS Sequence
@@ -434,7 +426,7 @@ function loadHostsTab(hostset){
 			lnk.adopt(head);
 			tgDiv.adopt(lnk);
 			
-			tcpDiv = new Element("div", {'id': txt + "-tcptssequence-detail", 'class': 'frame-div'});
+			tcpDiv = new Element("div", {'id': txt + "-tcptssequence-detail", 'class': 'frame-div hide'});
 			tb = new Element("table");
 			tcpDiv.adopt(tb);
 			selectValues = new Element("select");
@@ -447,8 +439,6 @@ function loadHostsTab(hostset){
 			addTableRow(tb, ["<b>Class:</b>", h.tcptssequence['class']]);
 			addTableRow(tb, ["<b>Values:</b>", selectValues]);
 			tgDiv.adopt(tcpDiv);
-			slides[txt + '-tcptssequence'] = new Fx.Slide(tcpDiv);
-			slides[txt + '-tcptssequence'].hide();
 		}
 	}
 }
@@ -628,20 +618,13 @@ function loadScanData(scan){
 	loadServices(scan);
 	loadScanInfo(scan);
 	selectHost(scanEvent, hosts, 0);
-	$$("a[class=expander]").each(function(lnk){
-		lnk.addEvent("click", function(e){
-			tgId = this.getElement("h4").id;
-			toggle(tgId.substring(0, tgId.length - "-switch".length));
-			new Event(e).stop();
-		})
-	});
 }
 
 function formatNmapOutput(output){
 	results = new Array();
 	output.split("\n").each(function(txt_out){
 		if(txt_out.trim().length == 0){
-			results.include("&nbsp;");
+			results.extend(["&nbsp;"]);
 			return;
 		}
 		result = '';
@@ -675,6 +658,7 @@ function formatNmapOutput(output){
 							  style + "'>" + m + "</span>"));
 				txt_temp = txt_temp.substring(txt_temp.search(regex) +
 							      txt_temp.match(regex)[0].length);
+				txt = result
 			}
 			
 			if(this_found)

@@ -21,7 +21,8 @@ from os.path import join, abspath, dirname, exists, pardir
 import sys
 from types import DictionaryType, StringType, ListType
 from math import floor, sqrt
-from umitCore.NmapOutputHighlight import NmapOutputHighlight
+#from umitCore.NmapOutputHighlight import NmapOutputHighlight
+from umitWeb.WebConf import JsOutputHighlight
 from umitCore.UmitConf import CommandProfile
 from umitWeb.Http import HttpResponse, Http404, HttpResponseRedirect
 from umitWeb.WebLogger import getLogger
@@ -41,7 +42,7 @@ def index(req):
 def output_highlight(req):
     response = HttpResponse()
     response['Content-type'] = "text/javascript; charset=utf-8"
-    highlight = NmapOutputHighlight()
+    highlight = JsOutputHighlight()
     attrDic = {}
     """
 setts:['bold', 'italic', 'underline', 'text', 'highlight', 'regex']

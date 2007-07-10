@@ -92,6 +92,9 @@ class Paths(object):
         # Should make the following only after reading the umit.conf file
         self.config_file = config_file
         self.config_file_set = True
+        
+        # Set UmitWeb file name
+        self.webconfig_file = os.path.join(os.path.dirname(umit_conf), "umitweb.conf")
 
         log.debug(">>> Config file: %s" % config_file)
 
