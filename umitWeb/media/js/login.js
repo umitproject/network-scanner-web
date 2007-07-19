@@ -2,7 +2,7 @@
     new Event(e).stop();
     processResult = function(result){
 	if(result == "OK"){
-	    location = "/"
+	    location.href = "/"
 	}else{
 	    $("error").empty().removeClass("hide").setText("Incorrect username or password")
 	    $("spacer").addClass("hide")

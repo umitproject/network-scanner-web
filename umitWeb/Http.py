@@ -128,25 +128,27 @@ class HttpRequest(object):
                         #self.logger.debug("Form-header: %s" % header)
                         #self.logger.debug("Form-data: %s" % data)
                         
-                        match_file = re.match(r".*[; ]filename=(?P<filename>[^,]+).*", header)
-                        match_text = re.match(r".*[; ]name=(?P<name>[^,]+).*", header)
+                        match_file = re.match(r".*[; ]filename=[\"](?P<filename>[^,]+)[\"].*", header)
+                        match_text = re.match(r".*[; ]name=[\"](?P<name>[^,^;]+)[\"].*", header)
                         
                         if match_file:
                             #Type: File
                             content_type, data = data.split("\r\n", 1)
                             data = data[2:-2]           # Delete initial and final '\r\n'
-                            self.logger.debug(str(data))
+                            #self.logger.debug("Data: " + str(data))
                             content_type = content_type[len("content-type:")-1:].strip()
                             temp_name = mktemp()
-                            temp_file = open(temp_name, "w+")
+                            temp_file = open(temp_name, "wb", 1)
                             temp_file.write(data)
+                            temp_file.flush()
+                            temp_file.close()
                             
                             self.FILES[match_text.groupdict()['name']] = {
                                 "content_type": content_type,
                                 "name": match_file.groupdict()['filename'],
                                 "temp_name": temp_name,
                                 "size": len(data),
-                                "temp_file": temp_file
+                                "temp_file": open(temp_name, "rb", 0)
                                 }
                             self.POST[match_text.groupdict()['name']] = match_file.groupdict()['filename']
                         else:

@@ -1,5 +1,5 @@
 body{
-    margin: 0;
+    margin: 10px;
 }
 
 td a{
@@ -41,11 +41,9 @@ td a{
 }
 
 #body{
-    margin: 5px;
-    width: 100%;
+    margin: 0;
+    /*width: 100%;*/
     position: absolute;
-    /*left: 50%;
-    margin-left: -47.5%;*/
 }
 
 #nmap-output{
@@ -63,18 +61,24 @@ td a{
 }
 
 #options{
-    position: absolute;
-    left: 95%;
-    margin-left: -10px;
-    width: 50px;
+    float: right;
+    margin-right: 50px;
     border: #DDD solid 1px;
 }
 
 #options ul{
     list-style: none;
-    margin:0px;
+    margin:0;
     padding: 0;
     display: inline;
+}
+
+#options ul li{
+    margin:0;
+    padding: 0;
+    display: inline;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 

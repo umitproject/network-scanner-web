@@ -18,12 +18,15 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from types import *
-from umitWeb.Http import HttpResponse, Http404, Http500
+from umitWeb.Http import HttpResponse, Http404, Http500, HttpError
 from umitWeb.Auth import authenticate, ERROR
 from umitWeb.Server import UmitWebServer as server
 from umitWeb.WebLogger import getLogger
 from umitCore.NmapCommand import NmapCommand
 from umitCore.NmapParser import NmapParser, HostInfo
+from tempfile import mktemp
+import os
+#from StringIO import StringIO
 import re
 from threading import Thread
 
@@ -66,11 +69,16 @@ def check(req, resource_id):
             parser = NmapParser()
             parser.set_xml_file(nmapCommand.get_xml_output_file())
             parser.parse()
-            parsed_scan = __scan_to_json(parser)
+            parsed_scan = str(__scan_to_json(parser))
             text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
             response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
                            " {'full': %s, 'plain': '%s'}}" % (parsed_scan, text_out))
             server.currentInstance.removeResource(resource_id)
+            fname = mktemp()
+            #scan_result = open(fname, 'w')
+            parser.write_xml(fname)
+            req.session['scan_result_' + resource_id] = open(fname, 'r').read()
+            #os.unlink(scan_result)
     except Exception, e:
         if "running" in str(e).lower():
             response.write("{'result': 'OK', 'status': 'RUNNING', " + \
@@ -78,6 +86,27 @@ def check(req, resource_id):
         else:
             raise Http500("Nmap command raised an exception!\n%s" % str(e))
     return response
+
+@authenticate(ERROR)
+def upload_result(req):
+    if req.POST:
+        if req.POST['type'] == "file":
+            try:
+                parser = NmapParser()
+                parser.set_xml_file(req.FILES['scan_result']['temp_file'])
+                parser.parse()
+                parsed_scan = __scan_to_json(parser)
+                text_out = parser.nmap_output.replace("'", "\\'").replace("\r", "").replace("\n", "\\n' + \n'")
+                parsed_scan = str(parsed_scan).replace("\n", "\\n' + \n'")
+                return HttpResponse("{'result': 'OK', 'output': " + \
+                                    "{'plain': '%s', 'full': %s}}" % \
+                                    (text_out, parsed_scan), "text/plain")
+            except Exception, ex:
+                return HttpResponse("{'result': 'FAIL', 'output': '%s'}" % str(ex).replace("'", "\\'"), "text/plain")
+        else:
+            return HttpResponse("{'result': 'FAIL', 'output': 'NOT IMPLEMENTED'}", "text/plain")
+    else:
+        raise HttpError(400, "Invalid GET request.")
 
 
 def __scan_to_json(scan):
@@ -97,7 +126,7 @@ def __scan_to_json(scan):
         else:
             ret[attr] = str(realAttribute)
             
-    return str(ret)
+    return ret
 
 def __list_to_json(list):
     ret = []

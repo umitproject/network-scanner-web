@@ -44,9 +44,7 @@ def output_highlight(req):
     response['Content-type'] = "text/javascript; charset=utf-8"
     highlight = JsOutputHighlight()
     attrDic = {}
-    """
-setts:['bold', 'italic', 'underline', 'text', 'highlight', 'regex']
-    """
+
     response.write("highlights = {};\n")
     for attr in ["closed_port", "date", "details", "filtered_port",
                  "hostname", "ip", "open_port", "port_list"]:

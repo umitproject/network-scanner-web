@@ -21,6 +21,7 @@ a:hover{
     margin: 0;
     padding-left: 190px;
     padding-top: 65px;
+    width: 98%;
 }
 
 #body{
@@ -127,4 +128,35 @@ h4 a:hover{
 
 .selected{
 	background-color: #CCC;
+}
+
+.dialog{
+    border: 1px solid #DDD;
+    background: white;
+}
+
+.dialog h2{
+    font-size: 9pt;
+    color: #505050;
+    padding: 2px;
+    margin: 0;
+    margin-bottom: 3px;
+    font-weight: bold;
+    border-bottom: 1px #DDD solid;
+    background-image: url(/media/images/th_back.jpg);
+    background-repeat: repeat-x;
+}
+
+.dialog h2 a{
+    color: #505050;
+    padding: 1px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border: solid #DDD 1px;
+    color: #505050;
+}
+
+.dialog h2 a:hover{
+    text-decoration: none;
+    color: black;
 }

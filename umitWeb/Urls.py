@@ -25,6 +25,7 @@ patterns = (
     (r'^test/(?P<path>.*)/$', 'umitWeb.views.test.main'),
     (r'^scan/$', 'umitWeb.views.scan.new'),
     (r'^scan/profiles/$', 'umitWeb.views.main.get_profiles'),
+    (r'^scan/upload/$', 'umitWeb.views.scan.upload_result'),
     (r'^scan/(?P<resource_id>[0-9a-fA-F]{32,32})/check/$', 'umitWeb.views.scan.check'),
     (r'^media/js/output_highlight.js$', 'umitWeb.views.main.output_highlight'),
     (r'^media/(?P<path>.*)$', 'umitWeb.views.main.serve_media'),
