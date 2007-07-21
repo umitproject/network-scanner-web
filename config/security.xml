@@ -5,6 +5,11 @@
         
         <permission id="deny-all" type="allow"/>
         
+        <permission id="deny-localhost" type="deny">
+            <constraint type="command">127\.[0-2][0-5][0-9]\.[0-2][0-5][0-9]\.[0-2][0-5][0-9]</constraint>
+            <constraint type="command">localhost</constraint>
+        </permission>
+        
         <permission id="p1" type="allow">
             <description>An sample permission</description>
             
@@ -24,9 +29,8 @@
         <role id="role1">
             <description>An example role</description>
             <permissions>
-                <permission ref="p1"/>
-                <permission ref="p2"/>
-                <permission ref="deny-all"/>
+                <permission ref="deny-localhost"/>
+                <permission ref="allow-all"/>
             </permissions>
         </role>
         
@@ -39,7 +43,7 @@
     </roles>
     
     <users>
-        <user login="admin">
+        <user login="admin" superuser="yes">
             <name>Umit's Administrator</name>
 	    <password>21232f297a57a5a743894a0e4a801fc3</password>
             <roles>
@@ -47,14 +51,13 @@
             </roles>
         </user>
         
-        <user login="user1">
+        <user login="user1" superuser="no">
             <name>Test User 1</name>
+            <!-- MD5 Hash of the pasword -->
+            <password>202cb962ac59075b964b07152d234b70</password>
             <roles>
                 <role ref="role1"/>
             </roles>
-            
-            <!-- MD5 Hash of the pasword -->
-            <password>202cb962ac59075b964b07152d234b70</password>
         </user>
     </users>
 </security>

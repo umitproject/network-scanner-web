@@ -24,13 +24,20 @@ from umitWeb.Server import UmitWebServer as server
 from umitWeb.WebLogger import getLogger
 from umitCore.NmapCommand import NmapCommand
 from umitCore.NmapParser import NmapParser, HostInfo
+from umitCore.UmitConf import CommandProfile
+from urllib import quote
 from tempfile import mktemp
+import random
+import sys
 import os
 #from StringIO import StringIO
 import re
+import md5
 from threading import Thread
 
+
 logger = getLogger(__name__)
+
 
 @authenticate(ERROR)
 def new(req):
@@ -43,12 +50,15 @@ def new(req):
         nmapCommand = NmapCommand(command)
         resourceID = server.currentInstance.addResource(nmapCommand)
         server.currentInstance.fireResourceEvent(resourceID, "run_scan")
-        #nmapCommand.run_scan()
         
+        req.session['command_' + resourceID] = command
+        req.session['profile_' + resourceID] = req.POST['profile_name']
+        req.session['target_' + resourceID] = req.POST['target']
         response.write("{'result': 'OK', 'status': 'RUNNING', 'id': '%s'}" % resourceID)
     except Exception, e:
         response.write("{'result': 'FAIL', 'status': '%s'}" % str(e).replace("'", "\\'"))
     return response
+
 
 @authenticate(ERROR)
 def check(req, resource_id):
@@ -66,19 +76,33 @@ def check(req, resource_id):
             response.write("{'result': 'OK', 'status': 'RUNNING', " + \
                            "'output': {'text': '%s'}}" % output.replace("'", "\\'").replace("\n", "\\n' + \n'"))
         else:
+            profile = CommandProfile()
             parser = NmapParser()
             parser.set_xml_file(nmapCommand.get_xml_output_file())
             parser.parse()
+
+            parser.profile_name = req.session['profile_' + resource_id]
+            parser.target = req.session['target_' + resource_id]
+            parser.nmap_command = req.session['command_' + resource_id]
+            parser.profile = profile.get_command(parser.profile_name)
+            parser.profile_hint = profile.get_hint(parser.profile_name)
+            parser.profile_description = profile.get_description(parser.profile_name)
+            parser.profile_annotation = profile.get_annotation(parser.profile_name)
+            parser.profile_options = profile.get_options(parser.profile_name)
+            try:
+                parser.nmap_output = nmapCommand.get_raw_output()
+            except:
+                parser.nmap_output = "\\n".join(self.scan_result.get_nmap_output().split("\n"))
+            
             parsed_scan = str(__scan_to_json(parser))
             text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
             response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
                            " {'full': %s, 'plain': '%s'}}" % (parsed_scan, text_out))
             server.currentInstance.removeResource(resource_id)
             fname = mktemp()
-            #scan_result = open(fname, 'w')
-            parser.write_xml(fname)
+            fresult = open(fname, "w", 0)
+            parser.write_xml(fresult)
             req.session['scan_result_' + resource_id] = open(fname, 'r').read()
-            #os.unlink(scan_result)
     except Exception, e:
         if "running" in str(e).lower():
             response.write("{'result': 'OK', 'status': 'RUNNING', " + \
@@ -86,6 +110,7 @@ def check(req, resource_id):
         else:
             raise Http500("Nmap command raised an exception!\n%s" % str(e))
     return response
+
 
 @authenticate(ERROR)
 def upload_result(req):
@@ -96,11 +121,16 @@ def upload_result(req):
                 parser.set_xml_file(req.FILES['scan_result']['temp_file'])
                 parser.parse()
                 parsed_scan = __scan_to_json(parser)
+                junk = r"odpojfsdkjfpisudŕij208u-0w9rsdnfkdfçwrtwqr/fsasd~/???çds"
+                key = md5.new(str(random.randint(0, sys.maxint-1)) \
+                                  + str(random.randint(1, sys.maxint-1)//2) \
+                                  + junk).hexdigest()
+                req.session['scan_result_' + key] = open(req.FILES['scan_result']['temp_name'], 'r').read()
                 text_out = parser.nmap_output.replace("'", "\\'").replace("\r", "").replace("\n", "\\n' + \n'")
                 parsed_scan = str(parsed_scan).replace("\n", "\\n' + \n'")
-                return HttpResponse("{'result': 'OK', 'output': " + \
-                                    "{'plain': '%s', 'full': %s}}" % \
-                                    (text_out, parsed_scan), "text/plain")
+                return HttpResponse(("{'result': 'OK', 'id': '%s', 'output': " + \
+                                    "{'plain': '%s', 'full': %s}}") % \
+                                    (key, text_out, parsed_scan), "text/plain")
             except Exception, ex:
                 return HttpResponse("{'result': 'FAIL', 'output': '%s'}" % str(ex).replace("'", "\\'"), "text/plain")
         else:
@@ -108,6 +138,21 @@ def upload_result(req):
     else:
         raise HttpError(400, "Invalid GET request.")
 
+@authenticate(ERROR)
+def save_result(req, scan_id):
+    if req.POST:
+        scan = req.session.get("scan_result_" + scan_id, None)
+        if not scan:
+            raise Http404
+        
+        if req.POST['destination'] == "database":
+            return HttpResponse("{'result': 'FAIL', 'output': 'NOT IMPLEMENTED'}", "text/plain")
+        else:
+            response = HttpResponse(scan, "text/xml")
+            response['Content-disposition'] = "attachment; filename=" + quote(req.POST['filename'].replace(" ", "_")) + ".usr"
+            return response
+    else:
+        raise HttpError(400, "Invalid GET request.")
 
 def __scan_to_json(scan):
     attrs = [a for a in dir(scan) if not callable(getattr(scan, a)) \
@@ -128,6 +173,7 @@ def __scan_to_json(scan):
             
     return ret
 
+
 def __list_to_json(list):
     ret = []
     for x in list:
@@ -142,6 +188,7 @@ def __list_to_json(list):
             
     return ret
 
+
 def __dict_to_json(dic):
     ret = {}
     for k in dic.keys():
@@ -154,6 +201,7 @@ def __dict_to_json(dic):
         else:
             ret[k] = str(dic[k])
     return ret
+
 
 def __hostinfo_to_json(host):
     attrs = [a for a in dir(host) if not callable(getattr(host, a)) and \

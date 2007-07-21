@@ -27,7 +27,7 @@ from umitCore.UmitConf import CommandProfile
 from umitWeb.Http import HttpResponse, Http404, HttpResponseRedirect
 from umitWeb.WebLogger import getLogger
 from umitWeb.Auth import authenticate, ERROR
-from umitWeb.SecurityParser import Security
+from umitWeb.Security import Context
 import mimetypes
 
 logger = getLogger("main")
@@ -98,9 +98,10 @@ def show_favicon(req):
 
 def login(req):
     resp = HttpResponse()
+    ctx = Context()
     if req.POST:
         resp['Content-type'] = "text/plain"
-        user = Security.get_user(req.POST['login'], req.POST['password'])
+        user = ctx.get_user(req.POST['login'], req.POST['password'])
         
         if req.GET.has_key("json"):
             if user:
@@ -129,4 +130,5 @@ def test_ajax(req):
 def logout(req):
     if req.session.has_key("umit_user"):
         del req.session['umit_user']
+    req.session.destroy()
     return HttpResponseRedirect("/")

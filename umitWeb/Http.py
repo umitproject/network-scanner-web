@@ -90,20 +90,7 @@ class HttpRequest(object):
 
         if self.requestHandler.command == "POST":
             length = int(self.headers.get('content-length', 0))
-            #rfile = StringIO()
-            #rf = self.requestHandler.request.makefile()
-            #pdata = self.requestHandler.rfile.flush()
             pdata = self.requestHandler.rfile.read(length)
-            #rfd = os.dup(self.requestHandler.rfile.fileno())
-            #rf = os.fdopen(rfd, 'rb')
-            #pdata = self.get_rfile(self.requestHandler.rfile, size=length-1)
-            #pdata = rf.read(length)
-            #rf.close()
-            #pdata = rf.read(length)
-            #print "PDATA: %s\n\n" % pdata
-            
-            #pdata = ""
-            #self.POST['command'] = "-v -v -v -O -sV 10.0.0.254"
             
             if pdata:
                 if "multipart/form-data" not in self.headers.get('content-type', 'x-www-urlencoded'):

@@ -31,6 +31,7 @@ from umitWeb.Urls import patterns
 from umitWeb.Http import HttpRequest, Http404, HttpError, HttpResponse
 from umitWeb.Database import SessionData
 from umitWeb.WebLogger import getLogger
+from umitWeb.Security import Context
 from threading import Thread
 
 

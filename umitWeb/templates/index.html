@@ -21,7 +21,7 @@
             <div id="options">
              <ul>
               <li><a href="javascript:void(null)" onclick="openScan()">Open Scan</a></li>
-              <li><a href="javascript:void(null)">Save Scan</a></li>
+              <li><a href="javascript:void(null)" onclick="saveScan()">Save Scan</a></li>
               <li><a href="/logout/">Logout</a></li>
              </ul>
             </div>
@@ -29,9 +29,10 @@
             <!-- <div><form method="post" onsubmit="return runScan()"> -->
             <div><form method="post" action="/scan/" id="frmScan">
                 <label for="target">Target:</label><input type="text" name="target" size="25" id="target" onblur="fillCommand(this.value)"/>
-                &nbsp;&nbsp;&nbsp;<label for="profiles">Profile:</label><select id="profiles" style="width:294px;"></select><br/>
+                &nbsp;&nbsp;&nbsp;<label for="profiles">Profile:</label><select id="profiles" style="width:294px;" name="profile"></select><br/>
                 <label for="command">Command: </label><span class="code"></span>
                 <input type='text' id='command' name='command' size='50' value='-v <target>'/><input type="SUBMIT" value="Scan now!"/>
+                <input type='HIDDEN' name="profile_name" id="profile_name"/>
             </form></div>
         <div id="result_window">
             <div id="hosts_services">

@@ -5,6 +5,8 @@ scanLock = false;
 lastHost = null;
 lastService = null;
 var scanEvent = null;
+var scanId = null;
+var saved = false;
 var nmapOutput = "";
 var sSlide;
 var hSlide;
@@ -639,6 +641,7 @@ function loadScanData(scan){
 	loadServices(scan);
 	loadScanInfo(scan);
 	selectHost(scanEvent, hosts, 0);
+	saved = false;
 }
 
 function formatNmapOutput(output){
@@ -720,15 +723,12 @@ function checkScanStatus(scanID){
 				    if(result.status == "FINISHED"){
 						resultBox.removeClass("ajax-loading")
 						nmapOutput = result.output.plain
-						if(window.ie){
-							nmapOutput = nmapOutput.replace("\r", "<br/>\r")
-							//alert(nmapOutput)
-						}
 						if(!$("highlight_out").checked){
 							resultBox.setText(nmapOutput)
 						}else{
 							resultBox.setHTML(formatNmapOutput(nmapOutput))
 						}
+						scanId = scanID
 						varData = result.output.full
 						loadScanData(result.output.full)
 				    }else if(result.status == "RUNNING"){
@@ -783,55 +783,87 @@ function showError(req, target){
 	}
 }
 
-runScan = function(e){
+function runScan(e){
 	e = new Event(e);
+	isToBeSent = true;
+	if(saved == false && scanId != null){
+		text = "The given scan has unsaved changes!\n" +
+			"If you want to continue, click 'OK'.\n" +
+			"WARNING: all unsaved data will be lost.";
+		if(!confirm(text)){
+			isToBeSent = false;
+		}
+	}
 	
-	scanEvent = e;
-	result_box = $("nmap-output");
-	result_box.empty().addClass("ajax-loading");
-	tbHosts = $("hosts_table").getElement("tbody");
-	tbHosts.empty();
-	tr = new Element("tr");
-	td1 = new Element("td");
-	td1.adopt(new Element("img", {'src': '/media/images/spinner.gif'}));
-	tr.adopt(td1);
-	td2 = new Element("td");
-	td2.setText("Running...");
-	tr.adopt(td2);
-	tbHosts.adopt(tr);
+	if(isToBeSent){
+		scanEvent = e;
+		result_box = $("nmap-output");
+		result_box.empty().addClass("ajax-loading");
+		tbHosts = $("hosts_table").getElement("tbody");
+		tbHosts.empty();
+		tr = new Element("tr");
+		td1 = new Element("td");
+		td1.adopt(new Element("img", {'src': '/media/images/spinner.gif'}));
+		tr.adopt(td1);
+		td2 = new Element("td");
+		td2.setText("Running...");
+		tr.adopt(td2);
+		tbHosts.adopt(tr);
+		
+		$("ports_table").getElement("tbody").empty();
+		$("hosts_tab").empty();
+		$("scan_details").empty();
+		$("tabber-result").tabber.tabShow(1);
+		$("services_table").getElement("tbody").empty();
+		$("profile_name").value = $("profiles")[$("profiles").selectedIndex].textContent
 	
-	$("ports_table").getElement("tbody").empty();
-	$("hosts_tab").empty();
-	$("scan_details").empty();
-	$("tabber-result").tabber.tabShow(1);
-	$("services_table").getElement("tbody").empty();
-	
-	this.send({onComplete: function(tResult){
-			result = Json.evaluate(tResult);
-			if(result.result == "OK"){
-				    checkScanStatus(result.id)
-			}else{
-				    result_box.removeClass("ajax-loading").addClass("ajax-error");
-				    result_box.setText(result.status);
-			}
-		  },
-		  onFailure: function(req){
-		    result_box.removeClass("ajax-loading");
-		    $("hosts_table").getElement("tbody").empty();
-		    if(req.status == 200){
-			$("nmap-output").setHTML(req.responseText);
-		    }else{
-			showError(req, "nmap-output");
-		    }
-		    scanLock = false;
-		  }
-		  });
+		this.send({onComplete: function(tResult){
+				result = Json.evaluate(tResult);
+				if(result.result == "OK"){
+					    checkScanStatus(result.id)
+				}else{
+					    result_box.removeClass("ajax-loading").addClass("ajax-error");
+					    result_box.setText(result.status);
+				}
+			  },
+			  onFailure: function(req){
+			    result_box.removeClass("ajax-loading");
+			    $("hosts_table").getElement("tbody").empty();
+			    if(req.status == 200){
+				$("nmap-output").setHTML(req.responseText);
+			    }else{
+				showError(req, "nmap-output");
+			    }
+			    scanLock = false;
+			  }
+		});
+	}
 	e.stop();
 }
 
 function openScan(){
-	rs = new UploadResultDialog();
-	rs.run();
+	isToRun = true;
+	if(saved == false && scanId != null){
+		text = "The given scan has unsaved changes!\n" +
+			"If you want to continue, click 'OK'.\n" +
+			"WARNING: all unsaved data will be lost.";
+		if(!confirm(text)){
+			isToRun = false;
+		}
+	}
+	if(isToRun){
+		rs = new UploadResultDialog();
+		rs.run();
+	}
+}
+
+function saveScan(){
+	if(scanId == null){
+		alert("There is no scan to save!");
+	}else{
+		dn = new SaveResultDialog();
+		dn.run();
+	}
 }
 
 window.addEvent("domready", function(){

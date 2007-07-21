@@ -95,7 +95,7 @@ class Paths(object):
         
         # Set UmitWeb file name
         self.webconfig_file = os.path.join(os.path.dirname(umit_conf), "umitweb.conf")
-
+        self.webconfig_file_set = True
         log.debug(">>> Config file: %s" % config_file)
 
     def root_dir(self):
@@ -169,6 +169,8 @@ def create_user_dir(main_config, user_home):
     copy_config_file("umit_version", main_dir, user_dir)
     copy_config_file("umit.db", main_dir, user_dir)
     copy_config_file("wizard.xml", main_dir, user_dir)
+    copy_config_file("umitweb.conf", main_dir, user_dir)
+    copy_config_file("security.xml", main_dir, user_dir)
 
     return dict(user_dir = user_dir,
                 config_dir = user_dir,
