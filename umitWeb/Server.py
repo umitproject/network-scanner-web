@@ -100,6 +100,7 @@ class SessionWrapper(object):
         return md5.new(str(random.randint(0, sys.maxint-1)) \
                                   + str(random.randint(1, sys.maxint-1)//2) \
                                   + junk).hexdigest()
+    
     def get_sessid(self):
         """Return the ID of the session
         """

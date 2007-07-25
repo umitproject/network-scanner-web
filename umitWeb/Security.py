@@ -1,5 +1,6 @@
 import os
 import md5
+import re
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
 from umitCore.Paths import Path
@@ -43,6 +44,32 @@ class User(object):
         else:
             self.superuser = False
         self.roles = roles or []
+        
+    def is_permitted(self, command):
+        command = command.replace("nmap", "")
+        permissions = []
+        for role in self.roles:
+            permissions += role.permissions
+            
+        for perm in permissions:
+            found = False
+            for c in perm.constraints:
+                match = re.search(c.content, command)
+                if match:
+                    found = True
+                    command = command[:match.start()] + command[match.end():]
+            if perm.type == "deny" and found:
+                return False
+            elif len(command.strip()) == 0:
+                return True
+            
+        else:
+            if perm.id == "allow-all":
+                return True
+            elif perm.id == "deny-all":
+                return False
+            else:
+                return False
 
 
 class SecurityContext(object):

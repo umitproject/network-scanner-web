@@ -760,9 +760,9 @@ function checkScanStatus(scanID){
 
 function showError(req, target){
 	messages = {
-		403: "<h2>Forbidden</h2>\n" +
+		403: "<h3 style='display:block;margin-top:0;padding-top:0'>Forbidden</h3>\n" +
 		    "Your access has been " +
-		    "denied when you try to " +
+		    "denied when you tried to " +
 		    "request this page.<br/>" +
 		    "Check with you system " +
 		    "administrator if you have " +

@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from types import *
-from umitWeb.Http import HttpResponse, Http404, Http500, HttpError
+from umitWeb.Http import HttpResponse, Http404, Http500, Http403, HttpError
 from umitWeb.Auth import authenticate, ERROR
 from umitWeb.Server import UmitWebServer as server
 from umitWeb.WebLogger import getLogger
@@ -46,18 +46,21 @@ def new(req):
     
     #Replace dangerous commands
     command = re.sub(r"[\\;|`&]", "", req.POST['command'])
-    try:
-        nmapCommand = NmapCommand(command)
-        resourceID = server.currentInstance.addResource(nmapCommand)
-        server.currentInstance.fireResourceEvent(resourceID, "run_scan")
-        
-        req.session['command_' + resourceID] = command
-        req.session['profile_' + resourceID] = req.POST['profile_name']
-        req.session['target_' + resourceID] = req.POST['target']
-        response.write("{'result': 'OK', 'status': 'RUNNING', 'id': '%s'}" % resourceID)
-    except Exception, e:
-        response.write("{'result': 'FAIL', 'status': '%s'}" % str(e).replace("'", "\\'"))
-    return response
+    if req.session.user.is_permitted(command):
+        try:
+            nmapCommand = NmapCommand(command)
+            resourceID = server.currentInstance.addResource(nmapCommand)
+            server.currentInstance.fireResourceEvent(resourceID, "run_scan")
+            
+            req.session['command_' + resourceID] = command
+            req.session['profile_' + resourceID] = req.POST['profile_name']
+            req.session['target_' + resourceID] = req.POST['target']
+            response.write("{'result': 'OK', 'status': 'RUNNING', 'id': '%s'}" % resourceID)
+        except Exception, e:
+            response.write("{'result': 'FAIL', 'status': '%s'}" % str(e).replace("'", "\\'"))
+        return response
+    else:
+        raise Http403
 
 
 @authenticate(ERROR)
@@ -67,7 +70,7 @@ def check(req, resource_id):
     
     nmapCommand = server.currentInstance.getResource(resource_id)
     
-    if not nmapCommand:
+    if nmapCommand is None:
         raise Http404
     
     try:
