@@ -3,8 +3,12 @@ import md5
 import re
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
+from xml.sax.saxutils import XMLGenerator
+from xml.sax.xmlreader import AttributesImpl as Attributes
 from umitCore.Paths import Path
+from umitWeb.WebLogger import getLogger
 
+SECURITY_FILE = os.path.join(os.path.dirname(__file__), os.pardir ,"config", "security.xml")
 
 class Constraint(object):
     
@@ -50,7 +54,6 @@ class User(object):
         permissions = []
         for role in self.roles:
             permissions += role.permissions
-            
         for perm in permissions:
             found = False
             for c in perm.constraints:
@@ -73,12 +76,12 @@ class User(object):
 
 
 class SecurityContext(object):
-    permissions = []
-    roles = []
-    users = []
+    _locked = False
     
-    def get_user(self, id):
-        pass
+    def __init__(self):
+        self.permissions = []
+        self.roles = []
+        self.users = []
     
     def get_permission(self, id):
         for p in self.permissions:
@@ -93,16 +96,97 @@ class SecurityContext(object):
     def add_permission(self, id, type):
         self.permissions.append(Permission(id, type))
     
-    def get_user(self, login, password):
+    def get_user(self, login, password, id=None):
         passwd = md5.new(password).hexdigest()
         for u in self.users:
             if u.login == login:
                 if u.password == passwd:
                     return u
+                
+    def _write_permissions(self):
+        permissions = self.permissions
+        self.writer.startElement("permissions", Attributes({}))
+        for perm in permissions:
+            attrs = Attributes({'id': perm.id,
+                                'type': perm.type})
+            self.writer.startElement("permission", attrs)
+            if perm.description:
+                self.writer.startElement("description", Attributes({}))
+                self.writer.characters(perm.description)
+                self.writer.endElement("description")
+                
+            for constraint in perm.constraints:
+                self.writer.startElement("constraint",
+                    Attributes({'type': constraint.type}))
+                self.writer.characters(constraint.content)
+                self.writer.endElement("constraint")
+            self.writer.endElement("permission")
+        self.writer.endElement("permissions")
+        
+    def _write_roles(self):
+        roles = self.roles
+        self.writer.startElement("roles", Attributes({}))
+        for role in roles:
+            self.writer.startElement("role",
+                    Attributes({'id': role.id}))
+            if role.description:
+                self.writer.startElement("description", Attributes({}))
+                self.writer.characters(role.description)
+                self.writer.endElement("description")
+                
+            if role.permissions:
+                self.writer.startElement("permissions", Attributes({}))
+                for p in role.permissions:
+                    self.writer.startElement("permission",
+                                  Attributes({"ref": p.id}))
+                    self.writer.endElement("permission")
+                self.writer.endElement("permissions")
+            self.writer.endElement("role")
+        self.writer.endElement("roles")
+    
+    def _write_users(self):
+        users = self.users
+        self.writer.startElement("users", Attributes({}))
+        for user in users:
+            attrs = Attributes({'login': user.login,
+                            'superuser': user.superuser and "yes" or "no"})
+            self.writer.startElement("user", attrs)
+            if user.name:
+                self.writer.startElement("name", Attributes({}))
+                self.writer.characters(user.name)
+                self.writer.endElement("name")
+            self.writer.startElement("password", Attributes({}))
+            self.writer.characters(user.password)
+            self.writer.endElement("password")
+            if user.roles:
+                self.writer.startElement("roles", Attributes({}))
+                for r in user.roles:
+                    self.writer.startElement("role",
+                                         Attributes({'ref': r.id}))
+                    self.writer.endElement("role")
+                self.writer.endElement("roles")
+            self.writer.endElement("user")
+        self.writer.endElement("users")
+    
+    def write_xml(self, xml_file=None):
+        xml_file = xml_file or SECURITY_FILE
+        if self._locked:
+            raise ResourceBusyError
+        else:
+            self._locked = True
+        self.writer = XMLGenerator(xml_file)
+        self.writer.startDocument()
+        self.writer.startElement("security", Attributes({}))
+        self._write_permissions()
+        self._write_roles()
+        self._write_users()
+        self.writer.endElement("security")
+        self.writer.endDocument()
+        self._locked = False
 
 
 class SecurityConfHandler(ContentHandler):
-    
+    logger = getLogger("ContentHandler")
     _in_users = False
     _in_roles = False
     _in_permissions = False
@@ -206,31 +290,42 @@ class SecurityConfHandler(ContentHandler):
             self._in_name = False
         elif name == "password" and self._in_user:
             self._in_password = False
+        
 
 
 ## Exceptions
 class ElementNotFound(Exception):
     pass
 
+class ResourceBusyError(Exception):
+    pass
+
 
 def get_security_parser(config_file=None):
-    cfg_file = config_file or os.path.join(os.path.dirname(__file__), os.pardir ,"config", "security.xml")
+    logger = getLogger("Context")
+    cfg_file = config_file or SECURITY_FILE
+    logger.debug(cfg_file)
     parser = make_parser()
     ctx = SecurityContext()
     parser.setContentHandler(SecurityConfHandler(ctx))
-    parser.parse(open(cfg_file, 'r'))
+    f = open(cfg_file, 'r')
+    parser.parse(f)
+    f.close()
+    #parser.close()
+    parser.reset()
     
     return ctx
     
 Context = get_security_parser
 
 if __name__ == "__main__":
-    Path.set_umit_conf(os.path.join(os.path.dirname(__file__), os.pardir, 'config', 'umit.conf'))
-    ctx = Context()
+    pass
+    #Path.set_umit_conf(os.path.join(os.path.dirname(__file__), os.pardir, 'config', 'umit.conf'))
+    #ctx = Context()
     #print "Permissions:\n" + "\n---\n".join([
     #    p.id + " - " + p.type + "\n###\n" + ("\n".join([c.content for c in p.constraints])) \
     #    for p in ctx.permissions
     #])
     
     #print [[r.id, r.description, [p.id for p in r.permissions]] for r in ctx.roles]
-    print [[u.login, u.password, u.name, [r.id for r in u.roles]] for u in ctx.users]
+    #print [[u.login, u.password, u.name, [r.id for r in u.roles]] for u in ctx.users]

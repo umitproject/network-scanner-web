@@ -102,20 +102,24 @@ UploadResultDialog = Dialog.extend({
         
         frm.addEvent("submit", function(e){
             iFrame.addEvent("load", function(e2){
-                result = Json.evaluate(this.contentDocument.getElementsByTagName("pre")[0].textContent);
-                if(result.result == "OK" && $defined(result.output.full)){
-                    varData = result.output.full;
-                    loadScanData(varData);
-                    nmapOutput = result.output.plain;
-                    $("command").value = varData.nmap_command;
-                    scanId = result.id;
-                    if(!$("highlight_out").checked){
-                            $("nmap-output").setText(nmapOutput);
+                try{
+                    result = Json.evaluate(this.contentDocument.getElementsByTagName("pre")[0].textContent);
+                    if(result.result == "OK" && $defined(result.output.full)){
+                        varData = result.output.full;
+                        loadScanData(varData);
+                        nmapOutput = result.output.plain;
+                        $("command").value = varData.nmap_command;
+                        scanId = result.id;
+                        if(!$("highlight_out").checked){
+                                $("nmap-output").setText(nmapOutput);
+                        }else{
+                                $("nmap-output").setHTML(formatNmapOutput(nmapOutput));
+                        }
                     }else{
-                            $("nmap-output").setHTML(formatNmapOutput(nmapOutput));
+                        alert(result.output);
                     }
-                }else{
-                    alert(result.output);
+                }catch(e){
+                    $("nmap-output").setText(this.contentDocument.getElementsByTagName("pre")[0].textContent);
                 }
             });
         });

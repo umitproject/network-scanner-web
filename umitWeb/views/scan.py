@@ -96,7 +96,7 @@ def check(req, resource_id):
                 parser.nmap_output = nmapCommand.get_raw_output()
             except:
                 parser.nmap_output = "\\n".join(self.scan_result.get_nmap_output().split("\n"))
-            
+            #del parser['nmap']
             parsed_scan = str(__scan_to_json(parser))
             text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
             response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \

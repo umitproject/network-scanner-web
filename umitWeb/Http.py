@@ -115,8 +115,10 @@ class HttpRequest(object):
                         #self.logger.debug("Form-header: %s" % header)
                         #self.logger.debug("Form-data: %s" % data)
                         
-                        match_file = re.match(r".*[; ]filename=[\"](?P<filename>[^,]+)[\"].*", header)
-                        match_text = re.match(r".*[; ]name=[\"](?P<name>[^,^;]+)[\"].*", header)
+                        match_file = re.search(r"[\s]?filename=[\"]?(?P<filename>[^;^$^\"]+)[\"]?", header)
+                        match_text = re.search(r"[\s;]?name=[\"]?(?P<name>[^;^$^\"]+)[\"]?", header)
+                        #self.logger.debug("groupdict (file): %s" % str(match_file.groupdict()))
+                        #self.logger.debug("groupdict (text): %s" % str(match_text.groupdict()))
                         
                         if match_file:
                             #Type: File
@@ -129,14 +131,13 @@ class HttpRequest(object):
                             temp_file.write(data)
                             temp_file.flush()
                             temp_file.close()
-                            
                             self.FILES[match_text.groupdict()['name']] = {
                                 "content_type": content_type,
                                 "name": match_file.groupdict()['filename'],
                                 "temp_name": temp_name,
                                 "size": len(data),
                                 "temp_file": open(temp_name, "rb", 0)
-                                }
+                            }
                             self.POST[match_text.groupdict()['name']] = match_file.groupdict()['filename']
                         else:
                             #Type: Plain text
@@ -153,6 +154,8 @@ class HttpRequest(object):
             if self.FILES:
                 for file in self.FILES.items():
                     self.logger.debug("temp name: %s" % file[1]['temp_name'])
+                    #self.logger.debug("data: %s" % file[1]['temp_file'].read())
+                    #file[1]['temp_file'].seek(0)
                     
     def get_rfile(self, rfile, length=16*1024, size=0):
         if not size:
@@ -172,6 +175,8 @@ class HttpRequest(object):
         return self.path
     
     def session_destroy(self):
+        """Destroy the current session.
+        """
         del self.COOKIES['umitsessid']
         self.session._session.delete()
 
@@ -194,8 +199,10 @@ class HttpResponse(object):
         self.data += data
         
     def loadTemplate(self, template):
+        """Load a template given its filename
+        """
         template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
-        self.data = open(os.path.join(template_dir, template)).read()
+        self.data += open(os.path.join(template_dir, template)).read()
         
     def __add__(self, obj):
         if not issubclass(obj.__class__, self.__class__):
@@ -217,6 +224,8 @@ class HttpResponse(object):
 
 
 class HttpResponseRedirect(HttpResponse):
+    """Return a 303 HTTP Response (See other)
+    """
     def __init__(self, url):
         HttpResponse.__init__(self)
         self.code = 303

@@ -42,6 +42,9 @@ class URLResolver(object):
     This function is executed and the result (an instance of HttpResponse) is sent
     back to the client (the http browser).
     """
+
+    logger = getLogger("URLResolver")
+    
     def __init__(self):
         pass
 
@@ -60,8 +63,8 @@ class URLResolver(object):
                 try:
                     found = True
                     module, function = action.rsplit(".", 1)
-                    exec "import %s" % module
-                    module = eval(module)
+                    module = __import__(module, level=0, fromlist=["umitWeb"])
+                    self.logger.debug("Importing module: " + module.__name__)
                     executer = getattr(module, function)
                     ret = executer(request, **match.groupdict())
                     del executer
@@ -195,6 +198,7 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                 self.session_start(request)
                 
                 response = resolver.resolve(request)
+
                 if response.__class__ is not HttpResponse and not \
                    issubclass(response.__class__, HttpResponse):
                     raise HttpError(500, "Expected HttpResponse, got %s" % \
@@ -207,6 +211,7 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                     request.session.save()
                 
                 self.send_response(response.code)
+                self.logger.debug("Response code: %s" % str(response.code))
                 for header in response.headers.keys():
                     self.send_header(header, response.headers[header])
 
@@ -221,12 +226,12 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(response.data)
                 
         except HttpError, e:
-            self.logger.error("Status code: %d - Message: %s", (e.error_code, e.message))
+            self.logger.error("Status code: %s - Message: %s", (str(e.error_code), e.message))
             self.send_error(e.error_code, e.message)
         except Exception, e:
+            print_exc()
             error = StringIO(0)
             self.send_error(500, str(e))
-            self.wfile.write("<h2>Exception Details:</h2><pre>")
             self.wfile.write("<h2>Exception Details:</h2><pre>")
             print_exc(file=error)
             error.flush()
@@ -299,4 +304,6 @@ class UmitWebServer(HTTPServer):
     def run(self):
         SessionWrapper.clear()
         #os.chroot(os.path.join(os.path.dirname(__file__), "chroot"))
+        f = open("umitweb.log", "a+", 1)
+        sys.stderr = sys.stdout = f
         self.serve_forever()

@@ -3,23 +3,23 @@ import os
 import re
 import sys
 import signal
-import BaseHTTPServer
 import urllib2
-from urllib import quote, unquote, urlencode
 import httplib
-from tempfile import mktemp
 import mimetypes
+from urllib import quote, unquote, urlencode
+from tempfile import mktemp
 
 sys.path += [os.path.join(os.path.dirname(__file__), "..", "")]
 
 from umitWeb.WebLogger import getLogger
 from umitWeb.Server import UmitWebServer
+from umitWeb.Security import Context
 
 class HttpTestCase(unittest.TestCase):
     logger = getLogger("HttpTestCase")
     
     def setUp(self):
-        self.server_url = "http://localhost:8000"
+        self.server_url = "http://localhost:8059"
         self.info_url = "%s/test/server/info/" % self.server_url
         self.req_info = urllib2.Request(self.info_url)
         
@@ -77,11 +77,11 @@ class HttpTestCase(unittest.TestCase):
     def testDestroySession(self):
         try:
             f = urllib2.urlopen("%s/test/server/session_destroy" % self.server_url)
-            fc = f.read()
+            fc = f.read().strip()
             contents = eval(fc)
         except SyntaxError, ex:
             self.logger.warning("Response: " + fc)
-            
+            assert False
         self.assertEqual(contents['result'], "OK")
         
         try:
@@ -121,10 +121,15 @@ class HttpTestCase(unittest.TestCase):
                   'data': 'Some data'}
         files = {'arq': open(ftest, 'r')}
         content_type, body = self.getMultipartFormData(fields, files)
+        self.logger.debug(body)
         req = urllib2.Request(self.info_url, body)
         req.add_header("Content-type", content_type)
+        req.add_header("Content-length", str(len(body)))
         try:
-            contents = eval(urllib2.urlopen(req).read())
+            self.logger.debug("CONTENT: " + str(req.headers))
+            c = urllib2.urlopen(req)
+            c = c.read()
+            contents = eval(c)
             self.assertTrue(contents['POST'].has_key("name") and contents['POST'].has_key("data"))
             self.assertEqual(contents['POST']['name'], 'A name')
             self.assertEqual(contents['POST']['data'], 'Some data')
@@ -149,7 +154,7 @@ class HttpTestCase(unittest.TestCase):
         
         for key in files.keys():
             parameters.append('--%s' % BOUNDARY)
-            parameters.append('Content-disposition: form-data; name=%s, filename=%s'\
+            parameters.append('Content-disposition: form-data; name=%s; filename=%s'\
                               % (key, files[key].name))
             parameters.append('Content-type: %s' % self.getContentType(files[key].name))
             parameters.append('')
@@ -157,14 +162,45 @@ class HttpTestCase(unittest.TestCase):
             
         parameters.append('--%s--' % BOUNDARY)
         parameters.append('')
-        enctype = "Content-type: multipart/form-data; boundary=%s" % BOUNDARY
+        enctype = "multipart/form-data; boundary=%s" % BOUNDARY
         body = CRLF.join(parameters)
         return enctype, body
         
     def getContentType(self, filename):
         return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
 
+
+class SecurityContextTestCase(unittest.TestCase):
+    logger = getLogger("SecurityContextTestCase")
+    file = "security.xml.sample"
+    
+    def setUp(self):
+        self.context = Context(self.file)
+        self.logger.debug(str(len(self.context.roles)))
+        
+    def tearDown(self):
+        del self.context
+        
+    def testPermissions(self):
+        self.assertTrue(len(self.context.permissions) == 5)
+        self.assertEqual(self.context.permissions[0].id, "allow-all")
+        self.assertEqual(self.context.permissions[2].id, "deny-localhost")
+        self.assertEqual(len(self.context.permissions[2].constraints), 2)
+        
+    def testRoles(self):
+        self.assertTrue(len(self.context.roles) == 2)
+        self.assertEqual(self.context.roles[1].id, "administrator")
+        
+    def testUsers(self):
+        self.assertTrue(len(self.context.users) == 2)
+        u = self.context.get_user("user1", "123")
+        self.assertTrue(u is not None)
+        command = "nmap -v localhost"
+        self.assertFalse(u.is_permitted(command))
+
+
 pid = None
+
 
 def run_tests():
     logger = getLogger()
@@ -180,11 +216,13 @@ def run_tests():
         os.kill(pid, signal.SIGKILL)
         sys.exit(0)
 
-    err_file = mktemp()
-    log_file = mktemp()
+    err_file = "umitweb.log"
+    log_file = "umitweb.log"
+    logger.debug("STDOUT: %s" % log_file)
+    logger.debug("STDERR: %s" % err_file)
     logger.info("Starting child process")
-    sys.stdout = open(log_file, 'w')
-    sys.stderr = open(err_file, 'w')
+    sys.stdout = open(log_file, 'a+', 1)
+    sys.stderr = open(err_file, 'a+', 1)
     web_server.run()
 
 

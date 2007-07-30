@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 patterns = (
-    (r'^$', 'umitWeb.views.html.index'),
+    (r'^$', 'umitWeb.views.html.main.index'),
     (r'^js/$', 'umitWeb.views.main.index'),
     (r'^favicon.ico$', 'umitWeb.views.main.show_favicon'),
     (r'^login/$', 'umitWeb.views.main.login'),
