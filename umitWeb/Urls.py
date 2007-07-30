@@ -21,6 +21,8 @@ patterns = (
     (r'^$', 'umitWeb.views.html.main.index'),
     (r'^js/$', 'umitWeb.views.main.index'),
     (r'^favicon.ico$', 'umitWeb.views.main.show_favicon'),
+    (r'^html/$', 'umitWeb.views.html.main.main'),
+    (r'^html/login/$', 'umitWeb.views.html.main.login'),
     (r'^login/$', 'umitWeb.views.main.login'),
     (r'^logout/$', 'umitWeb.views.main.logout'),
     (r'^test/(?P<path>.*)/$', 'umitWeb.views.test.main'),

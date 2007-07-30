@@ -304,7 +304,7 @@ class ResourceBusyError(Exception):
 def get_security_parser(config_file=None):
     logger = getLogger("Context")
     cfg_file = config_file or SECURITY_FILE
-    logger.debug(cfg_file)
+    #logger.debug(cfg_file)
     parser = make_parser()
     ctx = SecurityContext()
     parser.setContentHandler(SecurityConfHandler(ctx))

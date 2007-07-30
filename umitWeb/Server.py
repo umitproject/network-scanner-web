@@ -63,11 +63,12 @@ class URLResolver(object):
                 try:
                     found = True
                     module, function = action.rsplit(".", 1)
-                    module = __import__(module, level=0, fromlist=["umitWeb"])
-                    self.logger.debug("Importing module: " + module.__name__)
+                    module = __import__(module, level=0, fromlist=["umitWeb.views"])
+                    self.logger.debug("Importing module (" + path + "): " + module.__name__)
                     executer = getattr(module, function)
                     ret = executer(request, **match.groupdict())
                     del executer
+                    del module
                     return ret
                 except ImportError, e:
                     raise HttpError(500, str(e))

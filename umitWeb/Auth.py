@@ -26,17 +26,20 @@ ERROR = 1
 logger = getLogger(__name__)
 
 #decorator
-def authenticate(destination=None):
+def authenticate(destination=None, redirect_page=None):
     destination = destination or REDIRECT
+    redirect_page = redirect_page or "/login/"
     def _ret_function(func):
         def _checklogin(req, *args, **kwargs):
             if req.session.has_key("umit_user"):
                 return func(req, *args, **kwargs)
             else:
                 if destination == REDIRECT:
-                    return HttpResponseRedirect("/login/")
+                    return HttpResponseRedirect(redirect_page)
                 else:
                     raise Http403
         return _checklogin
     
     return _ret_function
+
+html_auth = lambda destination=None: authenticate(destination=destination, redirect_page="/html/login/")

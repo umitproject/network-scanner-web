@@ -1,4 +1,4 @@
- doLogin = function(e){
+doLogin = function(e){
     new Event(e).stop();
     processResult = function(result){
 	if(result == "OK"){

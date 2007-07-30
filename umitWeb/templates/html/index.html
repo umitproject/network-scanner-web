@@ -5,12 +5,16 @@
     <body>
         <script type="text/javascript">
         if(window.gecko){
+            document.write("redirecting the page...")
+            document.close()
             location = "js/"
         }else{
-            document.write("UmitWeb is not compatible with your browser (yet).");
-            document.close();
+            location = "html/"
         }
         </script>
-        <noscript>UmitWeb is <b>not</b> compatible with your browser (yet).</noscript>
+        <noscript>
+        Your browser don't support Javascript.
+        Try to use the <a href="html/">HTML basic interface.</a>
+        </noscript>
     </body>
 </html>

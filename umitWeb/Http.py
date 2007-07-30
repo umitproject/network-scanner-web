@@ -21,11 +21,12 @@ import re
 import os
 from tempfile import mktemp
 from urllib import quote, unquote, unquote_plus
+from copy import deepcopy
 from datetime import datetime, timedelta
 from Cookie import SimpleCookie
 from umitWeb.WebLogger import getLogger
 from umitCore.I18N import _
-from shutil import copyfileobj
+from types import StringTypes
 from StringIO import StringIO
 
 class HttpError(Exception):
@@ -187,6 +188,9 @@ class HttpResponse(object):
     response['Content-type'] = 'text/html'
     response['Content-disposition'] = 'attachment; filename=xyz.html'
     """
+
+    logger = getLogger("HttpResponse")
+    
     def __init__(self, data="", mimeType="text/html"):
         self.headers = {}
         self.data = data
@@ -202,13 +206,26 @@ class HttpResponse(object):
         """Load a template given its filename
         """
         template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
-        self.data += open(os.path.join(template_dir, template)).read()
+        template = template.split("/")
+        tpl_path = os.path.join(template_dir, *template)
+        #self.logger.debug("TEMPLATE FILE: " + tpl_path)
+        self.data += open(tpl_path).read()
         
     def __add__(self, obj):
+        if type(obj) in StringTypes:
+            response = deepcopy(self)
+            response.write(obj)
+            return response
+        
         if not issubclass(obj.__class__, self.__class__):
             raise ValueError, "Cannot add object %s of type %s" % (repr(obj), repr(obj.__class__))
         else:
             return HttpResponse(self.data + obj.data, self.headers['Content-type'])
+        
+    def __mod__(self, l):
+        response = deepcopy(self)
+        response.data %= l
+        return response
 
     def __setitem__(self, key, value):
         self.headers[key] = value
