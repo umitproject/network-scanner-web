@@ -817,7 +817,7 @@ function runScan(e){
 		$("services_table").getElement("tbody").empty();
 		$("profile_name").value = $("profiles")[$("profiles").selectedIndex].textContent
 	
-		this.send({onComplete: function(tResult){
+		$("frmScan").send({onComplete: function(tResult){
 				result = Json.evaluate(tResult);
 				if(result.result == "OK"){
 					    checkScanStatus(result.id)
@@ -866,11 +866,59 @@ function saveScan(){
 	}
 }
 
+function openCommandWizard(){
+	rs = new CommandWizardDialog();
+	rs.run();
+}
+
+function updateCommand(value, complement){
+	commandLine = $("divCommandConstructor");
+	oldValue = commandLine.value;
+
+	regex = new RegExp(value.replace(" ", "[ ]+").replace("%s", "[^ ^$]*"));
+	
+	if($defined(complement)){
+		newValue = value.replace("%s", complement);
+	}else{
+		newValue = value;
+	}
+	
+	if(oldValue.match(regex)){
+		commandLine.value = oldValue.replace(regex, newValue);
+	}else{
+		commandLine.value += " " + newValue;
+	}
+}
+
+function removeCommand(value){
+	commandLine = $("divCommandConstructor");
+	oldValue = commandLine.value;
+	regex = new RegExp(value.replace(" ", "[ ]+").replace("%s", "[^ ^$]*"));
+	
+	if(oldValue.match(regex)){
+		commandLine.value = oldValue.replace(regex, "");
+	}
+	commandLine.value = commandLine.value.trim();
+}
+
+function updateProfiles(){
+	new Json.Remote("/scan/profiles/", {onComplete: function(result){
+		for(i = 0; i < result.length; i++){
+			opt = new Element("option", {"value": result[i][1]})
+			opt.setText(result[i][0]);
+			$("profiles").adopt(opt);
+		}
+		cmd = $("profiles").options[0].value;
+		if($("target").value != ""){
+			cmd = cmd.replace("<target>", $("target").value);
+		}
+		$("command").value = cmd;
+	}}).send();
+}
+
 window.addEvent("domready", function(){
     if($defined($("frmScan"))){
 	$("frmScan").addEvent("submit", runScan);
-	hSlide = new Fx.Slide("hosts", {mode: 'horizontal'});
-	sSlide = new Fx.Slide("services", {mode: 'horizontal'});
 	
 	$("toggleHosts").addEvent("click", function(e){
 		if(!this.hasClass("active")){
@@ -897,18 +945,7 @@ window.addEvent("domready", function(){
 	$("toggleHosts").addClass("active");
 	$("services").setStyle("display", "none");
 	
-	new Json.Remote("/scan/profiles/", {onComplete: function(result){
-		for(i = 0; i < result.length; i++){
-			opt = new Element("option", {"value": result[i][1]})
-			opt.setText(result[i][0]);
-			$("profiles").adopt(opt);
-		}
-		cmd = $("profiles").options[0].value;
-		if($("target").value != ""){
-			cmd = cmd.replace("<target>", $("target").value);
-		}
-		$("command").value = cmd;
-	}}).send();
+	updateProfiles();
 	
 	$("profiles").addEvent("change", function(event){
 		cmd = this.options[this.selectedIndex].value;
@@ -919,31 +956,13 @@ window.addEvent("domready", function(){
 		new Event(event).stop();
 	});
     }
-});
 
-window.addEvent("domready", function(){
-	if(window.ie){
-		ts = $$("table", "tbody", "thead", "tfoot")
-		ts.each(function(el){
-			el.empty = function(){
-				this.innerText = "";
-				return this;
-			};
-		});
-	}
-	
-	evt = "";
-	if(!window.ie){
-		evt = "change";
+   $("highlight_out").addEvent("change", function(e){
+	new Event(e).stop();
+	if(this.checked){
+		$("nmap-output").setHTML(formatNmapOutput(nmapOutput));
 	}else{
-		evt = "change";
+		$("nmap-output").setText(nmapOutput);
 	}
-	$("highlight_out").addEvent(evt, function(e){
-		new Event(e).stop();
-		if(this.checked){
-			$("nmap-output").setHTML(formatNmapOutput(nmapOutput));
-		}else{
-			$("nmap-output").setText(nmapOutput);
-		}
-	});
+   });
 });

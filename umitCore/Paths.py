@@ -48,6 +48,7 @@ class Paths(object):
                          "recent_scans",
                          "options",
                          "umitdb",
+                         "umitdb_ng",
                          "umit_version"]
     
     share_files_list = ["umit_op",
@@ -168,6 +169,7 @@ def create_user_dir(main_config, user_home):
     copy_config_file("target_list.txt", main_dir, user_dir)
     copy_config_file("umit_version", main_dir, user_dir)
     copy_config_file("umit.db", main_dir, user_dir)
+    copy_config_file("umitng.db", main_dir, user_dir)
     copy_config_file("wizard.xml", main_dir, user_dir)
     copy_config_file("umitweb.conf", main_dir, user_dir)
     copy_config_file("security.xml", main_dir, user_dir)
@@ -223,6 +225,7 @@ if __name__ == '__main__':
     print ">>> UMIT_OPT:", Path.umit_opt
     print ">>> UMIT_OPF:", Path.umit_opf
     print ">>> UMITDB:", Path.umitdb
+    print ">>> UMITDB (New generation):", Path.umitdb_ng
     print ">>> SERVICES DUMP:", Path.services_dump
     print ">>> OS DB DUMP:", Path.os_dump
     print ">>> UMIT VERSION:", Path.umit_version

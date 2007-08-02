@@ -40,21 +40,21 @@ function tabberObj(argsObj)
   this.div = null;
 
   /* Class of the main tabber div */
-  this.classMain = "tabber";
+  this.classMain = argsObj.classMain || "tabber";
 
   /* Rename classMain to classMainLive after tabifying
      (so a different style can be applied)
   */
-  this.classMainLive = "tabberlive";
+  this.classMainLive = argsObj.classMainLive || "tabberlive";
 
   /* Class of each DIV that contains a tab */
-  this.classTab = "tabbertab";
+  this.classTab = argsObj.classTab || "tabbertab";
 
   /* Class to indicate which tab should be active on startup */
-  this.classTabDefault = "tabbertabdefault";
+  this.classTabDefault = argsObj.classTabDefault || "tabbertabdefault";
 
   /* Class for the navigation UL */
-  this.classNav = "tabbernav";
+  this.classNav = argsObj.classNav || "tabbernav";
 
   /* When a tab is to be hidden, instead of setting display='none', we
      set the class of the div to classTabHide. In your screen
@@ -62,12 +62,12 @@ function tabberObj(argsObj)
      print stylesheet you should set display:block to ensure that all
      the information is printed.
   */
-  this.classTabHide = "tabbertabhide";
+  this.classTabHide = argsObj.classTabHide || "tabbertabhide";
 
   /* Class to set the navigation LI when the tab is active, so you can
      use a different style on the active tab.
   */
-  this.classNavActive = "tabberactive";
+  this.classNavActive = argsObj.classNavActive || "tabberactive";
 
   /* Elements that might contain the title for the tab, only used if a
      title is not specified in the TITLE attribute of DIV classTab.

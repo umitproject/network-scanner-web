@@ -13,6 +13,7 @@
         <script type="text/javascript" src="/media/js/common.js"></script>
         <script type="text/javascript" src="/media/js/dialog.js"></script>
         <script type="text/javascript" src="/media/js/ajax.js"></script>
+        <script type="text/javascript">tabberOptions = {}</script>
         <script type="text/javascript" src="/media/js/tabber.js"></script>
         <script type="text/javascript" src="/media/js/output_highlight.js"></script>
     </head>
@@ -20,8 +21,11 @@
         <div id="body">
             <div id="options">
              <ul>
+              <li><a href="javascript:void(null)" onclick="openCommandWizard()">Command Wizard</a></li>
+              <li><a href="javascript:void(null)" onclick="openCompareResults()">Compare Results</a></li>
               <li><a href="javascript:void(null)" onclick="openScan()">Open Scan</a></li>
               <li><a href="javascript:void(null)" onclick="saveScan()">Save Scan</a></li>
+              <li><a href="/js/preferences/">Preferences</a></li>
               <li><a href="/logout/">Logout</a></li>
              </ul>
             </div>
@@ -132,6 +136,7 @@
                 </div>
             </div>
         </div>
+            <div id="footer">Copyright (C) 2005 Insecure.Com LLC. Sponsored by<a target="_blank" href="http://code.google.com/soc/"><img title="Sponsored by Google" alt="Sponsored by Google" src="/media/images/google-small-logo.png"/></a></div>
         </div>
     </body>
 </html>

@@ -61,6 +61,7 @@ locale_dir = os.path.join('share', 'umit', 'locale')
 config_dir = os.path.join('share', 'umit', 'config')
 docs_dir = os.path.join('share', 'umit', 'docs')
 misc_dir = os.path.join('share', 'umit', 'misc')
+sql_dir = os.path.join('share', 'umit', 'sql')
 maemo_dir = os.path.join("maemo")
 
 dist_config_dir = os.path.join('dist', config_dir)
@@ -69,6 +70,17 @@ dist_umit_conf = os.path.join(dist_config_dir, "umit.conf")
 user_dir = '.umit'
 
 
+# Updated for python 2.5
+try:
+    import sqlite3
+    sqlite = 'sqlite3'
+except:
+    try:
+        from pysqlite2 import dbapi2
+        sqlite = 'pysqlite2'
+    except ImportError, e:
+        print e
+        sys.exit(0)
 ###################################################################################
 # Main Functions
 
@@ -80,7 +92,7 @@ def check_dependencies():
     Checking:
     - gtk
     - psyco
-    - pysqlite2
+    - sqlite3 or pysqlite2
     '''
     
     try:
@@ -88,21 +100,17 @@ def check_dependencies():
 
         # Checking PyGTK version
         if gtk.pygtk_version[0] < 2 or gtk.pygtk_version[1] < 6:
-            raise Exception, "PyGTK must be version 2.6 or higher. Found version %s.%s.%s"\
-                        % (gtk.pygtk_version[0], gtk.pygtk_version[1], gtk.pygtk_version[2])
+            raise Exception, "PyGTK must be version 2.6 or higher. Found \
+version %s.%s.%s" % (gtk.pygtk_version[0], gtk.pygtk_version[1], 
+                     gtk.pygtk_version[2])
 
         if gtk.gtk_version[0] < 2 or gtk.pygtk_version[1] < 6:
-            raise Exception, "GTK must be version 2.6 or higher. Found version %s.%s.%s"\
-                        % (gtk.gtk_version[0], gtk.gtk_version[1], gtk.gtk_version[2])
+            raise Exception, "GTK must be version 2.6 or higher. Found \
+version %s.%s.%s" % (gtk.gtk_version[0], gtk.gtk_version[1], gtk.gtk_version[2])
     except ImportError:
         print "No GTK found"
     except Exception, msg:
         print msg
-
-    try:
-        from pysqlite2 import dbapi2
-    except ImportError:
-        print "No pysqlite2 found"
 
     try:
         import psyco
@@ -131,30 +139,49 @@ if PLATFORM == 'linux2':
     svg = glob(os.path.join('share', 'pixmaps', '*.svg'))
 
 
-data_files = [ (pixmaps_dir, svg + glob(os.path.join('share', 'pixmaps', '*.png')) +
-                                      glob(os.path.join('share', 'pixmaps', 'umit.o*'))),
-               (config_dir, [os.path.join('config', 'umit.conf')] +
-                                     [os.path.join('config', 'scan_profile.usp')] +
-                                     [os.path.join('config', 'umit_version')] +
-                                     [os.path.join('config', 'umit.db')] + 
-                                     glob(os.path.join('config', '*.xml'))+
-                                     glob(os.path.join('config', '*.txt'))),
+data_files = [ (pixmaps_dir, svg + glob(os.path.join('share', 'pixmaps', 
+                                                     '*.png')) +
+                glob(os.path.join('share', 'pixmaps', '*.gif')) +
+                glob(os.path.join('share', 'pixmaps', 'umit.o*'))),
+
+               (config_dir, [os.path.join('config', 'umit.conf')] +                             [os.path.join('config', 'scan_profile.usp')] +
+                [os.path.join('config', 'umit_version')] +
+                [os.path.join('config', 'umit.db')] +
+                [os.path.join('config', 'umitng.db')] +
+                [os.path.join('config', 'smtp-schemas.conf')] +
+                glob(os.path.join('config', '*.xml'))+
+                glob(os.path.join('config', '*.txt'))),
+
+               # UmitDB sql
+               (sql_dir, glob(os.path.join("umitDB/sql", '*.sql'))),
+
+               # Scheduler script
+               (scripts_dir, [os.path.join('share', 'scripts', 
+                                           'scheduler_control.py')]),
+
                (misc_dir, glob(os.path.join('misc', '*.dmp'))), 
+
                (icons_dir, glob(os.path.join('share', 'icons', '*.ico'))+
                            glob(os.path.join('share', 'icons', '*.png'))),
+
                (docs_dir, glob(os.path.join('docs', '*.html'))+
-                          glob(os.path.join('docs', 'comparing_results', '*.xml'))+
-                          glob(os.path.join('docs', 'profile_editor', '*.xml'))+
-                          glob(os.path.join('docs', 'scanning', '*.xml'))+
-                          glob(os.path.join('docs', 'searching', '*.xml'))+
-                          glob(os.path.join('docs', 'wizard', '*.xml'))+
-                          glob(os.path.join('docs', 'screenshots', '*.png')))]
+                glob(os.path.join('docs', 'comparing_results', '*.xml'))+
+                glob(os.path.join('docs', 'profile_editor', '*.xml'))+
+                glob(os.path.join('docs', 'scanning', '*.xml'))+
+                glob(os.path.join('docs', 'searching', '*.xml'))+
+                glob(os.path.join('docs', 'wizard', '*.xml'))+
+                glob(os.path.join('docs', 'screenshots', '*.png'))) ]
 
 # Installing maemo specific desktop entries
 if PLATFORM == "maemo":
-    data_files += [("share/pixmaps", [os.path.join("share", "icons", "umit_26.png")]),
-                   ("share/applications/hildon", [os.path.join(maemo_dir, "umit.desktop")]),
-                   ("share/dbus-1/services", [os.path.join(maemo_dir, "umit.service")])]
+    data_files += [ ("share/pixmaps", [os.path.join("share", "icons", 
+                                                    "umit_26.png")]),
+
+                    ("share/applications/hildon", 
+                     [os.path.join(maemo_dir, "umit.desktop")]),
+
+                    ("share/dbus-1/services", 
+                     [os.path.join(maemo_dir, "umit.service")]) ]
 
 # Add i18n files to data_files list
 os.path.walk(locale_dir, mo_find, data_files)
@@ -178,7 +205,8 @@ class umit_install(install):
     
 
     def create_uninstaller(self):
-        uninstaller_filename = os.path.join(self.install_scripts, "uninstall_umit")
+        uninstaller_filename = os.path.join(self.install_scripts, 
+                                            "uninstall_umit")
         uninstaller = """#!/usr/bin/env python
 import os, sys
 
@@ -228,7 +256,8 @@ print
         parser.set(sec, "docs_dir", os.path.join(self.install_data, docs_dir))
         parser.set(sec, "pixmaps_dir", os.path.join(self.install_data, pixmaps_dir))
         parser.set(sec, "icons_dir", os.path.join(self.install_data, icons_dir))
-        parser.set(sec, "locale_dir", os.path.join(self.install_data, locale_dir))
+        parser.set(sec, "locale_dir", os.path.join(self.install_data, 
+                                                   locale_dir))
         parser.set(sec, "umit_icon", self.get_file("umit_48.ico"))
         parser.set(sec, "nmap_command_path", "nmap")
         parser.set(sec, "misc_dir", os.path.join(self.install_data, misc_dir))
@@ -247,8 +276,9 @@ print
         subs_pattern = re.compile("Path\.set_umit_conf\(join\(split\(__file__\)\[0\],\
  'config', 'umit\.conf'\)\)")
         content = subs_pattern.sub("Path.set_umit_conf('%s')" % \
-                                       os.path.join(self.install_data, config_dir, "umit.conf"),
-                                   content)
+                                os.path.join(self.install_data, config_dir, 
+                                "umit.conf"),
+                                content)
 
         subs_pattern = re.compile("import sys")
         content = subs_pattern.sub("import sys\nsys.path.insert(0, '%s')" % self.install_lib,
@@ -265,7 +295,8 @@ print
 
     def finish_banner(self):
         print 
-        print "%s Thanks for using Umit %s %s" % ("#"*10, umit_version(), "#"*10)
+        print "%s Thanks for using Umit %s %s" % ("#"*10, umit_version(), 
+                                                  "#"*10)
         print
 
 
@@ -284,7 +315,9 @@ class umit_sdist(sdist):
 
     def finish_banner(self):
         print 
-        print "%s The packages for Umit %s are in ./dist %s" % ("#"*10, umit_version(), "#"*10)
+        print "%s The packages for Umit %s are in ./dist %s" % ("#"*10, 
+                                                                umit_version(),
+                                                                "#"*10)
         print
 
 
@@ -313,7 +346,7 @@ class umit_py2exe(build_exe):
                       pixmaps_dir = install_pixmaps_dir,
                       icons_dir = install_icons_dir,
                       locale_dir = install_locale_dir,
-                      umit_icon = os.path.join(install_icon_dir, "umit_48.ico"),
+                      umit_icon = os.path.join(install_icons_dir, "umit_48.ico"),
                       nmap_command_path = "nmap")
 
         umit_conf_file = open(dist_umit_conf, 'r')
@@ -354,7 +387,8 @@ scan results to easily see any changes. A regular user will also be able to cons
 powerful scans with UMIT command creator wizards.""",
       version = umit_version(),
       scripts = ['umit'],
-      packages = ['', 'umitCore', 'umitGUI', 'higwidgets'],
+      packages = ['', 'umitCore', 'umitGUI', 'umitDB', 'umitWeb', 
+                  'higwidgets'],
       data_files = data_files,
       cmdclass = {"install":umit_install,
                   "sdist":umit_sdist,
@@ -375,4 +409,5 @@ cairo,\
 pangocairo,\
 atk,\
 psyco,\
-pysqlite2"}})
+%s" % sqlite}})
+

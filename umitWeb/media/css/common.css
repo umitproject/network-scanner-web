@@ -65,7 +65,20 @@ h3{
    background:#FFFFE0;
    color:#FF0000;
    padding:2px;
-   /*height:17px;*/
    font-family: sans-serif;
    margin: 3px;
+}
+
+#footer{
+   font-size: 8pt;
+   color: #808080;
+   text-align: center;
+}
+
+a img{
+   border: none;
+}
+
+body{
+   overflow:visible;
 }

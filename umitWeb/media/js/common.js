@@ -52,8 +52,8 @@ getViewportSize = function(){
     return size;   
 }
 
-window.addEvent("domready", function(){
-    $$("input[type=text]", "input[type=password]", "select").each(function(element){
+function setInputStyles(){
+    $$("input[type=text]", "input[type=password]", "select", "textarea", "input[type=file]").each(function(element){
         element.style.borderStyle = "solid";
         element.style.borderWidth = "1px";
         element.style.borderColor = "#303030";
@@ -62,25 +62,27 @@ window.addEvent("domready", function(){
         element.style.backgroundImage = "url(/media/images/th_back.jpg)";
         element.style.color = "black";
     });
-    
+}
+
+window.addEvent("domready", function(){
+    setInputStyles();
+    size = getViewportSize();
     $$("div[class='tab-placeholder']").each(function(div){
-        size = getViewportSize();
-	if(!window.ie){
-	    div.style.height = (size[1]-250) + "px";
-	}else{
-	    div.style.height = (size[1]-250) + "px";
-	}
+	div.style.height = (size[1]-251) + "px";
     });
 	
     if($defined($("hosts")))
-	$("hosts").style.height = (getViewportSize()[1]-220) + "px"
+	$("hosts").style.height = (size[1]-220) + "px"
     if($defined($("services")))
-	$("services").style.height = (getViewportSize()[1]-220) + "px"
+	$("services").style.height = (size[1]-220) + "px"
 	
-    if($defined($("body")))
-	$("body").setStyle("width", (getViewportSize()[0]) + "px");
-    
+    if($defined($("body"))){
+	$("body").setStyle("width", (size[0]) + "px");
+        $("umit-title").setStyle("width", size[0]-60 + "px");
+    }
+    if($defined($("footer")))
+       $("footer").injectInside($("body"));
     if($defined($("nmap-output"))){
-        $("nmap-output").style.height = getViewportSize()[1]-300 + "px";
+        $("nmap-output").style.height = size[1]-300 + "px";
     }
 });

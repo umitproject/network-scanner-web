@@ -58,6 +58,9 @@ base_paths = dict(config_file = 'umit.conf',
                                              HOME],
                   i18n_search_sequence = [os.path.join(CURRENT_DIR, 'share', 'locale'), HOME],
                   umitdb = "umit.db",
+                  # new generation database
+                  umitdb_ng = "umitng.db",
+
                   services = "nmap-services",
                   services_dump = "services.dmp",
                   os_db = "nmap-os-db",

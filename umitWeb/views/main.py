@@ -23,7 +23,6 @@ from types import DictionaryType, StringType, ListType
 from math import floor, sqrt
 #from umitCore.NmapOutputHighlight import NmapOutputHighlight
 from umitWeb.WebConf import JsOutputHighlight
-from umitCore.UmitConf import CommandProfile
 from umitWeb.Http import HttpResponse, Http404, HttpResponseRedirect
 from umitWeb.WebLogger import getLogger
 from umitWeb.Auth import authenticate, ERROR
@@ -58,18 +57,6 @@ def output_highlight(req):
             else:
                 propValue = attribute[index]
             response.write("highlights['%s']['%s'] = '%s';\n" % (attr, value, propValue))
-    return response
-
-@authenticate(ERROR)
-def get_profiles(req):
-    profile = CommandProfile()
-    profiles = profile.sections()
-    response = HttpResponse()
-    response['Content-type'] = "text/plain"
-    ret = []
-    for section in profiles:
-        ret.append([section, profile.get_command(section) % "<target>"])
-    response.write(str(ret))
     return response
 
 def serve_media(req, path):

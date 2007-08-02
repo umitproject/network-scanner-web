@@ -12,8 +12,17 @@ from tempfile import mktemp
 sys.path += [os.path.join(os.path.dirname(__file__), "..", "")]
 
 from umitWeb.WebLogger import getLogger
-from umitWeb.Server import UmitWebServer
 from umitWeb.Security import Context
+from umitWeb.ProfileParser import ProfileEditorParser, WizardParser
+
+
+######################################
+# Setting the umit home directory
+
+from umitCore.Paths import Path
+Path.set_umit_conf(os.path.join(os.path.split(__file__)[0], os.pardir,'config', 'umit.conf'))
+######################################
+
 
 class HttpTestCase(unittest.TestCase):
     logger = getLogger("HttpTestCase")
@@ -175,7 +184,7 @@ class SecurityContextTestCase(unittest.TestCase):
     file = "security.xml.sample"
     
     def setUp(self):
-        self.context = Context(self.file)
+        self.context = Context()
         self.logger.debug(str(len(self.context.roles)))
         
     def tearDown(self):
@@ -199,33 +208,31 @@ class SecurityContextTestCase(unittest.TestCase):
         self.assertFalse(u.is_permitted(command))
 
 
+class ProfileEditorParserTestCase(unittest.TestCase):
+    def setUp(self):
+        self.profile_parser = ProfileEditorParser()
+        
+    def testSections(self):
+        self.assertEqual(len(self.profile_parser.sections.keys()), 6)
+        self.assertTrue("Advanced" in self.profile_parser.sections.keys())
+    
+
+class WizardParserTestCase(unittest.TestCase):
+    def setUp(self):
+        self.wizard_parser = WizardParser()
+        
+    def testSections(self):
+        self.assertEqual(len(self.wizard_parser.sections.keys()), 5)
+        self.assertTrue("Ping" in self.wizard_parser.sections.keys())
+
+
 pid = None
 
 
 def run_tests():
     logger = getLogger()
-    pid = os.fork()
-    if pid > 0:
-        
-        logger.info("server running on pid %d" % pid)
-        try:
-            unittest.main()
-        except SystemExit:
-            pass
-        logger.info('killing server process...')
-        os.kill(pid, signal.SIGKILL)
-        sys.exit(0)
-
-    err_file = "umitweb.log"
-    log_file = "umitweb.log"
-    logger.debug("STDOUT: %s" % log_file)
-    logger.debug("STDERR: %s" % err_file)
-    logger.info("Starting child process")
-    sys.stdout = open(log_file, 'a+', 1)
-    sys.stderr = open(err_file, 'a+', 1)
-    web_server.run()
+    unittest.main()
 
 
 if __name__ == "__main__":
-    web_server = UmitWebServer()
     run_tests()

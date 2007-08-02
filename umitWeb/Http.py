@@ -235,9 +235,6 @@ class HttpResponse(object):
 
     def __str__(self):
         return self.data
-    
-    #def __repr__(self):
-    #    pass
 
 
 class HttpResponseRedirect(HttpResponse):
