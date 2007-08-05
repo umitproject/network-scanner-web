@@ -5,10 +5,9 @@ from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesImpl as Attributes
-from umitCore.Paths import Path
 from umitWeb.WebLogger import getLogger
 
-SECURITY_FILE = os.path.join(os.path.dirname(__file__), os.pardir ,"config", "security.xml")
+SECURITY_FILE = os.path.join(os.path.dirname(__file__), os.pardir , "config", "security.xml")
 
 class Constraint(object):
     
@@ -93,14 +92,33 @@ class SecurityContext(object):
             if id == r.id:
                 return r
     
+    
     def add_permission(self, id, type):
         self.permissions.append(Permission(id, type))
     
-    def get_user(self, login, password, id=None):
-        passwd = md5.new(password).hexdigest()
-        for u in self.users:
-            if u.login == login:
-                if u.password == passwd:
+    
+    def add_user(self, name, login, password, is_superuser, role_names):
+        u = User(login, name=name, password=md5.new(password).hexdigest())
+        if is_superuser:
+            u.superuser = True
+        else:
+            u.superuser = False
+        u.roles = []
+        for r in role_names:
+            u.roles.append(self.get_role(r))
+        self.users.append(u)
+    
+    
+    def get_user(self, login=None, password=None, id=None):
+        if not id:
+            passwd = md5.new(password).hexdigest()
+            for u in self.users:
+                if u.login == login:
+                    if u.password == passwd:
+                        return u
+        else:
+            for u in self.users:
+                if u.login == id:
                     return u
                 
     def _write_permissions(self):
@@ -174,7 +192,10 @@ class SecurityContext(object):
             raise ResourceBusyError
         else:
             self._locked = True
-        self.writer = XMLGenerator(xml_file)
+        xml = open(xml_file, "w", 1)
+        xml.flush()
+        xml.seek(0)
+        self.writer = XMLGenerator(xml)
         self.writer.startDocument()
         self.writer.startElement("security", Attributes({}))
         self._write_permissions()
@@ -182,6 +203,9 @@ class SecurityContext(object):
         self._write_users()
         self.writer.endElement("security")
         self.writer.endDocument()
+        xml.flush()
+        xml.close()
+        del xml
         self._locked = False
 
 
@@ -300,19 +324,17 @@ class ElementNotFound(Exception):
 class ResourceBusyError(Exception):
     pass
 
-
 def get_security_parser(config_file=None):
     logger = getLogger("Context")
     cfg_file = config_file or SECURITY_FILE
-    #logger.debug(cfg_file)
+    
+    
     parser = make_parser()
     ctx = SecurityContext()
     parser.setContentHandler(SecurityConfHandler(ctx))
     f = open(cfg_file, 'r')
     parser.parse(f)
     f.close()
-    #parser.close()
-    parser.reset()
     
     return ctx
     

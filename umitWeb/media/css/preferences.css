@@ -1,0 +1,9 @@
+.pref-menu{
+    margin: 0;
+    padding: 0;
+}
+
+.pref-menu li{
+    list-style: none;
+    padding-left: 20px;
+}

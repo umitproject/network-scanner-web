@@ -18,3 +18,7 @@ window.addEvent("domready", function(){
         $("frmLogin").addEvent("submit", doLogin);
     }
 });
+
+window.addEvent("load", function(){
+   $$("input[name=login]")[0].focus();
+});

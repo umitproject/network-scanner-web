@@ -12,20 +12,28 @@
         <script type="text/javascript" src="/media/js/mootools.v1.11-old.js"></script>
         <script type="text/javascript" src="/media/js/common.js"></script>
         <script type="text/javascript" src="/media/js/dialog.js"></script>
-        <script type="text/javascript" src="/media/js/ajax.js"></script>
+        <script type="text/javascript" src="/media/js/profile-editor.js"></script>
+        <script type="text/javascript" src="/media/js/command-wizard.js"></script>
+        <script type="text/javascript" src="/media/js/scan-dialog.js"></script>
+        <script type="text/javascript" src="/media/js/index.js"></script>
+        <script type="text/javascript" src="/media/js/scan.js"></script>
         <script type="text/javascript">tabberOptions = {}</script>
         <script type="text/javascript" src="/media/js/tabber.js"></script>
         <script type="text/javascript" src="/media/js/output_highlight.js"></script>
     </head>
     <body>
-        <div id="body">
+        <div id="divSpinner" style="text-align:center">
+          <strong>Loading Umit...</strong><p>&nbsp;</p><p>&nbsp;</p>
+          <img src="/media/images/spinner.gif"/>
+        </div>
+        <div id="body" class="hide">
             <div id="options">
              <ul>
               <li><a href="javascript:void(null)" onclick="openCommandWizard()">Command Wizard</a></li>
               <li><a href="javascript:void(null)" onclick="openCompareResults()">Compare Results</a></li>
               <li><a href="javascript:void(null)" onclick="openScan()">Open Scan</a></li>
               <li><a href="javascript:void(null)" onclick="saveScan()">Save Scan</a></li>
-              <li><a href="/js/preferences/">Preferences</a></li>
+              <li><a href="/js/management/">Management</a></li>
               <li><a href="/logout/">Logout</a></li>
              </ul>
             </div>

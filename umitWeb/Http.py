@@ -65,6 +65,8 @@ class HttpRequest(object):
     
     logger = getLogger("HttpRequest")
     
+    user = property(lambda self: self.session.user)
+    
     def __init__(self, requestHandler):
         self.requestHandler = requestHandler
         self.headers = self.requestHandler.headers

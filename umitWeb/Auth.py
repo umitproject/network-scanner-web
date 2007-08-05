@@ -42,4 +42,14 @@ def authenticate(destination=None, redirect_page=None):
     
     return _ret_function
 
+def need_superuser():
+    def _ret_function(func):
+        def _check_perms(req, *args, **kwargs):
+            if req.user and req.user.superuser:
+                return func(req, *args, **kwargs)
+            else:
+                raise Http403
+        return _check_perms
+    return _ret_function
+
 html_auth = lambda destination=None: authenticate(destination=destination, redirect_page="/html/login/")
