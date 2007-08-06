@@ -32,6 +32,7 @@ function toggle(target){
 }
 
 function getViewportSize(){
+    /*return [window.getScrollWidth, window.getScrollHeight()];*/
     var size = [0, 0];
     if (typeof window.innerWidth != 'undefined')
     {
