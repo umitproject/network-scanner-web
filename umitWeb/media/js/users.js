@@ -72,10 +72,10 @@ UserDialog = Dialog.extend({
             btnMoveUp = new Element("a", {"href": "javascript:void(null)"});
             btnMoveUp.adopt(imgBtnMoveUp);
             btnMoveUp.addEvent("click", function(e){
-                for(j = 0; j < selectedRoles.length; j++){
-                    if((j < selectedRoles.length-1) && selectedRoles[j].selected){
+                for(j = 1; j < selectedRoles.length; j++){
+                    if(selectedRoles[j].selected){
                         opt = selectedRoles[j];
-                        optBefore = selectRoles[j-1];
+                        optBefore = selectedRoles[j-1];
                         selectedRoles.add(opt, optBefore);
                     }
                 }
@@ -85,11 +85,11 @@ UserDialog = Dialog.extend({
             btnMoveDown = new Element("a", {"href": "javascript:void(null)"});
             btnMoveDown.adopt(imgBtnMoveDown);
             btnMoveDown.addEvent("click", function(e){
-                for(j = 0; j < selectedRoles.length; j++){
+                for(j = selectedRoles.length-2; j >= 0; j--){
                     if(selectedRoles[j].selected){
                         opt = selectedRoles[j];
-                        optBefore = selectRoles[j-1];
-                        selectedRoles.add(opt, optBefore);
+                        optBefore = selectedRoles[j+1];
+                        opt.injectAfter(optBefore);
                     }
                 }
             });
@@ -325,7 +325,7 @@ window.addEvent("domready", function(e){
             alert("There are no records to be deleted.");
             return;
         }
-        if(confirm("Are you sure you want to delete this users?")){
+        if(confirm("Are you sure you want to delete the selected user(s)?")){
             ids.each(function(id){
                 new Json.Remote("delete/" + id + "/", {onComplete: function(e){loadUsersTableData()}}).send();
             });

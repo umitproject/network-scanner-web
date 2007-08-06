@@ -1,5 +1,6 @@
-#-*- coding: utf-8 -*-
-# Copyright (C) 2007 Adriano Monteiro Marques <py.adriano@gmail.com>
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Insecure.Com LLC.
 #
 # Author: Rodolfo da Silva Carvalho <rodolfo.ueg@gmail.com>
 #

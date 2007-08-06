@@ -12,7 +12,7 @@
         <script type="text/javascript" src="/media/js/tabber.js"></script>
         <script type="text/javascript" src="/media/js/common.js"></script>
         <script type="text/javascript" src="/media/js/dialog.js"></script>
-        <script type="text/javascript" src="/media/js/users.js"></script>
+        <script type="text/javascript" src="/media/js/permissions.js"></script>
     </head>
     <body>
         <div id="body">
@@ -22,19 +22,18 @@
                 <ul><li><a href="/logout/">Logout</a></li></ul>
             </div>
             <h2 id="umit-title">The nmap Frontend</h2>
-            <h3>User Administration</h3>
+            <h3>Permission Administration</h3>
             <form method="post" action="search/" id="frmSearch">
                 <label for="search_field">Search:</label><input type="text" size="45" name="search" id="search_field"/>
-                <input type="submit" value="search"/>&nbsp;&nbsp;&nbsp;<a href="javascript:void(null)" onclick="openUserDialog()"><img src="/media/images/plus.png"/>Add new user</a>
+                <input type="submit" value="search"/>&nbsp;&nbsp;&nbsp;<a href="javascript:void(null)" onclick="openPermissionDialog()"><img src="/media/images/plus.png"/>Add new permission</a>
             </form>
-            <table class="std_table" id="users_table">
+            <table class="std_table" id="permissions_table">
                 <thead>
                     <tr>
                      <th width="0">&nbsp;</th>
-                     <th width="30%">Name</th>
-                     <th width="10%">Login</th>
-                     <th width="0">Superuser?</th>
-                     <th width="100%">Roles</th>
+                     <th width="20%">ID</th>
+                     <th width="40%">Description</th>
+                     <th width="100%">Constraints/type</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,7 +42,7 @@
                     </tr>
                 </tbody>
             </table>
-            <a href="javascript:void(null)" id="delete-user"><img src="/media/images/minus.png"/>Delete selected users</a>
+            <a href="javascript:void(null)" id="delete-permission"><img src="/media/images/minus.png"/>Delete selected permissions</a>
         </div>
     </body>
 </html>

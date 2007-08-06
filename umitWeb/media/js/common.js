@@ -15,7 +15,7 @@ function clearScanData(){
     $("nmap-output").empty();
 }
 
-toggle = function(target){
+function toggle(target){
     tgDiv = $(target + "-detail")
     
     tgSwitcher = $(target + "-switch")
@@ -31,7 +31,7 @@ toggle = function(target){
     }  
 }
 
-getViewportSize = function(){
+function getViewportSize(){
     var size = [0, 0];
     if (typeof window.innerWidth != 'undefined')
     {
@@ -57,6 +57,10 @@ function setInputStyles(){
         element.style.borderStyle = "solid";
         element.style.borderWidth = "1px";
         element.style.borderColor = "#303030";
+    });
+    $$("textarea").each(function(element){
+        element.style.fontFamily = "sans-serif";
+        element.style.fontSize = "9pt";
     });
     $$("input[type=submit]", "input[type=button]").each(function(element){
         element.style.backgroundImage = "url(/media/images/th_back.jpg)";

@@ -1,3 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Insecure.Com LLC.
+#
+# Author: Rodolfo da Silva Carvalho <rodolfo.ueg@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 from umitWeb.Auth import authenticate, ERROR, need_superuser
 from umitWeb.WebLogger import getLogger
 from umitWeb.Http import HttpResponse, Http403, Http404, HttpError
@@ -12,7 +32,7 @@ def index(req):
     return r
 
 
-@authenticate(ERROR)
+@authenticate()
 @need_superuser()
 def users(req):
     response = HttpResponse()
@@ -142,4 +162,184 @@ def roles_get_all(req):
                                                (r.id.replace("'", "\\'"), 
                                                 r.description.replace("'", "\\'")) 
                                                for r in ctx.roles]))
+
+
+@authenticate(ERROR)
+@need_superuser()
+def roles(req):
+    response = HttpResponse()
+    response.loadTemplate("roles.html")
+    return response
+
+
+@authenticate(ERROR)
+@need_superuser()
+def roles_search(req):
+    if not req.POST:
+        raise HttpError(400, "Invalid Request")
     
+    search = req.POST.get("search", "")
+    
+    ctx = Context()
+    roles = [r for r in ctx.roles if search.lower() in r.id.lower()]
+    
+    data = []
+    for r in roles:
+        rdata = []
+        rdata.append("'id': '%s'" % r.id.replace("'", "\\'"))
+        rdata.append("'description': '%s'" % r.description.replace("'", "\\'"))
+        rdata.append("'permissions': ['%s']" % "','".join([p.id.replace("'", "\\'")
+                                                           for p in r.permissions]))
+        data.append("{%s}" % ",".join(rdata))
+    
+    return HttpResponse("[%s]" % ",".join(data), "text/plain")
+
+
+@authenticate(ERROR)
+@need_superuser()
+def get_role(req, id):
+    ctx = Context()
+    
+    role = ctx.get_role(id)
+    
+    if role is None:
+        raise Http404
+    
+    data = []
+    data.append("'id': '%s'" % role.id)
+    data.append("'description': '%s'" % role.description)
+    data.append("'permissions': ['%s']" % "','".join([p.id.replace("'", "\\'")
+                                                    for p in role.permissions]))
+    
+    return HttpResponse("{%s}" % ",".join(data), "text/plain")
+
+
+@authenticate(ERROR)
+@need_superuser()
+def add_role(req):
+    ctx = Context()
+    if not req.POST:
+        raise HttpError(400, "Invalid Request")
+    
+    id = req.POST['id']
+    description = req.POST['description']
+    permissions = req.POST['permissions'].strip() and req.POST['permissions'].split(",") or []
+    
+    if id in [p.id for p in ctx.roles]:
+        return HttpResponse("{'result': 'FAIL', 'error': 'This id already exists. Please, choose other.'}")
+    
+    ctx.add_role(id, description, permissions)
+    ctx.write_xml()
+    return HttpResponse("{'result': 'OK'}")
+
+
+@authenticate(ERROR)
+@need_superuser()
+def edit_role(req, id):
+    ctx = Context()
+    role = ctx.get_role(id=id)
+    if not role:
+        raise Http404
+    
+    role.description = req.POST['description']
+    role.permissions = []
+    for id in (req.POST['permissions'].strip() and req.POST['permissions'].split(",") or []):
+        role.permissions.append(ctx.get_permission(id))
+    
+    for i in xrange(len(ctx.roles)):
+        if ctx.roles[i].id == id:
+            ctx.roles[i] = role
+            break
+    
+    ctx.write_xml()
+    return HttpResponse("{'result': 'OK'}")
+
+
+@authenticate(ERROR)
+@need_superuser()
+def delete_role(req, id):
+    ctx = Context()
+    found = False
+    for i in xrange(len(ctx.roles)):
+        if ctx.roles[i].id == id:
+            del ctx.roles[i]
+            found = True
+            break
+    if not found:
+        raise Http404
+    
+    for i in xrange(len(ctx.users)):
+        for j in xrange(len(ctx.users[i].roles)):
+            if ctx.users[i].roles[j].id == id:
+                del ctx.users[i].roles[j]
+                break
+            
+    ctx.write_xml()
+    return HttpResponse("{'result': 'OK'}")
+
+
+@authenticate(ERROR)
+@need_superuser()
+def permissions_get_all(req):
+    ctx = Context()
+    return HttpResponse("['%s']" % "','".join([p.id.replace("'", "\\'") for p in ctx.permissions]))
+
+
+@authenticate()
+@need_superuser()
+def permissions(req):
+    response = HttpResponse()
+    response.loadTemplate("permissions.html")
+    return response
+
+
+@authenticate(ERROR)
+@need_superuser()
+def get_permission(req, id):
+    pass 
+
+
+@authenticate(ERROR)
+@need_superuser()
+def add_permission(req):
+    pass
+
+
+@authenticate(ERROR)
+@need_superuser()
+def delete_permission(req, id):
+    pass 
+
+
+@authenticate(ERROR)
+@need_superuser()
+def edit_permission(req, id):
+    pass 
+
+
+@authenticate(ERROR)
+@need_superuser()
+def permissions_search(req):
+    if not req.POST:
+        raise HttpError(400, "Invalid Request")
+    
+    search = req.POST.get("search", "")
+    
+    ctx = Context()
+    permissions = [p for p in ctx.permissions if search.lower() in p.id.lower()]
+    
+    data = []
+    for p in permissions:
+        pdata = []
+        pdata.append("'id': '%s'" % p.id.replace("'", "\\'"))
+        pdata.append("'description': '%s'" % p.description.replace("'", "\\'"))
+        cdata = []
+        for c in p.constraints:
+            ccdata = []
+            ccdata.append("'type': '%s'" % c.type.replace("'", "\\'"))
+            ccdata.append("'content': '%s'" % c.content.replace("'", "\\'"))
+            cdata.append("{%s}" % ",".join(ccdata))
+        pdata.append("'constraints': [%s]" % ",".join(cdata))
+        data.append("{%s}" % ",".join(pdata))
+    
+    return HttpResponse("[%s]" % ",".join(data), "text/plain")

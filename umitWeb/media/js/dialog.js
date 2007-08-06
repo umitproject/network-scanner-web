@@ -7,6 +7,7 @@ Dialog = new Class({
         height: 100
     },
     initialize: function(options){
+        self = this;
         this.options = $merge(this.options, options || {});
         this.window = new Element("div", {"class": "dialog"});
         header = new Element("h2");
@@ -19,10 +20,9 @@ Dialog = new Class({
         lnk.setStyle("position", "absolute");
         lnk.setStyle("right", "0");
         lnk.setStyle("top", "0");
-        p = this;
         lnk.addEvent("click", function(e){
-            p.close();
             new Event(e).stop();
+            self.close();
         });
         header.adopt(lnk);
         
