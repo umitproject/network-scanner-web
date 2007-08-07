@@ -1,9 +1,7 @@
-var constraintCount = 0;
-
 PermissionDialog = Dialog.extend({
     options: {
         title: "Permission Management",
-        width: 430,
+        width: 480,
         height: 280,
         content: new Element("div")
     },
@@ -21,13 +19,97 @@ PermissionDialog = Dialog.extend({
         
         tbl = new Element("table");
         tabMain.adopt(tbl);
-        inputId = new Element("input", {"size": "30", "type": "text"});
-        txtDescription = new Element("textarea", {"style": "width: 385px; height: 110px;"});
+        divType = new Element("span");
+        divType.setText("Type:* ");
+        selectPermType = new Element("select");
+        opt1 = new Element("option", {"value": "allow"});
+        opt1.setText("Allow");
+        opt2 = new Element("option", {"value": "deny"});
+        opt2.setText("Deny");
+        selectPermType.adopt(opt1);
+        selectPermType.adopt(opt2);
+        divType.adopt(selectPermType);
+        inputId = new Element("input", {"size": "30", "type": "text", "style": "margin-right:10px;"});
+        txtDescription = new Element("textarea", {"style": "width: 435px; height: 115px;"});
         fsDescription = new Element("fieldset", {"style": "padding:0;margin:0"});
         legend = new Element("legend");
         legend.setText("Description");
         fsDescription.adopt(legend);
         fsDescription.adopt(txtDescription);
+        
+        currentConstraints = [];
+        
+        tblContents = new Element("table");
+        dvConstraints = new Element("div", {"styles": {"height": "167px", "width": "415px", "border": "#CCC 1px solid", "overflow": "auto"}});
+        tblConstraints = new Element("table", {"id": "constraints_table", "class": "std_table"});
+        dvConstraints.adopt(tblConstraints);
+        
+        lnkMoveUp = new Element("a", {"href": "javascript:void(null)"});
+        imgMoveUp = new Element("img", {"src": "/media/images/up.png", "alt":"Move constraint up", "title":"Move constraint up"});
+        lnkMoveUp.adopt(imgMoveUp);
+        lnkMoveUp.addEvent("click", function(e){
+            for(j = 1; j < currentConstraints.length; j++){
+                if(currentConstraints[j]["check"].checked){
+                    aux = currentConstraints[j-1];
+                    currentConstraints[j-1] = currentConstraints[j];
+                    currentConstraints[j] = aux;
+                    fillConstraintTable();
+                    break;
+                }
+            }
+        });
+        
+        lnkMoveDown = new Element("a", {"href": "javascript:void(null)"});
+        imgMoveDown = new Element("img", {"src": "/media/images/down.png", "alt":"Move constraint down", "title":"Move constraint down"});
+        lnkMoveDown.adopt(imgMoveDown);
+        lnkMoveDown.addEvent("click", function(e){
+            for(j = currentConstraints.length - 2; j >= 0; j--){
+                if(currentConstraints[j]["check"].checked){
+                    aux = currentConstraints[j+1];
+                    currentConstraints[j+1] = currentConstraints[j];
+                    currentConstraints[j] = aux;
+                    fillConstraintTable();
+                    break;
+                }
+            }
+        });
+        
+        lnkAdd = new Element("a", {"href": "javascript:void(null)"});
+        imgAdd = new Element("img", {"src": "/media/images/plus.png", "alt":"Add new constraint", "title":"Add new constraint"});
+        lnkAdd.adopt(imgAdd);
+        lnkAdd.addEvent("click", function(e){
+            addPermissionRow();
+        });
+        
+        lnkRemove = new Element("a", {"href": "javascript:void(null)"});
+        imgRemove = new Element("img", {"src": "/media/images/minus.png", "alt":"Remove constraint", "title":"Remove constraint"});
+        lnkRemove.adopt(imgRemove);
+        lnkRemove.addEvent("click", function(e){
+            for(j = 0; j < currentConstraints.length; j++){
+                if(currentConstraints[j]["check"].checked){
+                    if(j > 0){
+                        currentConstraints[j]["check"].checked = true;
+                    }
+                    delete currentConstraints[j];
+                    break;
+                }
+            }
+            cc = [];
+            currentConstraints.each(function(c){
+                if(typeof c != "undefined"){
+                    cc.include(c);
+                }
+            });
+            currentConstraints = cc;
+            fillConstraintTable();
+        });
+        
+        addTableRow(tblContents, [{"value": dvConstraints, "attrs": {"rowSpan": "4"}},
+                                  {"value": lnkAdd, "attrs": {"width": "0", "align":"center"}}]);
+        addTableRow(tblContents, [{"value": lnkRemove, "attrs": {"width": "0", "align":"center"}}]);
+        addTableRow(tblContents, [{"value": lnkMoveUp, "attrs": {"width": "0", "align":"center"}}]);
+        addTableRow(tblContents, [{"value": lnkMoveDown, "attrs": {"width": "0", "align":"center"}}]);
+        tabConstraints.adopt(tblContents);
         
         if(self.options.data){
             d = self.options.data;
@@ -38,6 +120,7 @@ PermissionDialog = Dialog.extend({
         
         addTableRow(tbl, ["Id:*", inputId]);
         addTableRow(tbl, [{"value": fsDescription, "attrs": {"colSpan": "2"}}]);
+        divType.injectAfter(inputId);
         
         this.options.content.setStyle("padding", "10px;");
         
@@ -66,7 +149,6 @@ PermissionDialog = Dialog.extend({
                     return;
                 }
             }
-            
             
             selectedOptions = []
             for(k = 0; k < selectedPermissions.length; k++){
@@ -143,22 +225,56 @@ function fillTableData(permissions){
                 constraints.include(c["content"] + " <span style='color:#505050'><i>(" + c["type"] + ")</i></span>");
             }
             line = [ch, lnkEdit, p.description, constraints.join("<br/>")]
-            className = (index % 2 == 0)? "dark": "light";
-            addTableRow(t, line, {"class": className});
+            className = (index % 2 == 0)? "light": "dark";
+            tr = addTableRow(t, line);
+            tr.addClass(className);
         }
     }
 }
 
-function addPermissionRow(tbl, type, content){
+var currentConstraints = [];
+
+function fillConstraintTable(){
+    t = $("constraints_table").empty();
+    for(j = 0; j < currentConstraints.length; j++){
+        c =  currentConstraints[j];
+        args = {};
+        addTableRow(t, [c["check"], "Type: ", c["type"], "Content: ", c["content"]]);
+        
+        c["check"].removeEvents();
+        c["check"].addEvent("focus", function(e){
+            this.checked = true;
+            this.parentNode.parentNode.addClass("dark");
+        });
+        
+        c["check"].addEvent("blur", function(e){
+            this.parentNode.parentNode.removeClass("dark");
+        });
+        
+        if(c["check"].checked == true){
+            c["check"].fireEvent("focus");
+        }else{
+            c["check"].fireEvent("blur");
+        }
+        currentConstraints[j] = c;
+    }
+    setInputStyles();
+}
+
+function addPermissionRow(type, content){
     type = (type)? type: "";
     content = (content)? content: "";
-    
-    selectType = new Element("select", {"id": "type-" + constraintCount});
-    inputContent = new Element("input", {"type": "text", "id": "content-" + constraintCount});
-    lblType = new Element("label");
-    lblContent = new Element("content");
-    
-    constraintCount++;
+    inputCheck = new Element("input", {"type": "radio", "name": "current"});
+    inputCheck.checked = true;
+    selectType = new Element("select");
+    optCommand = new Element("option");
+    optCommand.setText("command");
+    selectType.add(optCommand, null);
+    inputContent = new Element("input", {"type": "text"});
+    currentConstraints.include({"type": selectType, "content": inputContent.clone(), "check": inputCheck.clone()});
+    delete inputCheck;
+    delete inputContent;
+    fillConstraintTable();
 }
 
 function loadPermissionsTableData(){

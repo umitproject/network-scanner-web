@@ -740,6 +740,7 @@ function runScan(e){
 		td2.setText("Running...");
 		tr.adopt(td2);
 		tbHosts.adopt(tr);
+		//tr2 = tr.cloneNode();
 		
 		$("ports_table").getElement("tbody").empty();
 		$("hosts_tab").empty();
@@ -748,7 +749,7 @@ function runScan(e){
 		$("services_table").getElement("tbody").empty();
 		$("profile_name").value = $("profiles")[$("profiles").selectedIndex].textContent
 	
-		$("frmScan").send({onComplete: function(tResult){
+		/*reqObj = $("frmScan").send({onComplete: function(tResult){
 				result = Json.evaluate(tResult);
 				if(result.result == "OK"){
 					    checkScanStatus(result.id)
@@ -768,6 +769,37 @@ function runScan(e){
 			    scanLock = false;
 			  }
 		});
+		reqObj.$events.onStateChange = [function(req){
+			alert(req.readyState);
+			request = req;
+			if(req.readyState == 3){
+				checkIfFinished();
+			}
+		}]*/
+	
+		args = {
+			target: $("target").value,
+			command: $("command").value,
+			profile: $("profiles")[$("profiles").selectedIndex].value,
+			profile_name: $("profiles")[$("profiles").selectedIndex].textContent
+		}
+		
+		reqObj = new XHR("post");
+		reqObj.send("/scan/", Object.toQueryString(args));
+		checkIfFinished();
 	}
 	e.stop();
+}
+var reqObj = null;
+function checkIfFinished(){
+	alert(":D");
+	response = null;
+	try{
+		eval("response = " + reqObj.transport.responseText);
+		reqObj.cancel();
+		checkScanStatus(response.id);
+	}catch(e){
+		alert(e);
+		setTimeout("checkIfFinished()", 1000);
+	}
 }

@@ -272,8 +272,9 @@ function fillTableData(users){
         imgAlt = u.superuser ? "yes": "no";
         imgSuperuser = new Element("img", {"src": "/media/images/" + imgSrc + ".png", "title": imgAlt, "alt": imgAlt});
         line = [ch, lnkEdit, u.login, {"value": imgSuperuser, "attrs": {"align": "center"}}, u.roles.join(", ")]
-        className = (index % 2 == 0)? "dark": "light";
-        addTableRow(t, line, {"class": className});
+        className = (index % 2 == 0)? "light": "dark";
+        tr = addTableRow(t, line);
+        tr.addClass(className);
     }
 }
 

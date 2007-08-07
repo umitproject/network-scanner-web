@@ -267,8 +267,9 @@ function fillTableData(roles){
             openRoleDialog(this.id);
         });
         line = [ch, lnkEdit, r.description, r.permissions.join(", ")]
-        className = (index % 2 == 0)? "dark": "light";
-        addTableRow(t, line, {"class": className});
+        className = (index % 2 == 0)? "light": "dark";
+        tr = addTableRow(t, line);
+        tr.addClass(className);
     }
 }
 

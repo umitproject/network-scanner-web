@@ -58,6 +58,8 @@ function setInputStyles(){
         element.style.borderStyle = "solid";
         element.style.borderWidth = "1px";
         element.style.borderColor = "#303030";
+        element.style.backgroundImage = "url(/media/images/input_bg.png)";
+        element.style.backgroundRepeat = "repeat-x";
     });
     $$("textarea").each(function(element){
         element.style.fontFamily = "sans-serif";
@@ -66,36 +68,37 @@ function setInputStyles(){
     $$("input[type=submit]", "input[type=button]").each(function(element){
         element.style.backgroundImage = "url(/media/images/th_back.jpg)";
         element.style.color = "black";
+        element.style.borderWidth = "1px";
     });
 }
 
 function addTableRow(table, row, lineAttrs){
 	tr = new Element("tr");
 	if(lineAttrs){
-		for(var attr in lineAttrs){
-			tr[attr] = lineAttrs[attr];
+		for(attr in lineAttrs){
+		    tr[attr] = lineAttrs[attr];
 		}
 	}
 	for(i = 0; i < row.length; i++){
 		td = new Element("td")
 		if($type(row[i]) == "string"){
-			td.setHTML(row[i]);
+		    td.setHTML(row[i]);
 		}else if($type(row[i]) == "element"){
-			td.adopt(row[i]);
+		    td.adopt(row[i]);
 		}else{
-			for(var attr in row[i].attrs){
-				td[attr] = row[i].attrs[attr]
-			}
-			if($type(row[i].value) == "string"){
-				td.setHTML(row[i].value);
-			}else{
-				td.adopt(row[i].value);
-			}
+                    for(attr in row[i].attrs){
+                        td[attr] = row[i].attrs[attr]
+                    }
+                    if($type(row[i].value) == "string"){
+                        td.setHTML(row[i].value);
+                    }else{
+                        td.adopt(row[i].value);
+                    }
 		}
 		tr.adopt(td)
 	}
-	//alert(table)
 	table.adopt(tr)
+        return tr;
 }
 
 function showError(req, target){
