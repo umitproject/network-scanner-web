@@ -1,9 +1,9 @@
 @echo off
 
 :: Setting variables
-set PythonEXE=C:\Python24\python.exe
-set UmitDir=C:\Umit
-set DistDir=C:\Umit\dist
+set PythonEXE=C:\Python25\python.exe
+set UmitDir=C:\Umit\trunk
+set DistDir=C:\Umit\trunk\dist
 set GTKDir=C:\GTK
 set NmapDir=C:\Nmap
 set WinpcapDir=C:\Winpcap
@@ -52,4 +52,3 @@ xcopy %GTKDir%\etc %DistDir%\etc /S /I
 
 :: Remove build dir
 rd %UmitDir%\build /s /q
-

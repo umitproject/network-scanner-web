@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
-# Authors: Adriano Monteiro Marques <py.adriano@gmail.com>
-#          Cleber Rodrigues <cleber.gnu@gmail.com>
-#                           <cleber@globalred.com.br>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+#         Cleber Rodrigues <cleber.gnu@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +34,6 @@ from higwidgets.higwindows import HIGMainWindow
 from higwidgets.higdialogs import HIGDialog, HIGAlertDialog
 from higwidgets.higlabels import HIGEntryLabel
 from higwidgets.higboxes import HIGHBox, HIGVBox
-from higwidgets.hignotebooks import HIGAnimatedTabLabel
 
 from umitGUI.FileChoosers import ResultsFileChooserDialog, SaveResultsFileChooserDialog
 from umitGUI.ScanNotebook import ScanNotebook, ScanNotebookPage
@@ -46,14 +47,18 @@ from umitGUI.BugReport import BugReport
 from umitCore.Paths import Path
 from umitCore.Logging import log
 from umitCore.I18N import _
+from umitCore.UmitOptionParser import option_parser
 from umitCore.UmitConf import SearchConfig, is_maemo
 from umitCore.UmitDB import Scans, UmitDB
 
 root = False
 try:
-    if sys.platform == 'win32': root = True
-    elif is_maemo(): root = True
-    elif os.getuid() == 0: root = True
+    if sys.platform == 'win32':
+        root = True
+    elif is_maemo():
+        root = True
+    elif os.getuid() == 0:
+        root = True
 except: pass
 
 
@@ -103,8 +108,12 @@ class MainWindow(UmitMainWindow):
         # invocation. sigh.
         self._profile_filechooser_dialog = None
         self._results_filechooser_dialog = None
-        
-        self._new_scan_cb (None)
+
+        # Loading files passed as argument
+        files = option_parser.get_open_results()
+        if len(files) >= 1:
+            for file in files:
+                self._load(filename=file)
 
     def configure_focus_chain(self):
         self.vbox.set_focus_chain()
@@ -529,7 +538,30 @@ Scan Tab?'),
 
     def _create_scan_notebook(self):
         self.scan_notebook = ScanNotebook()
+        page = self._new_scan_cb()
         self.scan_notebook.show_all()
+
+        # Applying some command line options
+        target = option_parser.get_target()
+        profile = option_parser.get_profile()
+        nmap = option_parser.get_nmap()
+
+        if nmap:
+            page.command_toolbar.command = " ".join(nmap)
+            page.start_scan_cb()
+
+        else:
+            if target:
+                page.toolbar.selected_target = target
+
+            if profile:
+                page.toolbar.selected_profile = profile
+
+            if target and profile:
+                log.debug(">>> Executing scan with the given args: %s \
+with %s" % (target, profile))
+                page.start_scan_cb()
+
         if is_maemo():
             # No padding. We need space!
             self.vbox.pack_start(self.scan_notebook, True, True, 0)
@@ -587,7 +619,7 @@ Scan Tab?'),
                 scan_page = current_page
             else:
                 log.debug(">>> Creating a new page to load it.")
-                scan_page = self._new_scan_cb(None)
+                scan_page = self._new_scan_cb()
 
             log.debug(">>> Enabling page widgets")
             scan_page.enable_widgets()
@@ -773,7 +805,7 @@ Wait until the scan is finished and then try to save it again.'))
             alert.run()
             alert.destroy()
     
-    def _new_scan_cb(self, widget, data=None):
+    def _new_scan_cb(self, widget=None, data=None):
         """Append a new ScanNotebookPage to ScanNotebook
         New tab properties:
         - Empty
@@ -829,7 +861,14 @@ Wait until the scan is finished and then try to save it again.'))
 
     def _show_help(self, action):
         import webbrowser
-        webbrowser.open("file://%s" % os.path.join(Path.docs_dir, "help.html"), new=2)
+
+        new = 0
+        if sys.hexversion >= 0x2050000:
+            new = 2
+
+        webbrowser.open("file://%s" % os.path.join(Path.docs_dir,
+                                                   "help.html"), new=new)
+        
 
     def _exit_cb (self, widget=None, extra=None):
         for page in self.scan_notebook.get_children():

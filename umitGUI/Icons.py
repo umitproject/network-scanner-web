@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
-# Authors: Adriano Monteiro Marques <py.adriano@gmail.com>
-#          Cleber Rodrigues <cleber.gnu@gmail.com>
-#                           <cleber@globalred.com.br>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+#         Cleber Rodrigues <cleber.gnu@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,11 +86,11 @@ if pixmap_path:
     else:
         for icon_name in icon_names:
             for variant in (('icon', '32'), ('logo', '75')):
-                log.debug('Pixmap Path: %s' % pixmap_path)
+                #log.debug('Pixmap Path: %s' % pixmap_path)
                 file_path = os.path.join(pixmap_path, '%s_%s.png' % (icon_name, variant[1]))
                 (key, val) = ('%s_%s' % (icon_name, variant[0]), file_path)
                 if os.path.exists(file_path):
-                    log.debug('Register %s icon name for file %s' % (key, val))
+                    #log.debug('Register %s icon name for file %s' % (key, val))
                     icons.append((key, val))
                 else:
                     log.warn('Could not find %s file for icon name %s' % (val, key))

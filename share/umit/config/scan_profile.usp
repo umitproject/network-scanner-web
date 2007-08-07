@@ -1,9 +1,9 @@
-[OS Detection with no DNS]
-options = 
-hint = 
-command = nmap   -O -n %s
-annotation = 
+[Intense Scan]
 description = 
+hint = 
+options = Version detection,Operating system detection,Aggressive, Verbose
+command = nmap -T Aggressive -A -v %s
+annotation = 
 
 [Operating System Detection]
 description = 
@@ -11,19 +11,6 @@ hint =
 options = Operating system detection,Verbose
 command = nmap -O -v %s
 annotation = 
-
-[Profile 1]
-description = description
-hint = hint
-options = 
-command = nmap -O  -PE -p22 %s
-annotation = annotation
-
-[Profile 2]
-hint = hint
-command = nmap -O -sV -f %s
-description = desc
-annotation = ann
 
 [Quick Full version Detection Scan]
 description = 

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
-# Authors: Adriano Monteiro Marques <py.adriano@gmail.com>
-#          Cleber Rodrigues <cleber.gnu@gmail.com>
-#                           <cleber@globalred.com.br>
-#          
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+#         Cleber Rodrigues <cleber.gnu@gmail.com>
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -54,7 +55,11 @@ except:
 ##################################################################################
 # Main Variables
 
-# Directories
+# Directories for POSIX operating systems
+# These are created after a "install" or "py2exe" command
+# These directories are relative to the installation or dist directory
+# Ex: python setup.py install --prefix=/tmp/umit
+# Will create the directory /tmp/umit with the following directories
 pixmaps_dir = os.path.join('share', 'pixmaps')
 icons_dir = os.path.join('share', 'icons')
 locale_dir = os.path.join('share', 'umit', 'locale')
@@ -85,7 +90,7 @@ except:
 # Main Functions
 
 def umit_version():
-    return open(os.path.join("config", "umit_version")).readlines()[0]
+    return open(os.path.join(config_dir, "umit_version")).readlines()[0]
 
 def check_dependencies():
     '''Tries to check all dependencies, and abort instalation if something is missing
@@ -139,18 +144,23 @@ if PLATFORM == 'linux2':
     svg = glob(os.path.join('share', 'pixmaps', '*.svg'))
 
 
-data_files = [ (pixmaps_dir, svg + glob(os.path.join('share', 'pixmaps', 
-                                                     '*.png')) +
-                glob(os.path.join('share', 'pixmaps', '*.gif')) +
-                glob(os.path.join('share', 'pixmaps', 'umit.o*'))),
+# What to copy to the destiny
+# Here, we define what should be put inside the directories set in the beginning
+# of this file. This list contain tuples where the first element contains
+# a path to where the other elements of the tuple should be installed.
+# The first element is a path in the INSTALLATION PREFIX, and the other elements
+# are the path in the source base.
+# Ex: [("share/pixmaps", "/umit/trunk/share/pixmaps/test.png")]
+# This will install the test.png file in the installation dir share/pixmaps.
+data_files = [ (pixmaps_dir, svg + glob(os.path.join(pixmaps_dir, '*.png')) +
+                             glob(os.path.join(pixmaps_dir, 'umit.o*'))),
 
-               (config_dir, [os.path.join('config', 'umit.conf')] +                             [os.path.join('config', 'scan_profile.usp')] +
-                [os.path.join('config', 'umit_version')] +
-                [os.path.join('config', 'umit.db')] +
-                [os.path.join('config', 'umitng.db')] +
-                [os.path.join('config', 'smtp-schemas.conf')] +
-                glob(os.path.join('config', '*.xml'))+
-                glob(os.path.join('config', '*.txt'))),
+               (config_dir, [os.path.join(config_dir, 'umit.conf')] +
+                            [os.path.join(config_dir, 'scan_profile.usp')] +
+                            [os.path.join(config_dir, 'umit_version')] +
+                            [os.path.join(config_dir, 'umit.db')] + 
+                            glob(os.path.join(config_dir, '*.xml'))+
+                            glob(os.path.join(config_dir, '*.txt'))),
 
                # UmitDB sql
                (sql_dir, glob(os.path.join("umitDB/sql", '*.sql'))),
@@ -159,29 +169,33 @@ data_files = [ (pixmaps_dir, svg + glob(os.path.join('share', 'pixmaps',
                (scripts_dir, [os.path.join('share', 'scripts', 
                                            'scheduler_control.py')]),
 
-               (misc_dir, glob(os.path.join('misc', '*.dmp'))), 
+               (misc_dir, glob(os.path.join(misc_dir, '*.dmp'))), 
 
                (icons_dir, glob(os.path.join('share', 'icons', '*.ico'))+
                            glob(os.path.join('share', 'icons', '*.png'))),
 
-               (docs_dir, glob(os.path.join('docs', '*.html'))+
-                glob(os.path.join('docs', 'comparing_results', '*.xml'))+
-                glob(os.path.join('docs', 'profile_editor', '*.xml'))+
-                glob(os.path.join('docs', 'scanning', '*.xml'))+
-                glob(os.path.join('docs', 'searching', '*.xml'))+
-                glob(os.path.join('docs', 'wizard', '*.xml'))+
-                glob(os.path.join('docs', 'screenshots', '*.png'))) ]
+               (docs_dir, glob(os.path.join(docs_dir, '*.html'))+
+                          glob(os.path.join(docs_dir,
+                                            'comparing_results', '*.xml'))+
+                          glob(os.path.join(docs_dir,
+                                            'profile_editor', '*.xml'))+
+                          glob(os.path.join(docs_dir,
+                                            'scanning', '*.xml'))+
+                          glob(os.path.join(docs_dir,
+                                            'searching', '*.xml'))+
+                          glob(os.path.join(docs_dir,
+                                            'wizard', '*.xml'))+
+                          glob(os.path.join(docs_dir,
+                                            'screenshots', '*.png')))]
 
 # Installing maemo specific desktop entries
 if PLATFORM == "maemo":
-    data_files += [ ("share/pixmaps", [os.path.join("share", "icons", 
-                                                    "umit_26.png")]),
-
-                    ("share/applications/hildon", 
-                     [os.path.join(maemo_dir, "umit.desktop")]),
-
-                    ("share/dbus-1/services", 
-                     [os.path.join(maemo_dir, "umit.service")]) ]
+    data_files += [(pixmaps_dir,
+                        [os.path.join(icons_dir, "umit_26.png")]),
+                   ("share/applications/hildon",
+                        [os.path.join(maemo_dir, "umit.desktop")]),
+                   ("share/dbus-1/services",
+                        [os.path.join(maemo_dir, "umit.service")])]
 
 # Add i18n files to data_files list
 os.path.walk(locale_dir, mo_find, data_files)
@@ -276,9 +290,8 @@ print
         subs_pattern = re.compile("Path\.set_umit_conf\(join\(split\(__file__\)\[0\],\
  'config', 'umit\.conf'\)\)")
         content = subs_pattern.sub("Path.set_umit_conf('%s')" % \
-                                os.path.join(self.install_data, config_dir, 
-                                "umit.conf"),
-                                content)
+                                       os.path.join(self.install_data, config_dir, "umit.conf"),
+                                   content)
 
         subs_pattern = re.compile("import sys")
         content = subs_pattern.sub("import sys\nsys.path.insert(0, '%s')" % self.install_lib,
@@ -346,7 +359,7 @@ class umit_py2exe(build_exe):
                       pixmaps_dir = install_pixmaps_dir,
                       icons_dir = install_icons_dir,
                       locale_dir = install_locale_dir,
-                      umit_icon = os.path.join(install_icons_dir, "umit_48.ico"),
+                      umit_icon = os.path.join(install_icon_dir, "umit_48.ico"),
                       nmap_command_path = "nmap")
 
         umit_conf_file = open(dist_umit_conf, 'r')

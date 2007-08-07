@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
-# Authors: Adriano Monteiro Marques <py.adriano@gmail.com>
-#          Cleber Rodrigues <cleber.gnu@gmail.com>
-#                           <cleber@globalred.com.br>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+#         Cleber Rodrigues <cleber.gnu@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,15 +23,9 @@
 import os
 import os.path
 import sys
-import optparse
-
-import gtk
-import gobject
-
-from umitGUI.Splash import Splash
-from umitGUI.MainWindow import MainWindow
 
 from umitCore.Paths import Path
+from umitCore.UmitOptionParser import option_parser
 from umitCore.UmitConf import is_maemo
 from umitCore.I18N import _
 from umitCore.Logging import log
@@ -48,23 +44,20 @@ def main_is_frozen():
 
 class App:
     def __init__(self, args=sys.argv):
-        self.__create_option_parser()
-
-    def __create_option_parser(self):
-        self.option_parser = optparse.OptionParser()
-        self.options, self.args = self.option_parser.parse_args()
+        pass
 
     def __parse_cmd_line(self):
         pass
 
     def __create_show_main_window(self):
+        from umitGUI.MainWindow import MainWindow
         self.main_window = MainWindow()
         
         if is_maemo():
             import hildon
             self.hildon_app = hildon.Program()
             self.hildon_app.add_window(self.main_window)
-        
+
         self.main_window.show_all()
     
     def safe_shutdown(self, signum, stack):
@@ -94,11 +87,26 @@ class App:
             self.using_psyco = True
         except:
             log.warning(_("RUNNING WITHOUT PSYCO!"))
-            log.warning(_("""Psyco is a module that speeds up the execution of this \
-application. It is not a requirement, and Umit runs perfectly well with or without it, \
-but you're encourajed to install it to have a better speed experience. Download it \
-at http://psyco.sf.net/"""))
+            log.warning(_("""Psyco is a module that speeds up the execution \
+of this application. It is not a requirement, and Umit runs perfectly \
+with or without it, but you're encourajed to install it to have a better \
+speed experience. Download it at http://psyco.sf.net/"""))
             self.using_psyco = False
+
+        self.diff = option_parser.get_diff()
+        if self.diff:
+            self.__run_text()
+        else:
+            self.__run_gui()
+
+    def __run_text(self):
+        log.info(">>> Text Mode")
+
+    def __run_gui(self):
+        log.info(">>> GUI Mode")
+        import gtk
+        import gobject
+        from umitGUI.Splash import Splash
 
         if not is_maemo():
             pixmap_d = Path.pixmaps_dir
@@ -108,8 +116,8 @@ at http://psyco.sf.net/"""))
 
         if main_is_frozen():
             # This is needed by py2exe
-            gtk.threads_init()
-            gtk.threads_enter()
+            gtk.gdk.threads_init()
+            gtk.gdk.threads_enter()
 
         # Create and show the main window as soon as possible
         gobject.idle_add(self.__create_show_main_window)
@@ -119,4 +127,4 @@ at http://psyco.sf.net/"""))
         gtk.main()
 
         if main_is_frozen():
-            gtk.threads_leave()
+            gtk.gdk.threads_leave()

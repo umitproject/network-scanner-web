@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques   <py.adriano@gmail.com>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,6 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import sys
 import gtk
 import gtk.gdk
 import pango
@@ -25,7 +29,7 @@ from threading import Thread
 
 from higwidgets.higbuttons import HIGButton
 
-from umitCore.I18N import _
+from umitCore.I18N import _, enc
 from umitCore.Logging import log
 from umitCore.UmitConf import NmapOutputHighlight
 
@@ -67,7 +71,7 @@ class NmapOutputViewer (gtk.VPaned):
         self.scrolled = gtk.ScrolledWindow ()
         self.text_view = gtk.TextView ()
         self.btn_refresh = gtk.Button (stock=gtk.STOCK_REFRESH)
-        self.check_enable_color = gtk.CheckButton(_("Enable/Disable Nmap output highlight"))
+        self.check_enable_color = gtk.CheckButton(_("Enable Nmap output highlight"))
         self.btn_output_properties = HIGButton(stock=gtk.STOCK_PREFERENCES)
         self.hbox_buttons = gtk.HBox (spacing=5)
         self.txg_font = gtk.TextTag()
@@ -349,11 +353,10 @@ gtk.color_selection_palette_to_string([gtk.gdk.Color(*highlight_color),]))
         self.refresh_output()
     
     def refresh_output(self, widget=None):
-        #log.debug("Refresh nmap output")
-        nmap_of = open(self.nmap_output_file)
-        self.text_buffer.set_text(nmap_of.read())
+        log.debug("Refresh nmap output")
+        nmap_of = open(self.nmap_output_file, "r")
 
-        # Closing file to avoid file descriptor problems
+        self.text_buffer.set_text(enc(nmap_of.read()))
         nmap_of.close()
     
 if __name__ == '__main__':
@@ -364,6 +367,6 @@ if __name__ == '__main__':
     w.connect('delete-event', lambda x,y,z=None:gtk.main_quit())
 
     buff = n.text_view.get_buffer()
-    buff.set_text(open("test/nmap_highlight").read())
+    buff.set_text(read_file("file_with_encoding_issues.txt"))
     
     gtk.main()

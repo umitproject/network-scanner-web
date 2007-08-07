@@ -1,24 +1,23 @@
-##
-## UserConf.py
-## Login : <adriano@localhost.localdomain>
-## Started on  Sat Apr  8 16:20:57 2006 Adriano Monteiro Marques
-## $Id$
-## 
-## Copyright (C) 2006 Adriano Monteiro Marques
-## This program is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
-## (at your option) any later version.
-## 
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License
-## along with this program; if not, write to the Free Software
-## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2005 Insecure.Com LLC.
+#
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
 import os.path
@@ -55,7 +54,7 @@ annotation =
 description = 
 hint = 
 options = Version detection,Operating system detection,Aggressive, Verbose
-command = nmap -T Aggressive -sV -O -v %s
+command = nmap -T Aggressive -A -v %s
 annotation = 
 
 [Regular Scan]
@@ -668,7 +667,7 @@ wizard_content = '''<?xml version="1.0"?>
 def create_user_dir(user_home):
     log.debug("Create user dir at given home: %s" % user_home)
     user_dir = os.path.join(user_home, base_paths['config_dir'])
-    
+
     if os.path.exists(user_home) and os.access(user_home, os.R_OK and os.W_OK)\
            and not os.path.exists(user_dir):
         os.mkdir(user_dir)

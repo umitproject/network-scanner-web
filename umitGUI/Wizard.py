@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques   <py.adriano@gmail.com>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -319,7 +322,7 @@ for this profile.'))
                                      hint=hint,\
                                      description=description,\
                                      annotation=annotation,\
-                                     options=','.join(self.constructor.get_options()))
+                                     options=self.constructor.get_options())
             
             for i in xrange(self.notebook.get_n_pages()):
                 page = self.notebook.get_nth_page(i)

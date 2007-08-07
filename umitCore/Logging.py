@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
 # Author: Adriano Monteiro Marques <py.adriano@gmail.com>
@@ -16,9 +19,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from logging import Logger, StreamHandler, Formatter
 
-LOGLEVEL = 40
+from logging import Logger, StreamHandler, Formatter
+from umitCore.UmitOptionParser import option_parser
+
+LOGLEVEL = option_parser.get_verbose()
 
 class Log(Logger, object):
     def __init__(self, name, level=0):

@@ -1,7 +1,9 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques   <py.adriano@gmail.com>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -220,9 +222,6 @@ Luis Antonio Bastião Silva <luis.kop@gmail.com>
 
 NSE Facilitator:
 Maxim I. Gavrilov <lovelymax@gmail.com>
-
-Nmap Python Wrapper:
-Pavel Klemenkov <parser@cs.msu.su>
 
 Umit Web:
 Rodolfo da Silva Carvalho <rodolfo.ueg@gmail.com>

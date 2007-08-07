@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques   <py.adriano@gmail.com>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +33,7 @@ class NmapOptions:
         it's parsing.
         '''
         # Starting file's parsing
-        self.option_xml = minidom.parse (open (profile))
+        self.option_xml = minidom.parse(open (profile))
         
         # Root tag of the xml file.
         self.root_tag = 'nmap_options'

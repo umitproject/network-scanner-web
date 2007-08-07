@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques   <py.adriano@gmail.com>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +31,7 @@ from subprocess import Popen, PIPE
 from umitCore.NmapOptions import NmapOptions
 from umitCore.Paths import Path
 from umitCore.Logging import log
+from umitCore.I18N import _, enc
 
 option_xml = Path.options
 
@@ -49,7 +53,13 @@ class NmapCommand(object):
         self.normal_output = mktemp()
         self.stdout_output = mktemp()
         self.stderr_output = mktemp()
-        
+
+        log.debug(">>> Created temporary files:")
+        log.debug(">>> XML OUTPUT: %s" % self.xml_output)
+        log.debug(">>> NORMAL OUTPUT: %s" % self.normal_output)
+        log.debug(">>> STDOUT OUTPUT: %s" % self.stdout_output)
+        log.debug(">>> STDERR OUTPUT: %s" % self.stderr_output)
+
         # Creating files. Avoid troubles while running at Windows
         open(self.xml_output,'w').close()
         open(self.normal_output,'w').close()
@@ -299,7 +309,7 @@ class CommandConstructor:
 
     def get_options(self):
         return dict([(k, v[0]) for k, v in self.options.items()])
-    
+
 class CommandThread(threading.Thread):
     def __init__(self, command):
         self._stop_event = threading.Event()
