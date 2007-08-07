@@ -792,7 +792,6 @@ function runScan(e){
 }
 var reqObj = null;
 function checkIfFinished(){
-	alert(":D");
 	response = null;
 	try{
 		eval("response = " + reqObj.transport.responseText);
