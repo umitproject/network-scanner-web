@@ -798,7 +798,6 @@ function checkIfFinished(){
 		reqObj.cancel();
 		checkScanStatus(response.id);
 	}catch(e){
-		alert(e);
 		setTimeout("checkIfFinished()", 1000);
 	}
 }
