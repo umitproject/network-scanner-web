@@ -22,14 +22,14 @@ import sys
 import os
 from os.path import join, split
 
-from umitWeb.Server import UmitWebServer
-
 ######################################
 # Setting the umit home directory
 
 from umitCore.Paths import Path
-Path.set_umit_conf(join(split(__file__)[0], 'config', 'umit.conf'))
+Path.set_umit_conf(join(split(__file__)[0], 'share', 'umit', 'config', 'umit.conf'))
 ######################################
+
+from umitWeb.Server import UmitWebServer
 
 def main():
     if sys.platform.startswith("linux"):

@@ -21,7 +21,7 @@
 from umitWeb.Auth import authenticate, ERROR, need_superuser
 from umitWeb.WebLogger import getLogger
 from umitWeb.Http import HttpResponse, Http403, Http404, HttpError
-from umitWeb.Security import Context, User
+from umitWeb.Security import Context, User, Permission
 import md5
 
 
@@ -302,13 +302,38 @@ def get_permission(req, id):
 @authenticate(ERROR)
 @need_superuser()
 def add_permission(req):
-    pass
+    id = req.POST["id"]
+    description = req.POST["description"]
+    type = req.POST["type"]
+
+    constraint_types = req.POST["constraint_types"].strip()  and \
+                     req.POST['constraint_types'].split("\n") or []
+    constraint_types = req.POST["constraints"].strip()  and \
+                     req.POST['constraints'].split("\n") or []
+    
+    p = Permission(id, type)
+    p.description = description
+    
 
 
 @authenticate(ERROR)
 @need_superuser()
 def delete_permission(req, id):
-    pass 
+    ctx = Context()
+    found = False
+    for i in xrange(len(ctx.permissions)):
+        if ctx.permissions[i].login == id:
+            del ctx.permissions[i]
+            found = True
+            break
+    if not found:
+        raise Http404
+    for i in xrange(len(ctx.roles)):
+        for j in xrange(len(ctx.roles[i].permissions)):
+            if ctx.roles[i].permissions[j].id == id:
+                del ctx.roles[i].permissions[j]
+    ctx.write_xml()
+    return HttpResponse("{'result': 'OK'}") 
 
 
 @authenticate(ERROR)

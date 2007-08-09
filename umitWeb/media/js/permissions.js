@@ -20,7 +20,7 @@ PermissionDialog = Dialog.extend({
         tbl = new Element("table");
         tabMain.adopt(tbl);
         divType = new Element("span");
-        divType.setText("Type:* ");
+        divType.setText("Base Type:* ");
         selectPermType = new Element("select");
         opt1 = new Element("option", {"value": "allow"});
         opt1.setText("Allow");
@@ -150,15 +150,15 @@ PermissionDialog = Dialog.extend({
                 }
             }
             
-            selectedOptions = []
-            for(k = 0; k < selectedPermissions.length; k++){
-                opt = selectedPermissions[k];
-                selectedOptions.include(opt.value);
-            }
-            selectedOptions.include(selectLast[selectLast.selectedIndex].value);
+            constraint_types = []
+            constraints = []
+            currentConstraints.each(function(c){
+                constraint_types.include(c["type"].value);
+                constraints.include(c["content"].value);
+            });
             
-            if(selectedOptions.length == 0){
-                alert("You must select at least one Permission.");
+            if(constraint_types.length == 0){
+                alert("You must put at least one constraint.");
                 tabber.tabber.tabShow(1);
                 return;
             }
@@ -166,10 +166,13 @@ PermissionDialog = Dialog.extend({
             args = {
                 id: inputId.value,
                 description: txtDescription.value.trim(),
-                permissions: selectedOptions.join(",")
+                constraint_types: constraint_types.join("\n"),
+                constraints: constraints.join("\n")
             }
+            
+            alert(Object.toQueryString(args));
                         
-            xhr = new XHR({method: "post",
+            /*xhr = new XHR({method: "post",
                             onSuccess: function(req){
                                 try{
                                     response = null;
@@ -193,7 +196,7 @@ PermissionDialog = Dialog.extend({
                            onFailure: function(req){
                             alert("The user information could not be saved. See umitweb.log for details.");
                            }
-            }).send(saveURL, Object.toQueryString(args));
+            }).send(saveURL, Object.toQueryString(args));*/
         });
         
         this.options.content.adopt(tabber);

@@ -52,7 +52,10 @@ class Paths(object):
                          "options",
                          "umitdb",
                          "umitdb_ng",
-                         "umit_version"]
+                         "umit_version",
+                         "webconfig_file",
+                         "security_file",
+                         "umitdb_web"]
     
     share_files_list = ["umit_op",
                         "umit_opi",
@@ -110,8 +113,11 @@ user home: %s" % config_file)
         self.config_file_set = True
         
         # Set UmitWeb file name
-        self.webconfig_file = os.path.join(os.path.dirname(umit_conf), "umitweb.conf")
+        self.webconfig_file = os.path.join(base_paths['user_dir'], base_paths['webconfig_file'])
         self.webconfig_file_set = True
+        
+        #self.security_file = os.path.join(base_paths['config_dir'], base_paths['security_file'])
+        #self.security_file_set = True
         log.debug(">>> Config file: %s" % config_file)
 
     def root_dir(self):

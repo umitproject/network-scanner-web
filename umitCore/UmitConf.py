@@ -285,22 +285,19 @@ class CommandProfile (Profile, object):
                 'options':self.get_options(profile_name)}
 
 
-class NmapOutputHighlight(object):
+
+class NmapOutputHighlight(UmitConfigParser, object):
     setts = ["bold", "italic", "underline", "text", "highlight", "regex"]
     
-    def __init__(self):
-        self.parser = Path.config_parser
-
-    def save_changes(self):
-        self.parser.save_changes()
+    def __init__(self, *args):
+        UmitConfigParser.__init__(self, *args)
+        self.read(Path.config_file)
 
     def __get_it(self, p_name):
         property_name = "%s_highlight" % p_name
 
         try:
-            return self.sanity_settings([self.parser.get(property_name,
-                                                         prop,
-                                                         True) \
+            return self.sanity_settings([self.get(property_name, prop, True) \
                                          for prop in self.setts])
         except:
             settings = []
@@ -318,9 +315,9 @@ class NmapOutputHighlight(object):
 
     def __set_it(self, property_name, settings):
         property_name = "%s_highlight" % property_name
-        settings = self.sanity_settings(list(settings))
+        settings = self.sanity_settings(settings)
 
-        [self.parser.set(property_name, self.setts[pos], settings[pos]) \
+        [self.set(property_name, self.setts[pos], settings[pos]) \
          for pos in xrange(len(settings))]
 
     def sanity_settings(self, settings):
@@ -331,7 +328,6 @@ class NmapOutputHighlight(object):
 
         Sequence: [bold, italic, underline, text, highlight, regex]
         """
-        #log.debug(">>> Sanitize %s" % str(settings))
         
         settings[0] = self.boolean_sanity(settings[0])
         settings[1] = self.boolean_sanity(settings[1])
@@ -402,9 +398,9 @@ class NmapOutputHighlight(object):
     def get_enable(self):
         enable = True
         try:
-            enable = self.parser.get("output_highlight", "enable_highlight")
+            enable = self.get("output_highlight", "enable_highlight")
         except NoSectionError:
-            self.parser.set("output_highlight", "enable_highlight", str(True))
+            self.set("output_highlight", "enable_highlight", str(True))
         
         if enable == "False" or enable == "0" or enable == "":
             return False
@@ -412,9 +408,9 @@ class NmapOutputHighlight(object):
 
     def set_enable(self, enable):
         if enable == False or enable == "0" or enable == None or enable == "":
-            self.parser.set("output_highlight", "enable_highlight", str(False))
+            self.set("output_highlight", "enable_highlight", str(False))
         else:
-            self.parser.set("output_highlight", "enable_highlight", str(True))
+            self.set("output_highlight", "enable_highlight", str(True))
 
     date = property(get_date, set_date)
     hostname = property(get_hostname, set_hostname)
@@ -451,31 +447,32 @@ class NmapOutputHighlight(object):
                             "underline":str(False),
                             "text":[0, 1272, 28362],
                             "highlight":[65535, 65535, 65535],
-                            "regex":"PORT\s+STATE\s+SERVICE(\s+VERSION)?[^\n]*"},
+                            "regex":"PORT\s+STATE\s+SERVICE(\s+VERSION)?\s.*"},
                           "open_port":{"bold":str(True),
                             "italic":str(False),
                             "underline":str(False),
                             "text":[0, 41036, 2396],
                             "highlight":[65535, 65535, 65535],
-                            "regex":"\d{1,5}/.{1,5}\s+open\s+.*"},
+                            "regex":"\d{1,5}/.{1,5}\sopen\s.*"},
                           "closed_port":{"bold":str(False),
                             "italic":str(False),
                             "underline":str(False),
                             "text":[65535, 0, 0],
                             "highlight":[65535, 65535, 65535],
-                            "regex":"\d{1,5}/.{1,5}\s+closed\s+.*"},
+                            "regex":"\d{1,5}/.{1,5}\sclosed\s.*"},
                           "filtered_port":{"bold":str(False),
                             "italic":str(False),
                             "underline":str(False),
                             "text":[38502, 39119, 0],
                             "highlight":[65535, 65535, 65535],
-                            "regex":"\d{1,5}/.{1,5}\s+filtered\s+.*"},
+                            "regex":"\d{1,5}/.{1,5}\sfiltered\s.*"},
                           "details":{"bold":str(True),
                             "italic":str(False),
                             "underline":str(True),
                             "text":[0, 0, 0],
                             "highlight":[65535, 65535, 65535],
                             "regex":"^(\w{2,}[\s]{,3}){,4}:"}}
+
 
 class DiffColors(object):
     def __init__(self):

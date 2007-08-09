@@ -33,6 +33,8 @@ CURRENT_DIR = os.getcwd()
 
 
 base_paths = dict(config_file = 'umit.conf',
+                  webconfig_file = 'umitweb.conf',
+                  security_file = 'security.xml',
                   config_dir = '.umit',
                   user_dir = os.path.join(HOME, '.umit'),
                   scan_profile = 'scan_profile.usp',
@@ -57,6 +59,7 @@ base_paths = dict(config_file = 'umit.conf',
                                              HOME],
                   i18n_search_sequence = [os.path.join(CURRENT_DIR, 'share', 'locale'), HOME],
                   umitdb = "umit.db",
+                  umitdb_web = "umitweb.db",
                   # new generation database
                   umitdb_ng = "umitng.db",
 
