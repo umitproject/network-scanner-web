@@ -26,6 +26,7 @@ from umitWeb.WebLogger import getLogger
 from umitCore.NmapCommand import NmapCommand
 from umitCore.NmapParser import NmapParser, HostInfo
 from umitCore.UmitConf import CommandProfile
+from umitCore.UmitDB import Scans, UmitDB
 from urllib import quote
 from tempfile import mktemp
 import random
@@ -35,6 +36,8 @@ import os
 import re
 import md5
 from threading import Thread
+from time import time
+import datetime
 
 
 logger = getLogger(__name__)
@@ -144,19 +147,62 @@ def upload_result(req):
 
 @authenticate(ERROR)
 def save_result(req, scan_id):
+    print req.POST
     if req.POST:
         scan = req.session.get("scan_result_" + scan_id, None)
+        parser = NmapParser()
+        fname = mktemp()
+        ftemp = open(fname, "a", 0)
+        ftemp.write(scan)
+        ftemp.close()
+        parser.set_xml_file(fname)
+        parser.parse()
+        parser.scan_name = req.POST['filename']
+        parser.write_xml(open(fname, "w", 0))
+        ftemp = open(fname, "r")
+        scan = ftemp.read()
         if not scan:
             raise Http404
         
         if req.POST['destination'] == "database":
-            return HttpResponse("{'result': 'FAIL', 'output': 'NOT IMPLEMENTED'}", "text/plain")
+            Scans(scan_name=parser.scan_name,
+                    nmap_xml_output=scan,
+                    date=time())
+            return HttpResponse("{'result': 'OK'}", "text/plain")
         else:
             response = HttpResponse(scan, "text/xml")
             response['Content-disposition'] = "attachment; filename=" + quote(req.POST['filename'].replace(" ", "_")) + ".usr"
             return response
     else:
         raise HttpError(400, "Invalid GET request.")
+    
+
+@authenticate(ERROR)
+def get_saved_scans(req):
+    db = UmitDB()
+    data = [{"id": str(s.scans_id), 
+             "name": str(s.scan_name).replace("'", "\\'"),
+             "date": datetime.datetime.fromtimestamp(s.date).strftime("%Y-%m-%d %H:%M:%S")}
+             for s in db.get_scans()]
+    return HttpResponse(str(data))
+
+@authenticate(ERROR)
+def get_scan(req, scan_id):
+    db = UmitDB()
+    if scan_id not in [str(sid) for sid in db.get_scans_ids()]:
+        raise Http404
+    
+    scan = Scans(scans_id=scan_id)
+    ftemp = open(mktemp(), "w", 0)
+    ftemp.write(scan.nmap_xml_output)
+    ftemp.flush()
+    parser = NmapParser(ftemp.name)
+    parser.parse()
+    return HttpResponse("{'result': 'OK', 'output': '%s'}" % \
+                        parser.get_nmap_output().replace("'", "\\'").\
+                        replace("\r", "").replace("\n", "\\n' + \n'"), 
+                        "text/plain")
+
 
 def __scan_to_json(scan):
     attrs = [a for a in dir(scan) if not callable(getattr(scan, a)) \

@@ -133,12 +133,41 @@ SaveResultDialog = Dialog.extend({
         this.options.content.adopt(frm);
         self = this;
         frm.addEvent("submit", function(e){
+            
             if(txtFilename.value.trim().length == 0){
                 alert("Select a filename!");
-                new Event(e).stop();
                 return;
             }
-            saved = true;
+            
+            if(rdDatabase.checked){
+                args = {
+                    "destination": "database",
+                    "filename": txtFilename.value
+                }
+                new Event(e).stop();
+                new XHR({
+                    method: "post",
+                    onSuccess: function(req){
+                        try{
+                            response = null;
+                            eval("response = " + req);
+                            if(response.result == "OK"){
+                                alert("Scan saved succefully!");
+                                self.close();
+                            }else{
+                                alert("Error loading data. Check umitweb.log for details.");
+                            }
+                        }catch(e){
+                            alert("Error loading data. Check umitweb.log for details.");
+                        }
+                    },
+                    onFailure: function(req){
+                        alert("Error loading data. Check umitweb.log for details.");
+                    }
+                }).send("/scan/" + scanId + "/save/", Object.toQueryString(args));
+            }else{
+                saved = true;
+            }
             return;
         });
     }

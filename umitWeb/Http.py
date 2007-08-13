@@ -73,6 +73,7 @@ class HttpRequest(object):
         self.headers = self.requestHandler.headers
         
         self.querystring = ""
+        self.method = self.requestHandler.command
         if "?" in self.requestHandler.path:
             self.path, self.querystring = self.requestHandler.path.split("?")
         else:
@@ -153,11 +154,11 @@ class HttpRequest(object):
         self.REQUEST.update(self.POST)
         if self.requestHandler.command == "POST":
             self.logger.debug("POST data: %s" % str(self.POST))
-            self.logger.debug("POST path: %s" % str(self.path))
+            #self.logger.debug("POST path: %s" % str(self.get_path()))
             
-            if self.FILES:
-                for file in self.FILES.items():
-                    self.logger.debug("temp name: %s" % file[1]['temp_name'])
+            #if self.FILES:
+            #    for file in self.FILES.items():
+            #        self.logger.debug("temp name: %s" % file[1]['temp_name'])
                     #self.logger.debug("data: %s" % file[1]['temp_file'].read())
                     #file[1]['temp_file'].seek(0)
                     
