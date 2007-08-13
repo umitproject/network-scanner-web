@@ -34,7 +34,6 @@ from umitWeb.Server import UmitWebServer
 def main():
     if sys.platform.startswith("linux"):
         if os.getuid() != 0:
-            #pass
             raise Exception, "Server MUST run as root."
         
     server = UmitWebServer()

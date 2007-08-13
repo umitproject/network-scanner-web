@@ -207,7 +207,8 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                                     response.__class__.__name__)
                 
                 for f in request.FILES.items():
-                    os.unlink(f[1]['temp_name'])
+                    try: os.unlink(f[1]['temp_name'])
+                    except: pass
                 
                 if request.session.modified:
                     request.session.save()
@@ -306,6 +307,6 @@ class UmitWebServer(HTTPServer):
     def run(self):
         SessionWrapper.clear()
         #os.chroot(os.path.join(os.path.dirname(__file__), "chroot"))
-        f = open("umitweb.log", "a+", 1)
-        sys.stderr = sys.stdout = f
+        #f = open("umitweb.log", "a+", 1)
+        #sys.stderr = sys.stdout = f
         self.serve_forever()

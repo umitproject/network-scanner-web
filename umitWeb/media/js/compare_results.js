@@ -3,50 +3,35 @@ DiffHandler = new Class({
         if(diff_text != null){
             last_tag = null;
             new_text = [];
+            removed = /^-.*/;
             styles = {
-                added: "background-color:" + diff_colors.added,
-                removed: "background-color:" + diff_colors.removed
-            }
-            
-            /*l = diff_text.join("\n");
-            p = this.takeChanges(l);
-            D = p;*/
-            //$("diff-pane").setHTML("");
-        }
-    },
-    "takeChanges": function(line){
-        positions = {"added": [], "removed": []};
-        
-        in_line = false;
-        type = '';
-        last_char = "\n";
-        
-        for(i = 0; i < line.length; line ++){
-            ch = line[i];
-            if(!in_line){
-                pos = [];
-                if(ch == "+" && last_char == "\n"){
-                    pos.extend([i]);
-                    type = "added";
-                    in_line = true;
-                }else if(ch == "-" && last_char == "\n"){
-                    pos.extend([i]);
-                    type = "removed";
-                    in_line = true;
+                added: {"style": "background-color:" + diff_colors.added,
+                        "regex": /^\+.*/},
+                removed: {"style": "background-color:" + diff_colors.not_present,
+                          "regex": /^-.*/}
+            };
+            new_lines = [];
+            for(i = 0; i < diff_text.length; i++){
+                found = false;
+                line = diff_text[i];
+                for(k in styles){
+                    if(line.match(styles[k].regex)){
+                        found = true;
+                        new_lines.extend(["<span style='" + styles[k].style + "'>" + line + "</span>"]);
+                        break;
+                    }
                 }
-            }else{
-                if(ch == "\n"){
-                    pos.append(i);
-                    positions[type].extend([pos]);
-                    in_line = false;
-                    type = '';
+                if(!found){
+                    new_lines.extend([line]);
                 }
             }
-            last_chars = ch;
+            $("diff-pane").setHTML(new_lines.join("<br/>"));
         }
-        return positions;
     },
     "uncolor": function(){
+        if(diff_text != null){
+            $("diff-pane").setHTML(diff_text.join("<br/>"));
+        }
     }
 });
 
@@ -153,25 +138,29 @@ window.addEvent("domready", function(){
     });
     
     
-    $$($("u1-result"), $("u2-result")).each(function(el){
-        el.addEvent("change", function(e){
-            new Event(e).stop();
-            if(this.value.trim().length > 0){
-                id = this.id.substring(1, 2);
+    $$($("frmScan1"), $("frmScan2")).each(function(el){
+        el.addEvent("submit", function(e){
+            id = this.id[this.id.length-1];
+            if($("u" + id + "-result").value.length > 0){
                 $("spinner" + id + "-file").removeClass("hide");
                 $("iframe-scan" + id).removeEvents();
                 $("iframe-scan" + id).addEvent("load", function(e){
-                    scan = Json.evaluate(this.contentDocument.getElementsByTagName("pre")[0].textContent);
+                    try{
+                        scan = Json.evaluate(this.contentDocument.getElementsByTagName("pre")[0].textContent);
+                    }catch(e){
+                        alert("Error loading data. See umitweb.log for details.");
+                        $("spinner" + id + "-file").addClass("hide");
+                        return;
+                    }
                     if(scan.result == "OK"){
                         $("scan" + id + "-detail").setText(scan.output);
                     }
                     $("spinner" + id + "-file").addClass("hide");
                     makeDiff();
                 });
-                
-                this.form.encoding = "multipart/form-data";
-                this.form.enctype = "multipart/form-data";
-                this.form.submit();
+                this.submit();
+            }else{
+                new Event(e).stop();
             }
         });
     });
