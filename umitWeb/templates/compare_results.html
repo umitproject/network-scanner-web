@@ -32,13 +32,14 @@
                    <span id="spinner1" class="hide"><img src="/media/images/spinner.gif"/></span><br/>
                    <form action="/scans/upload/" method="post" id="frmScan1" target="iframe-scan1" enctype="multipart/form-data">
                     <label for="upload-result">Upload result:</label>
-                    <input type="file" size="20" id="u1-result" name="u1-result"/>&nbsp;&nbsp;&nbsp;<input type="submit" value="upload"/>
+                    <input type="file" size="20" id="u1-result" name="u1-result"/>
                     <span id="spinner1-file" class="hide"><img src="/media/images/spinner.gif"/></span>
                    <iframe name="iframe-scan1" id="iframe-scan1" class="hide"></iframe>
                    </form>
                 </fieldset>
                 <a class="expander" href="javascript:void(null)"><h4 id="scan1-switch" class="sw-collapsed">Scan 1</h4></a>
                 <div class="frame-div hide code diff-text" id="scan1-detail"></div>
+                <span id="scan1-xml" class="hide"/>
             </div>
             <div id="result-right">
                 <fieldset>
@@ -48,13 +49,14 @@
                    <span id="spinner2" class="hide"><img src="/media/images/spinner.gif"/></span><br/>
                    <form action="/scans/upload/" method="post" id="frmScan2" target="iframe-scan2" enctype="multipart/form-data">
                     <label for="upload-result">Upload result:</label>
-                    <input type="file" size="20" id="u2-result" name="u2-result"/>&nbsp;&nbsp;&nbsp;<input type="submit" value="upload"/>
+                    <input type="file" size="20" id="u2-result" name="u2-result"/>
                     <span id="spinner2-file" class="hide"><img src="/media/images/spinner.gif"/></span>
                     <iframe name="iframe-scan2" id="iframe-scan2" class="hide"></iframe>
                    </form>
                 </fieldset>
                 <a class="expander" href="javascript:void(null)"><h4 id="scan2-switch" class="sw-collapsed">Scan 2</h4></a>
                 <div class="frame-div hide code diff-text" id="scan2-detail"></div>
+                <span id="scan2-xml" class="hide"/>
             </div>
             <div id="result-main">
                 <div class="tabber">
@@ -62,11 +64,25 @@
                         <div id="diff-pane" class="code"></div>
                     </div>
                     <div class="tabbertab" title="Comparision (Comparision Mode)" id="compare-tab">
-                        <div id="compare-pane"></div>
+                        <div id="compare-pane">
+                         <table id="compare-table" class="std_table">
+                            <thead>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>Section</th>
+                                    <th>Property</th>
+                                    <th>Original value</th>
+                                    <th>Current value</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                         </table>
+                        </div>
                     </div>
                 </div>
                 <div style="float:left;width:98%">
-                    <input type="checkbox" id="color-diff"/><label for="color-diff">Enable color diffies</label>
+                    <input type="checkbox" id="color-diff"/><label for="color-diff">Enable color diffies</label>&nbsp;&nbsp;&nbsp;
+                    <a href="javascript:void(0)" onclick="viewHTMLDiff()">View standard HTML diff</a>
                 </div>
             </div>
             <div id="footer">Copyright (C) 2005 Insecure.Com LLC. Sponsored by<a target="_blank" href="http://code.google.com/soc/"><img title="Sponsored by Google" alt="Sponsored by Google" src="/media/images/google-small-logo.png"/></a></div>

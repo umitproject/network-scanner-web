@@ -1,12 +1,15 @@
 from math import floor, sqrt
 import sys
 import os
+from types import DictType
 from umitWeb.Http import HttpResponse, Http404, HttpError
 from umitWeb.Auth import authenticate, ERROR
 from umitWeb.WebLogger import getLogger
 from umitCore.NmapParser import NmapParser
-from umitCore.Diff import Diff
+from umitCore.Diff import Diff, ParserDiff
 from umitCore.UmitConf import DiffColors
+from umitCore.DiffHtml import DiffHtml
+from umitGUI.DiffCompare import diff_state
 from tempfile import mktemp
 
 logger = getLogger("compare_results")
@@ -18,7 +21,7 @@ def index(req):
     return response
 
 
-#@authenticate(ERROR)
+@authenticate(ERROR)
 def upload(req):
     logger.debug("FILES: %s" % str(req.FILES))
     
@@ -43,13 +46,14 @@ def upload(req):
         return HttpResponse("{'result': 'FAIL'}")
     
     output = parser.nmap_output.replace("'", "\\'").replace("\n", "\\n")
+    full = open(fname, "r").read().replace("'", "\\'").replace("\n", "\\n")
     logger.debug(output)
     
-    response = HttpResponse("{'result': 'OK', 'output': '%s'}" % output, "text/plain")
+    response = HttpResponse("{'result': 'OK', 'output': '%s', 'xml': '%s'}" % (output, full), "text/plain")
     return response
 
 
-#@authenticate(ERROR)
+@authenticate(ERROR)
 def diff_colors(req):
     response = HttpResponse("", "text/plain")
     dc = DiffColors()
@@ -64,14 +68,34 @@ def diff_colors(req):
     return response
 
 
-#@authenticate(ERROR)
+@authenticate(ERROR)
 def make_diff(req):
     scan1 = req.POST['scan1']
     scan2 = req.POST['scan2']
-
+    xml1 = mktemp()
+    xml2 = mktemp()
     
+    open(xml1, "w").write(req.POST['scan1-xml'])
+    open(xml2, "w").write(req.POST['scan2-xml'])
+    parsed1 = NmapParser(xml1)
+    parsed1.parse()
+    parsed2 = NmapParser(xml2)
+    parsed2.parse()
+    
+    diff_tree = ParserDiff(parsed1, parsed2)
     diff_text = Diff(scan1.split("\n"), scan2.split("\n"))
     lines = diff_text.generate_without_banner()
+    diff = {"text": lines, "compare": [d.to_dict() for d in diff_tree.make_diff()]}
     
-    response = HttpResponse(str(lines), "text/plain")
+    response = HttpResponse(str(diff), "text/plain")
     return response
+
+
+@authenticate(ERROR)
+def make_html_diff(req):
+    scan1 = req.POST['scan1']
+    scan2 = req.POST['scan2']
+    
+    diff_html = DiffHtml(scan1.split('\n'), scan2.split('\n'))
+    return HttpResponse(diff_html.generate())
+    

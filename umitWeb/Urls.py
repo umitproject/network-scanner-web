@@ -63,6 +63,7 @@ patterns = (
     (r'^js/profiles/add/$', 'umitWeb.views.profiles.add'),
     (r'^js/compare_results/$', 'umitWeb.views.compare_results.index'),
     (r'^js/compare_results/make_diff/$', 'umitWeb.views.compare_results.make_diff'),
+    (r'^js/compare_results/make_html_diff/$', 'umitWeb.views.compare_results.make_html_diff'),
     (r'^media/js/output_highlight.js$', 'umitWeb.views.main.output_highlight'),
     (r'^media/js/diff_colors.js$', 'umitWeb.views.compare_results.diff_colors'),
     (r'^media/(?P<path>.*)$', 'umitWeb.views.main.serve_media'),

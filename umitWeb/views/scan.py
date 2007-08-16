@@ -198,9 +198,12 @@ def get_scan(req, scan_id):
     ftemp.flush()
     parser = NmapParser(ftemp.name)
     parser.parse()
-    return HttpResponse("{'result': 'OK', 'output': '%s'}" % \
-                        parser.get_nmap_output().replace("'", "\\'").\
-                        replace("\r", "").replace("\n", "\\n' + \n'"), 
+    return HttpResponse("{'result': 'OK', 'output': '%s', 'xml': '%s'}" % \
+                        (parser.get_nmap_output().replace("'", "\\'").\
+                        replace("\r", "").replace("\n", "\\n' + \n'"),
+                        open(ftemp.name).read().replace('"', "'").\
+                        replace("'", "\\'").\
+                        replace("\n", "\\n' + \n'")), 
                         "text/plain")
 
 

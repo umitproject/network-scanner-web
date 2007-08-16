@@ -1,3 +1,5 @@
+var varData = null;
+
 DiffHandler = new Class({
     "color": function(){
         if(diff_text != null){
@@ -37,6 +39,7 @@ DiffHandler = new Class({
 
 var handler = null;
 var diff_text;
+var diff_compare;
 function updateResults(){
     new Json.Remote("/scans/", {
         onComplete: function(scans){
@@ -62,6 +65,7 @@ function getScan(scanID, target){
             onComplete: function(scan){
                 if(scan.result == 'OK'){
                     $("scan" + target + "-detail").setText(scan.output);
+                    $("scan" + target + "-xml").setText(scan['xml']);
                 }else{
                     alert("Error loading data. See umitweb.log for details.");
                 }
@@ -82,13 +86,17 @@ function getScan(scanID, target){
 function makeDiff(){
     if($("scan1-detail").getText().length > 0 && $("scan2-detail").getText().length > 0){
         args = {
-            scan1: $("scan1-detail").getText(),
-            scan2: $("scan2-detail").getText()
+            "scan1": $("scan1-detail").getText(),
+            "scan2": $("scan2-detail").getText(),
+            "scan1-xml": $("scan1-xml").getText(),
+            "scan2-xml": $("scan2-xml").getText()
         }
         new XHR({
             method: "post",
             onSuccess: function(response){
-                diff_text = Json.evaluate(response);
+                result = Json.evaluate(response);
+                diff_text = result.text;
+                diff_compare = result.compare;
                 if($("color-diff").checked){
                     handler.color();
                 }else{
@@ -97,6 +105,22 @@ function makeDiff(){
             }
         }).send("make_diff/", Object.toQueryString(args));
     }
+}
+
+function viewHTMLDiff(){
+    args = {
+        scan1: $("scan1-detail").getText(),
+        scan2: $("scan2-detail").getText()
+    }
+    
+    new XHR({
+        method: "post",
+        onSuccess: function(response){
+            w = window.open("", "_blank");
+            w.document.write(response);
+            w.document.close();
+        }
+    }).send("make_html_diff/", Object.toQueryString(args));
 }
 
 window.addEvent("domready", function(){
@@ -138,9 +162,9 @@ window.addEvent("domready", function(){
     });
     
     
-    $$($("frmScan1"), $("frmScan2")).each(function(el){
-        el.addEvent("submit", function(e){
-            id = this.id[this.id.length-1];
+    $$($("u1-result"), $("u2-result")).each(function(el){
+        el.addEvent("change", function(e){
+            id = this.id[1];
             if($("u" + id + "-result").value.length > 0){
                 $("spinner" + id + "-file").removeClass("hide");
                 $("iframe-scan" + id).removeEvents();
@@ -152,13 +176,16 @@ window.addEvent("domready", function(){
                         $("spinner" + id + "-file").addClass("hide");
                         return;
                     }
-                    if(scan.result == "OK"){
-                        $("scan" + id + "-detail").setText(scan.output);
+                    if(scan['result'] == "OK"){
+                        $("scan" + id + "-detail").setText(scan['output']);
+                        $("scan" + id + "-xml").setText(scan['xml']);
+                    }else{
+                        alert("Error loading data. See umitweb.log for details.")
                     }
                     $("spinner" + id + "-file").addClass("hide");
                     makeDiff();
                 });
-                this.submit();
+                this.form.submit();
             }else{
                 new Event(e).stop();
             }

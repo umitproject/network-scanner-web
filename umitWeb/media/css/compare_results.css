@@ -23,10 +23,17 @@ fieldset{
     margin-bottom: 5px;
 }
 
-#diff-pane, #compare-pane{
+#diff-pane{
     margin: 5px;
     border: #CCC solid 1px;
     width: 99%;
+    overflow: auto;
+}
+
+#compare-pane{
+    margin: 0;
+    overflow: auto;
+    width: 100%;
 }
 
 .diff-text{
