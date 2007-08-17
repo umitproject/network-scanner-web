@@ -29,10 +29,64 @@ DiffHandler = new Class({
             }
             $("diff-pane").setHTML(new_lines.join("<br/>"));
         }
+        if(diff_compare != null){
+            $("compare-table").getElement("tbody").empty();
+            this.showCompareTable(diff_compare, true);
+        }
+    },
+    "showCompareTable": function(childs, color, spaces, classLine){
+        tbl = $("compare-table").getElement("tbody");
+        self = this;
+        
+        if(spaces == null){
+            spaces = "";
+        }
+        
+        childs.each(function(c){
+            spn1rstCell = new Element("span");
+            spn1rstCell.setHTML(spaces + c.state);
+            tr = addTableRow(tbl, [spn1rstCell, 
+                                  {"value": c.section, "attrs": {"whiteSpace": "nowrap"}}, 
+                                  {"value": c.property, "attrs": {"whiteSpace": "nowrap"}}, 
+                                  {"value": c.value1, "attrs": {"whiteSpace": "nowrap"}}, 
+                                  {"value": c.value2, "attrs": {"whiteSpace": "nowrap"}}]);
+            tr.addClass(classLine? classLine: "");
+            tr.addClass(classLine? "hide": "");
+            if(c.section.trim().length > 0){
+                tr.id = (classLine != null ? classLine + "-": "") + c.section.replace(" ", "-", "g");
+            }else{
+                tr.id = (classLine != null ? classLine + "-": "") + c.property.replace(" ", "-", "g");
+            }
+            
+            if(c.childs.length > 0){
+                tr.addEvent("click", function(e){
+                    toggleLine(this);
+                });
+                tr.setStyle("cursor", "hand");
+            }
+            if(color){
+                if(c.state == "A"){
+                    tr.setStyle("backgroundColor", diff_colors.added);
+                }else if(c.state == "M"){
+                    tr.setStyle("backgroundColor", diff_colors.modified);
+                }else if(c.state == "U"){
+                    tr.setStyle("backgroundColor", diff_colors.unchanged);
+                }else if(c.state == "N"){
+                    tr.setStyle("backgroundColor", diff_colors.not_present);
+                }
+            }
+            if(c.childs.length > 0){
+                self.showCompareTable(c.childs, color, spaces+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", tr.id);
+            }
+        });
     },
     "uncolor": function(){
         if(diff_text != null){
             $("diff-pane").setHTML(diff_text.join("<br/>"));
+        }
+        if(diff_compare != null){
+            $("compare-table").getElement("tbody").empty();
+            this.showCompareTable(diff_compare, false);
         }
     }
 });
@@ -40,6 +94,16 @@ DiffHandler = new Class({
 var handler = null;
 var diff_text;
 var diff_compare;
+
+function toggleLine(line){
+    $$("tr[class*=" + line.id + "]").each(function(t){
+        t.toggleClass("hide");
+        if(t.hasClass("hide")){
+            toggleLine(t);
+        }
+    });
+}
+
 function updateResults(){
     new Json.Remote("/scans/", {
         onComplete: function(scans){
