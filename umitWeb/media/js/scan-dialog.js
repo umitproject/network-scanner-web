@@ -27,14 +27,25 @@ UploadResultDialog = Dialog.extend({
         fieldSetFile.adopt(spnFile);
         
         rdDatabase = new Element("input", {"type": "radio", "name": "type", "value": "database", "id": "rdDatabase", "checked": "checked"});
-        selectScan = new Element("select");
+        selectScan = new Element("select", {"name": "scanId"});
+        selectScan.setStyle("width", "60px");
         opt = new Element("option");
-        opt.setText("--- Select an option ---");
+        opt.setText("--- Select a saved scan ---");
+        opt.value = "0";
         selectScan.add(opt, null);
         selectScan.setStyle("width", "300px;");
         selectScan.addEvent("focus", function(e){
             rdDatabase.checked = true;
         });
+        new Json.Remote("/scans/", {
+            onComplete: function(scans){
+                scans.each(function(s){
+                    opt = new Element("option", {"value": s.id});
+                    opt.setText(s.name + " (" + s.date + ")");
+                    selectScan.add(opt, null);
+                });
+            }
+        }).send();
         spnDatabase = new Element("span");
         spnDatabase.adopt(rdDatabase);
         spnDatabase.adopt(selectScan);

@@ -141,7 +141,22 @@ def upload_result(req):
             except Exception, ex:
                 return HttpResponse("{'result': 'FAIL', 'output': '%s'}" % str(ex).replace("'", "\\'"), "text/plain")
         else:
-            return HttpResponse("{'result': 'FAIL', 'output': 'NOT IMPLEMENTED'}", "text/plain")
+            scan_id = req.POST['scanId']
+            db = UmitDB()
+            if scan_id not in [str(sid) for sid in db.get_scans_ids()]:
+                return HttpResponse("{'result': 'FAIL', 'output': 'Scan not found!'}")
+            
+            scan = Scans(scans_id=scan_id)
+            ftemp = open(mktemp(), "w", 0)
+            ftemp.write(scan.nmap_xml_output)
+            ftemp.flush()
+            parser = NmapParser(ftemp.name)
+            parser.parse()
+            return HttpResponse("{'result': 'OK', 'output': {'plain': '%s', 'full': %s}}" % \
+                                (parser.get_nmap_output().replace("'", "\\'").\
+                                replace("\r", "").replace("\n", "\\n' + \n'"),
+                                str(__scan_to_json(parser))), 
+                                "text/plain")
     else:
         raise HttpError(400, "Invalid GET request.")
 
