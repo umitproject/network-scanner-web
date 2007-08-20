@@ -42,6 +42,12 @@ import datetime
 
 logger = getLogger(__name__)
 
+@authenticate()
+def index(req):
+    response = HttpResponse()
+    response.loadTemplate("scans.html")
+    return response
+
 
 @authenticate(ERROR)
 def new(req):
@@ -198,8 +204,9 @@ def get_saved_scans(req):
     data = [{"id": str(s.scans_id), 
              "name": str(s.scan_name).replace("'", "\\'"),
              "date": datetime.datetime.fromtimestamp(s.date).strftime("%Y-%m-%d %H:%M:%S")}
-             for s in db.get_scans()]
+             for s in db.get_scans() if req.POST.get("search", "").lower() in s.scan_name.lower()]
     return HttpResponse(str(data))
+
 
 @authenticate(ERROR)
 def get_scan(req, scan_id):
@@ -220,6 +227,21 @@ def get_scan(req, scan_id):
                         replace("'", "\\'").\
                         replace("\n", "\\n' + \n'")), 
                         "text/plain")
+
+
+@authenticate(ERROR)
+def delete_scan(req, scan_id):
+    db = UmitDB()
+    cursor = db.cursor
+    if int(scan_id) not in db.get_scans_ids():
+        raise Http404
+    
+    try:
+        cursor.execute("DELETE FROM scans WHERE scans_id=%d" % int(scan_id))
+    except Exception, e:
+        return HttpResponse("{'result': 'FAIL', 'error': '%s'}" % str(e))
+    
+    return HttpResponse("{'result': 'OK'}")
 
 
 def __scan_to_json(scan):

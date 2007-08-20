@@ -44,19 +44,37 @@ DiffHandler = new Class({
         
         childs.each(function(c){
             spn1rstCell = new Element("span");
-            spn1rstCell.setHTML(spaces + c.state);
-            tr = addTableRow(tbl, [spn1rstCell, 
-                                  {"value": c.section, "attrs": {"whiteSpace": "nowrap"}}, 
-                                  {"value": c.property, "attrs": {"whiteSpace": "nowrap"}}, 
-                                  {"value": c.value1, "attrs": {"whiteSpace": "nowrap"}}, 
-                                  {"value": c.value2, "attrs": {"whiteSpace": "nowrap"}}]);
-            tr.addClass(classLine? classLine: "");
-            tr.addClass(classLine? "hide": "");
+            spn1rstCell.setHTML("<span>" + spaces + "</span>");
+            lnk = new Element("a", {"href": "javascript:void(null)", "styles": {"display": "inline"}});
+            lnk.adopt(new Element("img", {"src": "/media/images/plus.png", "styles": {"display": "inline"}}));
+            //spn1rstCell.adopt(lnk);
+            spn1rstCell.appendText(c.state);
+            spn1rstCell.setStyle("margin:0");
+            spn1rstCell.setStyle("padding:0");
+            tr = addTableRow(tbl, [{"value": spn1rstCell, "attrs": {"padding": "0"}}, 
+                                  {"value": c.section, "attrs": {"styles": {"white-space": "nowrap", "padding": "0"}}}, 
+                                  {"value": c.property, "attrs": {"styles": {"white-space": "nowrap", "padding": "0"}}}, 
+                                  {"value": c.value1, "attrs": {"styles": {"white-space": "nowrap", "padding": "0"}}}, 
+                                  {"value": c.value2, "attrs": {"styles": {"white-space": "nowrap", "padding": "0"}}}]);
+            
+            tr.childLines = [];
+            tr.setStyle("padding", "0");
             if(c.section.trim().length > 0){
                 tr.id = (classLine != null ? classLine + "-": "") + c.section.replace(" ", "-", "g");
             }else{
                 tr.id = (classLine != null ? classLine + "-": "") + c.property.replace(" ", "-", "g");
             }
+            
+            if(classLine){
+                tr.addClass(classLine);
+                tr.addClass("hide");
+                $(classLine).childLines.extend([tr]);
+                tr.parentLine = $(classLine);
+            }else{
+                tr.parentLine = null;
+            }
+            
+            tr.lineAction = "show";
             
             if(c.childs.length > 0){
                 tr.addEvent("click", function(e){
@@ -96,10 +114,25 @@ var diff_text;
 var diff_compare;
 
 function toggleLine(line){
-    $$("tr[class*=" + line.id + "]").each(function(t){
-        t.toggleClass("hide");
-        if(t.hasClass("hide")){
-            toggleLine(t);
+    line.childLines.each(function(child){
+        if(child.childLines.length > 0 && child.lineAction == "hide"){
+            toggleLine(child);
+        }
+        
+        if(child.lineAction == "show"){
+            child.removeClass("hide");
+            child.childLines.each(function(c){
+                c.childLines.each(function(cc){cc.lineAction = "hide"});
+                c.addClass("hide");
+            });
+            child.lineAction = "hide";
+        }else{
+            child.addClass("hide");
+            child.childLines.each(function(c){
+                c.childLines.each(function(cc){cc.lineAction = "show"});
+                c.addClass("hide");
+            });
+            child.lineAction = "show";
         }
     });
 }
@@ -189,13 +222,6 @@ function viewHTMLDiff(){
 
 window.addEvent("domready", function(){
     handler = new DiffHandler();
-    $$("a[class=expander]").each(function(lnk){
-        lnk.addEvent("click", function(e){
-                tgId = this.getElement("h4").id;
-                toggle(tgId.substring(0, tgId.length - "-switch".length));
-                new Event(e).stop();
-        });
-    });
     $("s1-result").addEvent("change", function(e){
         getScan(this[this.selectedIndex].value, 1);
         new Event(e).stop();
@@ -208,11 +234,11 @@ window.addEvent("domready", function(){
     
     size = getViewportSize()
     $$($("compare-tab"), $("diff-tab")).each(function(e){
-        e.setStyle("height", (size[1]-348) + "px");
+        e.setStyle("height", (size[1]-368) + "px");
     });
     
     $$($("compare-pane"), $("diff-pane")).each(function(e){
-        e.setStyle("height", (size[1]-358) + "px");
+        e.setStyle("height", (size[1]-378) + "px");
     });
     
     $("color-diff").checked = true;

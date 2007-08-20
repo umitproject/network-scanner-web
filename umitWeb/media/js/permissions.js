@@ -10,7 +10,7 @@ PermissionDialog = Dialog.extend({
         this.options.content.empty();
 
         self = this;
-        tabber = new Element("div", {"class": "tabber", "id": "tabberRole"});
+        tabber = new Element("div", {"class": "tabber", "id": "tabberPermission"});
         
         tabMain = new Element("div", {class: "tabbertab", style: "height: 175px;", title: "Main Information"});
         tabber.adopt(tabMain);
@@ -116,6 +116,11 @@ PermissionDialog = Dialog.extend({
             inputId.value = d.id;
             txtDescription.value = d.description;
             inputId.readOnly = true;
+            if(d.type == opt1.value){
+                opt1.selected = true;
+            }else{
+                opt2.selected = true;
+            }
         }
         
         addTableRow(tbl, ["Id:*", inputId]);
@@ -153,8 +158,8 @@ PermissionDialog = Dialog.extend({
             constraint_types = []
             constraints = []
             currentConstraints.each(function(c){
-                constraint_types.include(c["type"].value);
-                constraints.include(c["content"].value);
+                constraint_types.extend([c["type"].value]);
+                constraints.extend([c["content"].value]);
             });
             
             if(constraint_types.length == 0){
@@ -165,14 +170,13 @@ PermissionDialog = Dialog.extend({
             
             args = {
                 id: inputId.value,
+                type: selectPermType[selectPermType.selectedIndex].value,
                 description: txtDescription.value.trim(),
                 constraint_types: constraint_types.join("\n"),
                 constraints: constraints.join("\n")
             }
-            
-            alert(Object.toQueryString(args));
                         
-            /*xhr = new XHR({method: "post",
+            xhr = new XHR({method: "post",
                             onSuccess: function(req){
                                 try{
                                     response = null;
@@ -185,7 +189,7 @@ PermissionDialog = Dialog.extend({
                                 }
                                 
                                 if(response.result == "OK"){
-                                    alert("Role information saved succefully!");
+                                    alert("Permission information saved succefully!");
                                     loadPermissionsTableData();
                                     self.close();
                                 }else{
@@ -196,7 +200,7 @@ PermissionDialog = Dialog.extend({
                            onFailure: function(req){
                             alert("The user information could not be saved. See umitweb.log for details.");
                            }
-            }).send(saveURL, Object.toQueryString(args));*/
+            }).send(saveURL, Object.toQueryString(args));
         });
         
         this.options.content.adopt(tabber);
@@ -205,6 +209,12 @@ PermissionDialog = Dialog.extend({
             "div": tabber
         }
         tabber.tabber = new tabberObj(to);
+        if(self.options.data){
+            d = self.options.data;
+            d.constraints.each(function(constraint){
+                addPermissionRow(constraint.type, constraint.content, constraint, tblConstraints);
+            });
+        }
     }
 });
 
@@ -227,7 +237,9 @@ function fillTableData(permissions){
                 c = p.constraints[j];
                 constraints.include(c["content"] + " <span style='color:#505050'><i>(" + c["type"] + ")</i></span>");
             }
-            line = [ch, lnkEdit, p.description, constraints.join("<br/>")]
+            imgType = new Element("img", {"src": "/media/images/" + (p.type=="allow"? "open": "closed") + ".png",
+                                          "title": p.type, "alt": p.type});
+            line = [ch, lnkEdit, {"value": imgType, "attrs": {"align": "center"}}, p.description, constraints.join("<br/>")]
             className = (index % 2 == 0)? "light": "dark";
             tr = addTableRow(t, line);
             tr.addClass(className);
@@ -237,8 +249,8 @@ function fillTableData(permissions){
 
 var currentConstraints = [];
 
-function fillConstraintTable(){
-    t = $("constraints_table").empty();
+function fillConstraintTable(tbl){
+    t = tbl==null? $("constraints_table").empty(): tbl;
     for(j = 0; j < currentConstraints.length; j++){
         c =  currentConstraints[j];
         args = {};
@@ -264,7 +276,7 @@ function fillConstraintTable(){
     setInputStyles();
 }
 
-function addPermissionRow(type, content){
+function addPermissionRow(type, content, data, tbl){
     type = (type)? type: "";
     content = (content)? content: "";
     inputCheck = new Element("input", {"type": "radio", "name": "current"});
@@ -274,10 +286,16 @@ function addPermissionRow(type, content){
     optCommand.setText("command");
     selectType.add(optCommand, null);
     inputContent = new Element("input", {"type": "text"});
+    if(data){
+        inputContent.value = data["content"];
+        if(optCommand.value == data["type"]){
+            optCommand.selected = true;
+        }
+    }
     currentConstraints.include({"type": selectType, "content": inputContent.clone(), "check": inputCheck.clone()});
     delete inputCheck;
     delete inputContent;
-    fillConstraintTable();
+    fillConstraintTable(tbl);
 }
 
 function loadPermissionsTableData(){
@@ -300,13 +318,13 @@ function openPermissionDialog(data){
         rs = new PermissionDialog();
         rs.run();
     }else{
-        new Json.Remote("get_role/" + data + "/", {
-            onComplete: function(role){
-                rs = new PermissionDialog({"data": role});
+        new Json.Remote("get_permission/" + data + "/", {
+            onComplete: function(permission){
+                rs = new PermissionDialog({"data": permission});
                 rs.run();
             },
             onFailure: function(req){
-                alert("Error while UMIT loading role information. See umitweb.log for details.");
+                alert("Error while UMIT loading permission information. See umitweb.log for details.");
             }
         }).send();
     }
@@ -327,7 +345,7 @@ window.addEvent("domready", function(e){
             alert("There are no records to be deleted.");
             return;
         }
-        if(confirm("Are you sure you want to delete the selected role(s)?")){
+        if(confirm("Are you sure you want to delete the selected permission(s)?")){
             ids.each(function(id){
                 new Json.Remote("delete/" + id + "/", {onComplete: function(e){loadPermissionsTableData()}}).send();
             });

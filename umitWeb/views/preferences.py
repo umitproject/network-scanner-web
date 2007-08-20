@@ -24,8 +24,9 @@ from umitWeb.Http import HttpResponse, Http403, Http404, HttpError
 from umitWeb.Security import Context, User, Permission
 import md5
 
+logger = getLogger(__name__)
 
-@authenticate(ERROR)
+@authenticate()
 def index(req):
     r = HttpResponse()
     r.loadTemplate("preferences.html")
@@ -296,24 +297,49 @@ def permissions(req):
 @authenticate(ERROR)
 @need_superuser()
 def get_permission(req, id):
-    pass 
+    ctx = Context()
+    perm = ctx.get_permission(id)
+    
+    if perm is None:
+        raise Http404
+    
+    data = []
+    data.append("'id': '%s'" % perm.id.replace("'", "\\'"))
+    data.append("'description': '%s'" % perm.description.replace("'", "\\'").replace("\n", "\\n'+\n'"))
+    data.append("'type': '%s'" % perm.type.replace("'", "\\'"))
+    ccdata = []
+    for c in perm.constraints:
+        cdata = []
+        cdata.append("'type': '%s'" % c.type)
+        cdata.append("'content': '%s'" % c.content.replace("'", "\\'").replace("\\", "\\\\").replace("\n", "\\n'+\n'"))
+        ccdata.append("{%s}" % ",".join(cdata))
+    data.append("'constraints': [%s]" % ",".join(ccdata))
+    
+    return HttpResponse("{%s}" % ",".join(data))
 
 
 @authenticate(ERROR)
 @need_superuser()
 def add_permission(req):
+    ctx = Context()
     id = req.POST["id"]
     description = req.POST["description"]
     type = req.POST["type"]
 
     constraint_types = req.POST["constraint_types"].strip()  and \
                      req.POST['constraint_types'].split("\n") or []
-    constraint_types = req.POST["constraints"].strip()  and \
+    constraints = req.POST["constraints"].strip()  and \
                      req.POST['constraints'].split("\n") or []
+    if id in [p.id for p in ctx.permissions]:
+        return HttpResponse("{'result': 'FAIL', 'error': 'This id already exists. Please, choose other.'}")
     
     p = Permission(id, type)
     p.description = description
-    
+    for i, t in enumerate(constraint_types):
+        p.add_constraint(t, constraints[i])
+    ctx.permissions.append(p)
+    ctx.write_xml()
+    return HttpResponse("{'result': 'OK'}")
 
 
 @authenticate(ERROR)
@@ -322,7 +348,7 @@ def delete_permission(req, id):
     ctx = Context()
     found = False
     for i in xrange(len(ctx.permissions)):
-        if ctx.permissions[i].login == id:
+        if ctx.permissions[i].id == id:
             del ctx.permissions[i]
             found = True
             break
@@ -339,7 +365,32 @@ def delete_permission(req, id):
 @authenticate(ERROR)
 @need_superuser()
 def edit_permission(req, id):
-    pass 
+    ctx = Context()
+    found = False
+    p = ctx.get_permission(id)
+    if p is None:
+        raise Http404
+    
+    p.description = req.POST['description']
+    p.type = req.POST['type']
+
+    constraint_types = req.POST["constraint_types"].strip()  and \
+                     req.POST['constraint_types'].split("\n") or []
+    constraints = req.POST["constraints"].strip()  and \
+                     req.POST['constraints'].split("\n") or []
+
+    p.constraints = []
+    
+    for i, t in enumerate(constraint_types):
+        p.add_constraint(t, constraints[i])
+    
+    for i in xrange(len(ctx.permissions)):
+        if ctx.permissions[i].id == id:
+            ctx.permissions[i] = p
+            break
+    
+    ctx.write_xml()
+    return HttpResponse("{'result': 'OK'}")
 
 
 @authenticate(ERROR)
@@ -358,11 +409,12 @@ def permissions_search(req):
         pdata = []
         pdata.append("'id': '%s'" % p.id.replace("'", "\\'"))
         pdata.append("'description': '%s'" % p.description.replace("'", "\\'"))
+        pdata.append("'type': '%s'" % p.type.replace("'", "\\'"))
         cdata = []
         for c in p.constraints:
             ccdata = []
             ccdata.append("'type': '%s'" % c.type.replace("'", "\\'"))
-            ccdata.append("'content': '%s'" % c.content.replace("'", "\\'"))
+            ccdata.append("'content': '%s'" % c.content.replace("'", "\\'").replace("\\", "\\\\"))
             cdata.append("{%s}" % ",".join(ccdata))
         pdata.append("'constraints': [%s]" % ",".join(cdata))
         data.append("{%s}" % ",".join(pdata))

@@ -161,7 +161,7 @@ window.addEvent("domready", function(){
     setInputStyles();
     size = getViewportSize();
     $$("div[class='tab-placeholder']").each(function(div){
-	div.style.height = (size[1]-251) + "px";
+	div.style.height = (size[1]-271) + "px";
     });
 	
     if($defined($("hosts")))
@@ -176,6 +176,6 @@ window.addEvent("domready", function(){
     if($defined($("footer")))
        $("footer").injectInside($("body"));
     if($defined($("nmap-output"))){
-        $("nmap-output").style.height = size[1]-300 + "px";
+        $("nmap-output").style.height = size[1]-320 + "px";
     }
 });

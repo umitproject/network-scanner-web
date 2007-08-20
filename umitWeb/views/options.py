@@ -20,7 +20,9 @@
 
 from umitWeb.Auth import authenticate, ERROR
 from umitCore.UmitConf import CommandProfile
-from umitWeb.Http import HttpResponse
+from umitCore.NmapOptions import NmapOptions
+from umitCore.Paths import Path
+from umitWeb.Http import HttpResponse, HttpRequest
 from umitWeb.ProfileParser import ProfileEditorParser, WizardParser
 
 @authenticate(ERROR)
@@ -46,3 +48,15 @@ def get_wizard_options(req):
 def get_profile_editor_options(req):
     pep = ProfileEditorParser()
     return HttpResponse(pep.to_json(), "text/plain")
+
+
+@authenticate(ERROR)
+def get_options(req):
+    options = NmapOptions(Path.options)
+    opt_list = [options.get_option(id) for id in options.get_options_list() \
+            if req.POST.get("search", "").lower() in id.lower()]
+    str_opt = []
+    for option in opt_list:
+        data = ["'%s': '%s'" % item for item in option.items()]
+        str_opt.append("{%s}" % ",".join(data))
+    return HttpResponse("[%s]" % ",".join(str_opt))

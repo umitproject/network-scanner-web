@@ -61,9 +61,13 @@ td a{
 }
 
 #options{
-    float: right;
-    margin-right: 50px;
+    position: absolute;
+    top: 0;
+    /*margin-right: 50px;*/
     border: #DDD solid 1px;
+    background-color: white;
+    width: 97%;
+    text-align: right;
 }
 
 #options ul{

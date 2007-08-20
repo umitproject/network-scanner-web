@@ -5,5 +5,19 @@
 
 .pref-menu li{
     list-style: none;
-    padding-left: 20px;
+    padding-left: 15px;
+    background-image: url(/media/images/config_12.png);
+    background-repeat: no-repeat;
+}
+
+.pref-menu li#pref-profiles{
+    background-image: url(/media/images/config2_12.png);
+}
+
+.pref-menu li#pref-options{
+    background-image: url(/media/images/config2_12.png);
+}
+
+.pref-menu li#pref-scans{
+    background-image: url(/media/images/config2_12.png);
 }
