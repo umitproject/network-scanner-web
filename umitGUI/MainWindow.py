@@ -45,7 +45,7 @@ from umitGUI.SearchWindow import SearchWindow
 from umitGUI.BugReport import BugReport
 
 from umitCore.Paths import Path
-from umitCore.Logging import log
+from umitCore.UmitLogging import log
 from umitCore.I18N import _
 from umitCore.UmitOptionParser import option_parser
 from umitCore.UmitConf import SearchConfig, is_maemo
@@ -329,14 +329,20 @@ class MainWindow(UmitMainWindow):
         bug.show_all()
 
     def _search_scan_result(self, widget):
-        search_window = SearchWindow(self._load_search_result)
+        search_window = SearchWindow(self._load_search_result, self.scan_notebook)
         search_window.show_all()
 
     def _load_search_result(self, results):
         for result in results:
-            page = self._load(parsed_result=results[result][1],
+            if results[result][1].is_unsaved():
+                for i in range(self.scan_notebook.get_n_pages()):
+                    if results[result][0] == "Unsaved " + \
+                    self.scan_notebook.get_nth_page(i).get_tab_label():
+                        self.scan_notebook.set_current_page(i)
+            else:
+                page = self._load(parsed_result=results[result][1],
                               title=results[result][1].scan_name)
-            page.status.set_search_loaded()
+                page.status.set_search_loaded()
 
     def _close_scan_cb(self, widget, data=None):
         # data can be none, if the current page is to be closed
@@ -727,6 +733,9 @@ Wait until the scan is finished and then try to save it again.'))
             filename = None
             if (response == gtk.RESPONSE_OK):
                 filename = self._save_results_filechooser_dialog.get_filename()
+                # add .usr to filename if there is no other extension
+                if filename.find('.') == -1:
+                    filename += ".usr"
                 self._save(current_page, filename)
                 
             self._save_results_filechooser_dialog.destroy()

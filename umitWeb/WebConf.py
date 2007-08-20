@@ -27,7 +27,4 @@ class JsOutputHighlight(NmapOutputHighlight, object):
     
     def __init__(self, *args):
         NmapOutputHighlight.__init__(self, *args)
-        #RESOLVE THIS LATER
-        self.paths_checked.append(Path.webconfig_file)
         self.read(Path.webconfig_file)
-        

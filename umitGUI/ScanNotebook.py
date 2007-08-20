@@ -42,7 +42,7 @@ from umitCore.NmapCommand import CommandConstructor
 from umitCore.UmitConf import CommandProfile, ProfileNotFound, is_maemo
 from umitCore.NmapParser import NmapParser
 from umitCore.Paths import Path
-from umitCore.Logging import log
+from umitCore.UmitLogging import log
 from umitCore.I18N import _
 
 icon_dir = Path.pixmaps_dir
@@ -315,6 +315,7 @@ class ScanNotebookPage(HIGVBox):
 
     def __create_toolbar(self):
         self.toolbar = ScanToolbar()
+        self.toolbar.scan_button.set_sensitive(False)
         self.empty_target = _("<target>")
         
         self.toolbar.target_entry.connect('changed', self.refresh_command_target)
@@ -379,13 +380,17 @@ class ScanNotebookPage(HIGVBox):
     
     def refresh_command_target(self, widget):
         #log.debug(">>> Refresh Command Target")
-        
+
         profile = self.toolbar.selected_profile
         #log.debug(">>> Profile: %s" % profile)
         
         if profile != '':
             target = self.toolbar.selected_target
-            #log.debug(">>> Target: %s" % target)
+            if target == '':
+                self.toolbar.scan_button.set_sensitive(False)
+            else:
+                self.toolbar.scan_button.set_sensitive(True)
+
             try:
                 cmd_profile = CommandProfile()
                 command = cmd_profile.get_command(profile) % target
@@ -423,7 +428,7 @@ class ScanNotebookPage(HIGVBox):
         warn_dialog = HIGAlertDialog(message_format=_("Profile not found!"),
                                      secondary_text=_("The profile name you \
 selected/typed couldn't be found, and probably doesn't exist. Please, check the profile \
-name, and then try again."),
+name and try again."),
                                      type=gtk.MESSAGE_QUESTION)
         warn_dialog.run()
         warn_dialog.destroy()
@@ -435,6 +440,9 @@ name, and then try again."),
         self.get_parent().set_tab_title(self, label)
     
     def start_scan_cb(self, widget=None):
+        if not self.toolbar.scan_button.get_property("sensitive"):
+            return
+
         target = self.toolbar.selected_target
         command = self.command_toolbar.command
         profile = self.toolbar.selected_profile
@@ -451,25 +459,33 @@ name, and then try again."),
         elif profile:
             self.set_tab_label(profile)
 
-        ####
-        # Setting status to scanning
-        self.status.set_scanning()
-        ####
-        
         if target != '':    
             self.toolbar.add_new_target(target)
 
+        if (command.find("-iR") == -1 and command.find("-iL") == -1):
+            if command.find("<target>") > 0:
+                warn_dialog = HIGAlertDialog(message_format=_("No Target Host!"), 
+                                             secondary_text=_("Target specification \
+is mandatory. Either by an address in the target input box or through the '-iR' and \
+'-iL' nmap options. Aborting scan."),
+                                             type=gtk.MESSAGE_ERROR)
+                warn_dialog.run()
+                warn_dialog.destroy()
+                return
+
         if command != '':
+            # Setting status to scanning
+            self.status.set_scanning()
             self.execute_command(command)
         else:
             warn_dialog = HIGAlertDialog(message_format=_("Empty Nmap Command!"),
-                                         secondary_text=_("There is no command to be \
-executed! Maybe the selected/typed profile doesn't exist. Please, check the profile name \
-or type a nmap command that you would like to execute."),
+                                         secondary_text=_("There is no command to  \
+execute! Maybe the selected/typed profile doesn't exist. Please, check the profile name \
+or type the nmap command you would like to execute."),
                                          type=gtk.MESSAGE_ERROR)
             warn_dialog.run()
             warn_dialog.destroy()
-    
+
     def close_tab(self):
         try:
             gobject.source_remove(self.verify_thread_timeout_id)
@@ -513,9 +529,9 @@ or type a nmap command that you would like to execute."),
             alive = self.command_execution.scan_state()
             if alive:
                 warn_dialog = HIGAlertDialog(message_format=_("Scan has not finished yet"),
-                                             secondary_text=_("Another Scan is running in \
-background and has not finished yet. To start another scan and kill the old one, click Ok. \
-To wait the conclusion of the old scan, choose Cancel."),
+                                             secondary_text=_("Another scan is running in \
+the background. To start another scan and kill the old one, click Ok. To wait for the \
+conclusion of the old scan, choose Cancel."),
                                              type=gtk.MESSAGE_QUESTION,
                                              buttons=gtk.BUTTONS_OK_CANCEL)
                 response = warn_dialog.run()
@@ -535,9 +551,8 @@ To wait the conclusion of the old scan, choose Cancel."),
             self.command_execution.run_scan()
         except Exception, msg:
             warn_dialog = HIGAlertDialog(message_format=_("Command is missing!"),
-                                         secondary_text=_("It seens that your profile's \
-command is missing or something else went wrong. This may be caused by a miss configuration \
-of your profile. Please, try to remove your profile and then create it again."),
+                                         secondary_text=_("It seems that your profile's \
+command is missing or something else went wrong. Please, try to remove and recreate your profile."),
                                          type=gtk.MESSAGE_ERROR)
             warn_dialog.run()
             warn_dialog.destroy()
@@ -654,8 +669,11 @@ of your profile. Please, try to remove your profile and then create it again."),
                 log.debug(">>> An exception occourried during xml ouput parsing")
                 try:
                     error = self.command_execution.get_error()
+                except AttributeError:
+                    error = _("Couldn't retrieve the error raised by \
+the command!")
                 except:
-                    error = _('Unknown error!')
+                    error = _("Unknown error!")
 
                 log.debug(">>> Error: '%s'" % error)
 
