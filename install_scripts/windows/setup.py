@@ -43,8 +43,8 @@ locale_dir = os.path.join('share', 'umit', 'locale')
 config_dir = os.path.join('share', 'umit', 'config')
 docs_dir = os.path.join('share', 'umit', 'docs')
 misc_dir = os.path.join('share', 'umit', 'misc')
-templates_dir = os.path.join('umitWeb', 'templates')
-media_dir = os.path.join('umitWeb', 'media')
+templates_dir = os.path.join('share', 'umit', 'templates')
+media_dir = os.path.join('share', 'umit', 'umitweb_media')
 
 def mo_find(result, dirname, fnames):
     files = []
@@ -150,7 +150,8 @@ wizards.""",
       cmdclass = {"py2exe":umit_py2exe},
       windows = [{"script" : "umit.pyw",
                   "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]},
-                 {"script": "umitweb.py"}],
+                 {"script": "umitweb.py",
+                  "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]}],
       options = {"py2exe":{"compressed":1,
                            "optimize":2,
                            "packages":"encodings",
