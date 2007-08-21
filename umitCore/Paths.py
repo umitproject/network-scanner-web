@@ -38,6 +38,8 @@ MISC_DIR = join("share", "umit", "misc")
 ICONS_DIR = join("share", "icons")
 PIXMAPS_DIR = join("share", "pixmaps")
 DOCS_DIR = join("share", "umit", "docs")
+MEDIA_DIR = join("share", "umit", "umitweb_media")
+TEMPLATES_DIR = join("share", "umit", "templates")
 
 
 #######
@@ -53,7 +55,9 @@ class Paths(object):
                  "icons_dir",
                  "misc_dir",
                  "docs_dir",
-                 "umit_icon"]
+                 "umit_icon",
+                 "templates_dir",
+                 "media_dir"]
 
     config_files_list = ["config_file",
                          "target_list",
@@ -164,6 +168,8 @@ user home: %s" % config_file)
         self.misc_dir = MISC_DIR
         self.docs_dir = DOCS_DIR
         self.umit_icon = UMIT_ICON
+        self.media_dir = MEDIA_DIR
+        self.templates_dir = TEMPLATES_DIR
 
         log.debug(">>> Config file: %s" % config_file)
 

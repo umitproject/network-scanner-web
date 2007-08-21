@@ -27,6 +27,7 @@ from datetime import datetime, timedelta
 from Cookie import SimpleCookie
 from umitWeb.WebLogger import getLogger
 from umitCore.I18N import _
+from umitCore.Paths import Path
 from types import StringTypes
 from StringIO import StringIO
 
@@ -209,7 +210,7 @@ class HttpResponse(object):
     def loadTemplate(self, template):
         """Load a template given its filename
         """
-        template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+        template_dir = Path.templates_dir
         template = template.split("/")
         tpl_path = os.path.join(template_dir, *template)
         #self.logger.debug("TEMPLATE FILE: " + tpl_path)

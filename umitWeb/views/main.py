@@ -22,21 +22,24 @@ from os.path import join, abspath, dirname, exists, pardir
 import sys
 from types import DictionaryType, StringType, ListType
 from math import floor, sqrt
-#from umitCore.NmapOutputHighlight import NmapOutputHighlight
 from umitWeb.WebConf import JsOutputHighlight
 from umitWeb.Http import HttpResponse, Http404, HttpResponseRedirect
 from umitWeb.WebLogger import getLogger
 from umitWeb.Auth import authenticate, ERROR
+from umitCore.Paths import Path
 from umitWeb.Security import Context
 import mimetypes
 
+
 logger = getLogger("main")
+
 
 @authenticate()
 def index(req):
     response = HttpResponse()
     response.loadTemplate("index.html")
     return response
+
 
 @authenticate(ERROR)
 def output_highlight(req):
@@ -60,10 +63,11 @@ def output_highlight(req):
             response.write("highlights['%s']['%s'] = '%s';\n" % (attr, value, propValue))
     return response
 
+
 def serve_media(req, path):
     response = HttpResponse()
     
-    filename = join(dirname(__file__), pardir, 'media', *(path.split("/")))
+    filename = join(Path.media_dir, *(path.split("/")))
     
     if not exists(filename):
         raise Http404
@@ -81,8 +85,10 @@ def serve_media(req, path):
     response.write(cntFile.read())
     return response
 
+
 def show_favicon(req):
     return serve_media(req, "images/favicon.ico")
+
 
 def login(req):
     resp = HttpResponse()
