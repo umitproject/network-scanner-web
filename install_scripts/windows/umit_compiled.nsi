@@ -11,6 +11,8 @@
 
 !define APPLICATION_NAME "Umit"
 !define APPLICATION_VERSION "0.9.4"
+!define APPLICATION_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_NAME}"
+!define APPLICATION_UNINST_ROOT_KEY "HKLM"
 !define WINPCAP "winpcap-nmap-4.01.exe"
 
 Name "${APPLICATION_NAME}"
@@ -32,7 +34,7 @@ Outfile ${APPLICATION_NAME}-${APPLICATION_VERSION}.exe
 !insertmacro MUI_PAGE_LICENSE "COPYING_HIGWIDGETS"
 !insertmacro MUI_PAGE_LICENSE "COPYING_NMAP"
 !insertmacro MUI_PAGE_LICENSE "COPYING_WINPCAP"
-;!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -63,8 +65,29 @@ Section "Umit" SecUmit
 
   CreateDirectory "$SMPROGRAMS\Umit"
   CreateShortCut "$SMPROGRAMS\Umit\Umit.lnk" "$INSTDIR\umit.exe" "" $INSTDIR\umit_48.ico
+SectionEnd
 
+Section "Umit Web Interface"
+  SetOutPath "$INSTDIR"
+  File "install_scripts\windows\win_dependencies\instsrv.exe"
+  File "install_scripts\windows\win_dependencies\srvany.exe"
+  ExecWait '"$INSTDIR\instsrv.exe" "UMIT" "$INSTDIR\srvany.exe"' $0
+  MessageBox MB_OK $0
+  Delete "$INSTDIR\instsrv.exe"
+  WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT" "Description" "UMIT is a graphical interface for nmap, with and embedded web server."
+  WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT" "DisplayName" "UMIT The nmap frontend"
+  WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "Application" "$INSTDIR\umitweb.exe"
+  WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "AppDir" "$INSTDIR"
+  WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "AppDirectory" "$INSTDIR"
+  ExecWait "net start UMIT"
+SectionEnd
+
+Section -Post
   WriteUninstaller "$INSTDIR\Umit-Uninstaller.exe"
+  WriteRegStr ${APPLICATION_UNINST_ROOT_KEY} "${APPLICATION_UNINST_KEY}" "DisplayName" "${APPLICATION_NAME}"
+  WriteRegStr ${APPLICATION_UNINST_ROOT_KEY} "${APPLICATION_UNINST_KEY}" "UninstallString" "$INSTDIR\Umit-Uninstaller.exe"
+  WriteRegStr ${APPLICATION_UNINST_ROOT_KEY} "${APPLICATION_UNINST_KEY}" "DisplayVersion" "${APPLICATION_VERSION}"
+  WriteRegStr ${APPLICATION_UNINST_ROOT_KEY} "${APPLICATION_UNINST_KEY}" "Publisher" "Umit, The Nmap Frontend"
 SectionEnd
 
 ; Components descriptions
@@ -74,10 +97,15 @@ SectionEnd
 
 Section "Uninstall"
     Delete "$INSTDIR\*"
+    Delete "$INSTDIR\share\*"
     Delete "$SMPROGRAMS\Umit"
+    RMDir "$INSTDIR\share"
     RMDir "$INSTDIR"
     RMDir "$SMPROGRAMS\Umit"
+    ExecWait "net stop UMIT"
+    DeleteRegKey HKLM "SYSTEM\CurrentControlSet\Services\UMIT"
+    DeleteRegKey ${APPLICATION_UNINST_ROOT_KEY} "${APPLICATION_UNINST_KEY}"
   
-  remove_uninstaller:
-      Delete "$INSTDIR\Umit-Uninstaller.exe"  
+;  remove_uninstaller:
+;      Delete "$INSTDIR\Umit-Uninstaller.exe"
 SectionEnd

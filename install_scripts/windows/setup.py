@@ -96,7 +96,8 @@ data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.png')) +
                                             'wizard', '*.xml'))+
                           glob(os.path.join(docs_dir,
                                             'screenshots', '*.png'))),
-                (templates_dir, glob(os.path.join(templates_dir, '*.html'))) +
+                (templates_dir, glob(os.path.join(templates_dir, '*.html'))+
+                                glob(os.path.join(templates_dir, 'html', '*.html'))) +
                 (media_dir, glob(os.path.join(media_dir, 'images', '*.png')) +
                             glob(os.path.join(media_dir, 'images', '*.jpg')) +
                             glob(os.path.join(media_dir, 'images', '*.gif')) +
@@ -143,7 +144,7 @@ scanning or even compare scan results to easily see any changes. A regular \
 user will also be able to construct powerful scans with UMIT command creator \
 wizards.""",
       version = VERSION,
-      scripts = ['umit.pyw', 'umitweb.py'],
+      scripts = ['umit.pyw'],
       packages = ['', 'umitCore', 'umitGUI', 'umitWeb', 'umitWeb.views',
                   'umitWeb.views.html', 'higwidgets'],
       data_files = data_files,
@@ -152,6 +153,7 @@ wizards.""",
                   "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]},
                  {"script": "umitweb.py",
                   "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]}],
+      #console = ["umitweb.py"],
       options = {"py2exe":{"compressed":1,
                            "optimize":2,
                            "packages":"encodings",
@@ -165,4 +167,7 @@ encodings.*,\
 cairo,\
 pangocairo,\
 atk,\
-psyco"}})
+psyco,\
+umitWeb.*,\
+umitWeb.views.*,\
+umitWeb.views.html.*"}})
