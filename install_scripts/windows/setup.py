@@ -30,7 +30,7 @@ from glob import glob
 # Main Variables
 
 VERSION = "0.9.4"
-REVISION = "1470"
+REVISION = "1485"
 
 # Directories for POSIX operating systems
 # These are created after a "install" or "py2exe" command
