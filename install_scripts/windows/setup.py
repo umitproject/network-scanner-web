@@ -96,13 +96,17 @@ data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.png')) +
                                             'wizard', '*.xml'))+
                           glob(os.path.join(docs_dir,
                                             'screenshots', '*.png'))),
-                (templates_dir, glob(os.path.join(templates_dir, '*.html'))+
-                                glob(os.path.join(templates_dir, 'html', '*.html'))) +
-                (media_dir, glob(os.path.join(media_dir, 'images', '*.png')) +
-                            glob(os.path.join(media_dir, 'images', '*.jpg')) +
-                            glob(os.path.join(media_dir, 'images', '*.gif')) +
-                            glob(os.path.join(media_dir, 'js', '*.js')) +
-                            glob(os.path.join(media_dir, 'css', '*.css')))]
+                (os.path.join(media_dir, 'js'),
+                          glob(os.path.join(media_dir, 'js', '*.js'))), 
+               (os.path.join(media_dir, 'css'),
+                          glob(os.path.join(media_dir, 'css', '*.css'))),
+               (os.path.join(media_dir, 'images'), 
+                          glob(os.path.join(media_dir, 'images', '*.jpg')) +
+                          glob(os.path.join(media_dir, 'images', '*.png')) +
+                          glob(os.path.join(media_dir, 'images', '*.gif'))),
+               (templates_dir, glob(os.path.join(templates_dir, '*.html'))),
+               (os.path.join(templates_dir, 'html'),
+                          glob(os.path.join(templates_dir, 'html', '*.html')))]
                 
 # Add i18n files to data_files list
 os.path.walk(locale_dir, mo_find, data_files)

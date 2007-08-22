@@ -22,6 +22,12 @@ import sys
 import os
 from os.path import join, split
 
+try:
+    import psyco
+    psyco.full()
+except ImportError:
+    pass
+
 ######################################
 # Setting the umit home directory
 

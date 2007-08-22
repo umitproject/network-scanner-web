@@ -26,7 +26,7 @@ from distutils.command.install import install
 from distutils.command.sdist import sdist
 
 from glob import glob
-from stat import ST_MODE, S_IRWXU, S_IRGRP, S_IROTH
+from stat import ST_MODE, S_IRWXU, S_IRGRP, S_IROTH, S_IRUSR, S_IWUSR
 
 
 VERSION = "0.9.4"
@@ -43,6 +43,8 @@ locale_dir = os.path.join('share', 'umit', 'locale')
 config_dir = os.path.join('share', 'umit', 'config')
 docs_dir = os.path.join('share', 'umit', 'docs')
 misc_dir = os.path.join('share', 'umit', 'misc')
+media_dir = os.path.join('share', 'umit', 'umitweb_media')
+templates_dir = os.path.join('share', 'umit', 'templates')
 
 
 def mo_find(result, dirname, fnames):
@@ -87,7 +89,18 @@ data_files = [ (pixmaps_dir, svg + glob(os.path.join(pixmaps_dir, '*.png')) +
                           glob(os.path.join(docs_dir,
                                             'wizard', '*.xml'))+
                           glob(os.path.join(docs_dir,
-                                            'screenshots', '*.png')))]
+                                            'screenshots', '*.png'))),
+               (os.path.join(media_dir, 'js'),
+                          glob(os.path.join(media_dir, 'js', '*.js'))), 
+               (os.path.join(media_dir, 'css'),
+                          glob(os.path.join(media_dir, 'css', '*.css'))),
+               (os.path.join(media_dir, 'images'), 
+                          glob(os.path.join(media_dir, 'images', '*.jpg')) +
+                          glob(os.path.join(media_dir, 'images', '*.png')) +
+                          glob(os.path.join(media_dir, 'images', '*.gif'))),
+               (templates_dir, glob(os.path.join(templates_dir, '*.html'))),
+               (os.path.join(templates_dir, 'html'),
+                          glob(os.path.join(templates_dir, 'html', '*.html')))]
 
 # Add i18n files to data_files list
 os.path.walk(locale_dir, mo_find, data_files)
@@ -164,7 +177,7 @@ print
         ufile.writelines(ucontent)
         ufile.close()
 
-        print ">>> UMIT", open(umit, "r").readlines()[:uline + 5]
+        print ">>> UMIT", "".join(open(umit, "r").readlines()[:uline + 5])
 
         
 
@@ -270,8 +283,8 @@ could create scan profiles for faster and easier network scanning or even compar
 scan results to easily see any changes. A regular user will also be able to construct \
 powerful scans with UMIT command creator wizards.""",
       version = VERSION,
-      scripts = ['umit'],
-      packages = ['', 'umitCore', 'umitGUI', 'higwidgets'],
+      scripts = ['umit', 'umitweb.py'],
+      packages = ['', 'umitCore', 'umitGUI', 'umitWeb', 'umitWeb.views', 'umitWeb.views.html', 'higwidgets'],
       data_files = data_files,
       cmdclass = {"install":umit_install,
                   "sdist":umit_sdist})
