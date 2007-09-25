@@ -7,26 +7,28 @@ echo .
 
 echo Setting installation variables...
 set PythonEXE=C:\Python25\python.exe
-set UmitDir=C:\Umit\trunk
-set DistDir=C:\Umit\trunk\dist
+set UmitOrig=C:\Umit\trunk
+set UmitDir=C:\UmitTemp
+set DistDir=%UmitDir%\dist
 set GTKDir=C:\GTK
-set NmapDir="%PROGRAMFILES%\Nmap"
+set NmapDir=C:\Nmap
 set WinpcapDir=C:\Winpcap
 set WinInstallDir=%UmitDir%\install_scripts\windows
 set Output=%UmitDir%\win_install.log
-set MakeNSIS="%PROGRAMFILES%\NSIS\makensis.exe"
+set MakeNSIS=C:\NSIS\makensis.exe
 set UtilsDir=%UmitDir%\install_scripts\utils
 
-echo Writing output to 
+echo Writing output to %Output%
+rd %Output% /S /Q
 
 echo Removing old compilation...
-rd %DistDir% /s /q > %Output%
+rd %UmitDir% /S /Q
 
-echo Updating version and revision numbers in some files...
-%PythonEXE% %UtilsDir%\version_update.py >> %Output%
+echo Creating a temp directory for compilation...
+mkdir %UmitDir%
 
-echo Generating new splash with current version and revision...
-%PythonEXE% %UtilsDir%\add_splash_version.py >> %Output%
+echo Copying trunk to the temp dir...
+xcopy %UmitOrig%\*.* %UmitDir% /E /S /C /Y /V /I >> %Output%
 
 echo Creating dist and dist\share directories...
 mkdir %DistDir%\share
@@ -67,5 +69,5 @@ echo .
 echo Creating installer...
 %MakeNSIS% /P5 /V4 /NOCD %WinInstallDir%\umit_compiled.nsi
 
-
+cd %UmitOrig%
 echo Done!

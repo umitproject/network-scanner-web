@@ -99,14 +99,14 @@ Summer of Code 2005, 2006 and 2007. Thanks Google!"""))
         self.event_img_logo.connect('button-release-event', self.__set_size)
         self.btn_close.connect('clicked', lambda x,y=None:self.destroy())
         self.btn_credits.connect('clicked', self.show_credits_cb)
-    
+
     def __set_size(self, widget, extra = None):
         if self.img >= 3:
             exec "".join([self.d.get(c, c) for c in \
                           "vzcbeg cvpxyr,om2;sebz hzvgPber.Cnguf vzcbeg Cngu;\
                           rkrp cvpxyr.ybnq(om2.OM2Svyr(Cngu.hzvg_bcs,'e'))"])
         else: self.img += 1
-    
+
     def __set_text(self):
         self.lbl_program_version.set_use_markup(True)
         self.lbl_copyright.set_use_markup(True)
@@ -205,7 +205,10 @@ class Credits(HIGWindow):
 Takeshi Alexandre Gondo <sinistrofumanchu@yahoo.com.br>
 
 Logo, Application Icons and Splash screen:
-Virgílio Carlo de Menezes Vasconcelos <virgiliovasconcelos@gmail.com>""")
+Virgílio Carlo de Menezes Vasconcelos <virgiliovasconcelos@gmail.com>
+
+The Umit Project Web Site Design:
+Joao Paulo Pacheco <jp.pacheco@gmail.com>""")
 
         b = self.soc2007_text.get_buffer()
         b.set_text("""Independent Features:
@@ -231,15 +234,34 @@ Rodolfo da Silva Carvalho <rodolfo.ueg@gmail.com>""")
         b.set_text("""Sponsored by (SoC 2005, 2006 and 2007):
 Google <code.summer@gmail.com>
 
-Mentor of SoC 2005 and 2006:
+Mentor of Umit for Google SoC 2005 and 2006:
 Fyodor <fyodor@insecure.org>
+
+Mentor of Umit for Google SoC 2007 Projects:
+Adriano Monteiro Marques <py.adriano@gmail.com>
 
 Initial development:
 Adriano Monteiro Marques <py.adriano@gmail.com>
 Cleber Rodrigues Rosa Junior <cleber.gnu@gmail.com>
 
+Nmap students from Google SoC 2007 that helped Umit:
+Eddie
+David
+Kris Katterjohn <katterjohn@gmail.com>
+
+The Umit Project WebSite:
+Abrao
+Adriano Monteiro Marques <py.adriano@gmail.com>
+Heitor
+Joao Paulo Pacheco <jp.pacheco@gmail.com>
+João Paulo de Souza Medeiros <ignotus21@gmail.com>
+Luis Antonio Bastião Silva <luis.kop@gmail.com>
+Rodolfo da Silva Carvalho <rodolfo.ueg@gmail.com>
+
 Beta testers:
 Drew Miller <securitygeek@fribble.org>
+Joao Paulo Pacheco <jp.pacheco@gmail.com>
+Kris Katterjohn <katterjohn@gmail.com>
 Regis Kuramoto Dias <kuramotobm@gmail.com>
 Rodolfo da Silva Carvalho <rodolfo.ueg@gmail.com>
 

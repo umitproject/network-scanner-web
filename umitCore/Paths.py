@@ -19,8 +19,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from os import R_OK, W_OK, access, mkdir, getcwd
-from os.path import exists, join, split, abspath
+from os import R_OK, W_OK, access, mkdir, getcwd, environ, getcwd
+from os.path import exists, join, split, abspath, dirname
 import sys
 
 from umitCore.UmitLogging import log
@@ -28,18 +28,22 @@ from umitCore.UmitConfigParser import UmitConfigParser
 from umitCore.BasePaths import base_paths, HOME
 from umitCore.I18N import _
 
-VERSION = "0.9.4"
-REVISION = "1485"
+VERSION = environ.get("UMIT_VERSION", "0.9.5")
+REVISION = environ.get("UMIT_REVISION", "2549")
 
-CONFIG_DIR = join("share", "umit", "config")
-UMIT_ICON = join("share", "icons", "umit_48.ico")
-LOCALE_DIR = join("share", "umit", "locale")
-MISC_DIR = join("share", "umit", "misc")
-ICONS_DIR = join("share", "icons")
-PIXMAPS_DIR = join("share", "pixmaps")
-DOCS_DIR = join("share", "umit", "docs")
+main_dir = ""
+if hasattr(sys, "frozen"):
+    main_dir = dirname(sys.executable)
+
+CONFIG_DIR = join(main_dir, "share", "umit", "config")
+UMIT_ICON = join(main_dir, "share", "icons", "umit_48.ico")
+LOCALE_DIR = join(main_dir, "share", "umit", "locale")
+MISC_DIR = join(main_dir, "share", "umit", "misc")
 MEDIA_DIR = join("share", "umit", "umitweb_media")
+ICONS_DIR = join(main_dir, "share", "icons")
 TEMPLATES_DIR = join("share", "umit", "templates")
+PIXMAPS_DIR = join(main_dir, "share", "pixmaps")
+DOCS_DIR = join(main_dir, "share", "umit", "docs")
 
 
 #######
@@ -60,21 +64,20 @@ class Paths(object):
                  "media_dir"]
 
     config_files_list = ["config_file",
-                         "target_list",
                          "profile_editor",
                          "wizard",
                          "scan_profile",
-                         "recent_scans",
                          "options",
-                         "umitdb",
                          "umit_version",
                          "webconfig_file",
                          "security_file",
                          "umitdb_web"]
-    
-    share_files_list = ["umit_op",
-                        "umit_opi",
-                        "umit_opt",
+
+    empty_config_files_list = ["target_list",
+                               "recent_scans",
+                               "umitdb"]
+
+    share_files_list = ["umit_opt",
                         "umit_opf"]
 
     misc_files_list = ["services_dump",
@@ -94,14 +97,14 @@ class Paths(object):
 
         elif exists(join(base_dir, CONFIG_DIR)) and\
             exists(join(base_dir,
-                                        CONFIG_DIR,
-                                        base_paths['config_file'])):
+                        CONFIG_DIR,
+                        base_paths['config_file'])):
             main_config_dir = join(base_dir, CONFIG_DIR)
 
         elif exists(join(split(base_dir)[0], CONFIG_DIR)) and \
             exists(join(split(base_dir)[0],
-                                        CONFIG_DIR,
-                                        base_paths['config_file'])):
+                        CONFIG_DIR,
+                        base_paths['config_file'])):
             main_config_dir = join(split(base_dir)[0], CONFIG_DIR)
 
         else:
@@ -177,16 +180,18 @@ user home: %s" % config_file)
         pass
 
     def check_version(self, config_dir):
-        ver = open(join(config_dir,
-                        base_paths['umit_version'])).readlines()[0].\
-                                                     split("\n")[0].\
-                                                     split("\r")[0]
+        version_file = join(config_dir, base_paths['umit_version'])
 
-        log.debug(">>> This Umit Version: %s" % VERSION)
-        log.debug(">>> Version of the files in %s: %s" % (config_dir, ver))
+        if exists(version_file):
+            ver = open(version_file).readlines()[0].\
+                                     split("\n")[0].\
+                                     split("\r")[0]
 
-        if VERSION == ver:
-            return True
+            log.debug(">>> This Umit Version: %s" % VERSION)
+            log.debug(">>> Version of the files in %s: %s" % (config_dir, ver))
+
+            if VERSION == ver:
+                return True
         return False
 
     def root_dir(self):
@@ -201,7 +206,6 @@ user home: %s" % config_file)
         log.debug(">>> Root dir: %s" % curr_dir)
         return curr_dir
 
-
     def __getattr__(self, name):
         if self.config_file_set:
             if name in self.other_settings:
@@ -213,6 +217,11 @@ user home: %s" % config_file)
             elif name in self.config_files_list:
                 return return_if_exists(join(self.__dict__['config_dir'],
                                              base_paths[name]))
+
+            elif name in self.empty_config_files_list:
+                return return_if_exists(join(self.__dict__['config_dir'],
+                                             base_paths[name]),
+                                        True)
 
             elif name in self.share_files_list:
                 return return_if_exists(join(self.__dict__['pixmaps_dir'],
@@ -234,7 +243,6 @@ user home: %s" % config_file)
             self.config_parser.set(self.paths_section, name, value)
         else:
             self.__dict__[name] = value
-    
 
 ####################################
 # Functions for directories creation
@@ -289,9 +297,14 @@ def copy_config_file(filename, dir_origin, dir_destiny):
 def check_access(path, permission):
     return exists(path) and access(path, permission)
 
-def return_if_exists(path):
+def return_if_exists(path, create=False):
+    path = abspath(path)
     if exists(path):
-        return abspath(path)
+        return path
+    elif create:
+        f = open(path, "w")
+        f.close()
+        return path
     raise Exception("File '%s' does not exist or could not be found!" % path)
 
 ############
@@ -315,8 +328,6 @@ if __name__ == '__main__':
     print ">>> RECENT_SCANS:", Path.recent_scans
     print ">>> OPTIONS:", Path.options
     print
-    print ">>> UMIT_OP:", Path.umit_op
-    print ">>> UMIT_OPI:", Path.umit_opi
     print ">>> UMIT_OPT:", Path.umit_opt
     print ">>> UMIT_OPF:", Path.umit_opf
     print ">>> UMITDB:", Path.umitdb

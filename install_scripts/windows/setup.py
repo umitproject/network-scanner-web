@@ -19,8 +19,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import py2exe
+import sys
 import os.path
+import os
 
 from py2exe.build_exe import py2exe as build_exe
 from distutils.core import setup
@@ -29,8 +30,10 @@ from glob import glob
 ################################################################################
 # Main Variables
 
-VERSION = "0.9.4"
-REVISION = "1485"
+VERSION = os.environ.get("UMIT_VERSION", "0.4.5")
+REVISION = os.environ.get("UMIT_REVISION", "1567")
+
+SOURCE_PKG = False
 
 # Directories for POSIX operating systems
 # These are created after a "install" or "py2exe" command
@@ -43,8 +46,6 @@ locale_dir = os.path.join('share', 'umit', 'locale')
 config_dir = os.path.join('share', 'umit', 'config')
 docs_dir = os.path.join('share', 'umit', 'docs')
 misc_dir = os.path.join('share', 'umit', 'misc')
-templates_dir = os.path.join('share', 'umit', 'templates')
-media_dir = os.path.join('share', 'umit', 'umitweb_media')
 
 def mo_find(result, dirname, fnames):
     files = []
@@ -74,10 +75,9 @@ data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.png')) +
                (config_dir, [os.path.join(config_dir, 'umit.conf')] +
                             [os.path.join(config_dir, 'scan_profile.usp')] +
                             [os.path.join(config_dir, 'umit_version')] +
-                            [os.path.join(config_dir, 'umitweb.conf')] +
                             glob(os.path.join(config_dir, '*.xml'))+
                             glob(os.path.join(config_dir, '*.txt'))),
-               
+
                (misc_dir, glob(os.path.join(misc_dir, '*.dmp'))), 
 
                (icons_dir, glob(os.path.join('share', 'icons', '*.ico'))+
@@ -95,19 +95,8 @@ data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.png')) +
                           glob(os.path.join(docs_dir,
                                             'wizard', '*.xml'))+
                           glob(os.path.join(docs_dir,
-                                            'screenshots', '*.png'))),
-                (os.path.join(media_dir, 'js'),
-                          glob(os.path.join(media_dir, 'js', '*.js'))), 
-               (os.path.join(media_dir, 'css'),
-                          glob(os.path.join(media_dir, 'css', '*.css'))),
-               (os.path.join(media_dir, 'images'), 
-                          glob(os.path.join(media_dir, 'images', '*.jpg')) +
-                          glob(os.path.join(media_dir, 'images', '*.png')) +
-                          glob(os.path.join(media_dir, 'images', '*.gif'))),
-               (templates_dir, glob(os.path.join(templates_dir, '*.html'))),
-               (os.path.join(templates_dir, 'html'),
-                          glob(os.path.join(templates_dir, 'html', '*.html')))]
-                
+                                            'screenshots', '*.png')))]
+
 # Add i18n files to data_files list
 os.path.walk(locale_dir, mo_find, data_files)
 
@@ -115,6 +104,14 @@ os.path.walk(locale_dir, mo_find, data_files)
 
 class umit_py2exe(build_exe):
     def run(self):
+        base_dir = os.getcwd()
+        sys.path.append(os.path.join("install_scripts", "utils"))
+        from version_update import update_umit_compiled, update_paths, update_umit_version
+
+        update_umit_compiled(base_dir, VERSION, REVISION)
+        update_paths(base_dir, VERSION, REVISION)
+        update_umit_version(base_dir, VERSION, REVISION)
+
         build_exe.run(self)
         self.finish_banner()
 
@@ -149,15 +146,11 @@ user will also be able to construct powerful scans with UMIT command creator \
 wizards.""",
       version = VERSION,
       scripts = ['umit.pyw'],
-      packages = ['', 'umitCore', 'umitGUI', 'umitWeb', 'umitWeb.views',
-                  'umitWeb.views.html', 'higwidgets'],
+      packages = ['', 'umitCore', 'umitGUI', 'higwidgets'],
       data_files = data_files,
       cmdclass = {"py2exe":umit_py2exe},
       windows = [{"script" : "umit.pyw",
-                  "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]},
-                 {"script": "umitweb.py",
                   "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]}],
-      #console = ["umitweb.py"],
       options = {"py2exe":{"compressed":1,
                            "optimize":2,
                            "packages":"encodings",
@@ -171,7 +164,4 @@ encodings.*,\
 cairo,\
 pangocairo,\
 atk,\
-psyco,\
-umitWeb.*,\
-umitWeb.views.*,\
-umitWeb.views.html.*"}})
+psyco"}})

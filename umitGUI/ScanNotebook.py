@@ -31,7 +31,7 @@ from higwidgets.higscrollers import HIGScrolledWindow
 from umitGUI.NmapOutputViewer import NmapOutputViewer
 from umitGUI.ScanHostDetailsPage import ScanHostDetailsPage
 from umitGUI.ScanToolbar import ScanCommandToolbar, ScanToolbar
-from umitGUI.ScanHostsView import ScanHostsView
+from umitGUI.ScanHostsView import ScanHostsView, SCANNING
 from umitGUI.ScanOpenPortsPage import ScanOpenPortsPage
 from umitGUI.ScanRunDetailsPage import ScanRunDetailsPage
 from umitGUI.ScanNmapOutputPage import ScanNmapOutputPage
@@ -186,12 +186,27 @@ class ScanNotebook(HIGNotebook):
         self.set_scrollable(True)
         self.tab_titles = []
         self.scan_num = 1
+        self.close_scan_cb = None
 
     def remove_page(self, page_num):
         page = self.get_nth_page(page_num)
         self.remove_tab_title(self.get_tab_title(page))
         
         HIGNotebook.remove_page(self, page_num)
+
+    def add_scan_page(self, title):
+        page = ScanNotebookPage()
+        page.select_first_profile()
+
+        self.append_page(page, self.close_scan_cb, tab_title=title)
+        page.show_all()
+
+        self.set_current_page(-1)
+
+        # Put focus at the target combo, so user can open umit and start writing the target
+        page.target_focus()
+
+        return page
 
     def append_page(self, page, close_cb, tab_label=None, tab_title=None):
         log.debug(">>> Appending Scan Tab.")
@@ -398,7 +413,9 @@ class ScanNotebookPage(HIGVBox):
                 
                 self.command_toolbar.command = command
             except ProfileNotFound:
-                pass
+                pass # Go without a profile
+            except TypeError:
+                pass # The target is empty...
                 #self.profile_not_found_dialog()
     
     def refresh_command(self, widget):
@@ -561,12 +578,11 @@ command is missing or something else went wrong. Please, try to remove and recre
         self.scan_result.show_nmap_output(self.command_execution.get_output_file())
 
         # Set a "EXECUTING" icon to host list
-        self.scan_result.set_hosts({_('Scanning'):{'stock':gtk.STOCK_EXECUTE,'action':None}})
-        self.scan_result.set_services({_('Scanning'):{'action':None}})
+        self.scan_result.set_hosts({SCANNING:{'stock':gtk.STOCK_EXECUTE,'action':None}})
+        self.scan_result.set_services({SCANNING:{'action':None}})
 
         # Clear port list, to remove old information
         self.scan_result.clear_port_list()
-
 
         # When scan starts, change to nmap output view tab and refresh output
         self.scan_result.change_to_nmap_output_tab()
@@ -900,6 +916,7 @@ Fingerprints Found!"),
     
     def update_host_info(self, widget):
         self.scan_result.scan_result_notebook.port_mode()
+
         model_host_list, selection = widget.get_selected_rows()
         host_objs = [self.hosts[model_host_list[i[0]][1]] for i in selection]
         self.clean_host_details()
@@ -1038,7 +1055,7 @@ Fingerprints Found!"),
                                       'scanned':str(host.get_scanned_ports()),
                                       'uptime':uptime['seconds'],
                                       'lastboot':uptime['lastboot']})
-        
+
         ipv4 = ''
         try:ipv4 = host.get_ip()['addr']
         except KeyError: pass
