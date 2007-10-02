@@ -48,7 +48,7 @@ Outfile ${APPLICATION_NAME}-${APPLICATION_VERSION}.exe
 ; Language
 !insertmacro MUI_LANGUAGE "English"
 
-Section "Umit" SecUmit
+Section "Umit Web interface" SecUmit
   SetOutPath $INSTDIR
   File COPYING
   File COPYING_HIGWIDGETS
@@ -64,15 +64,14 @@ Section "Umit" SecUmit
   Delete "$INSTDIR\${WINPCAP}"
 
   CreateDirectory "$SMPROGRAMS\Umit"
-  CreateShortCut "$SMPROGRAMS\Umit\Umit.lnk" "$INSTDIR\umit.exe" "" $INSTDIR\umit_48.ico
+  CreateShortCut "$SMPROGRAMS\Umit\Start UMIT web server.lnk" "$INSTDIR\umitweb.exe" "" $INSTDIR\umit_48.ico
 SectionEnd
 
-Section "Umit Web Interface"
+Section "Install as windows service"
   SetOutPath "$INSTDIR"
   File "install_scripts\windows\win_dependencies\instsrv.exe"
   File "install_scripts\windows\win_dependencies\srvany.exe"
   ExecWait '"$INSTDIR\instsrv.exe" "UMIT" "$INSTDIR\srvany.exe"' $0
-  MessageBox MB_OK $0
   Delete "$INSTDIR\instsrv.exe"
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT" "Description" "UMIT is a graphical interface for nmap, with and embedded web server."
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT" "DisplayName" "UMIT The nmap frontend"
@@ -80,6 +79,12 @@ Section "Umit Web Interface"
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "AppDir" "$INSTDIR"
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "AppDirectory" "$INSTDIR"
   ExecWait "net start UMIT"
+  CreateDirectory "$SMPROGRAMS\Umit"
+  CreateShortCut "$SMPROGRAMS\Umit\Start UMIT server instance.lnk" "net start UMIT" "" $INSTDIR\umit_48.ico
+  CreateShortCut "$SMPROGRAMS\Umit\Start UMIT server instance.lnk" "net stop UMIT" "" $INSTDIR\umit_48.ico
+  
+  MessageBox MB_YESNO|MB_ICONQUESTION "You need to restart your computer to make UMIT work find. Do you want to reboot your computer now?" IDNO +2
+    Reboot
 SectionEnd
 
 Section -Post
@@ -96,8 +101,8 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Section "Uninstall"
-    Delete "$INSTDIR\*"
-    Delete "$INSTDIR\share\*"
+    Delete "$INSTDIR\*.*"
+    Delete "$INSTDIR\share\*.*"
     Delete "$SMPROGRAMS\Umit"
     RMDir "$INSTDIR\share"
     RMDir "$INSTDIR"
