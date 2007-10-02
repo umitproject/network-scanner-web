@@ -33,8 +33,8 @@ from stat import *
 
 # The environ variables are catch only on package generating phase.
 # After package generation, the version and revision turns into a hardcoded string
-VERSION = os.environ.get("UMIT_VERSION", "0.9.5")
-REVISION = os.environ.get("UMIT_REVISION", "2549")
+VERSION = os.environ.get("UMITWEB_VERSION", "0.1-beta1")
+REVISION = os.environ.get("UMITWEB_REVISION", "2721")
 
 VERSION_FILE = os.path.join("share", "umit", "config", "umit_version")
 SOURCE_PKG = False
@@ -50,6 +50,8 @@ locale_dir = os.path.join('share', 'umit', 'locale')
 config_dir = os.path.join('share', 'umit', 'config')
 docs_dir = os.path.join('share', 'umit', 'docs')
 misc_dir = os.path.join('share', 'umit', 'misc')
+media_dir = os.path.join('share', 'umit', 'umitweb_media')
+templates_dir = os.path.join('share', 'umit', 'templates')
 
 
 def mo_find(result, dirname, fnames):
@@ -93,7 +95,14 @@ data_files = [ (pixmaps_dir, svg + glob(os.path.join(pixmaps_dir, '*.png')) +
                           glob(os.path.join(docs_dir,
                                             'wizard', '*.xml'))+
                           glob(os.path.join(docs_dir,
-                                            'screenshots', '*.png')))]
+                                            'screenshots', '*.png'))),
+               (templates_dir, glob(os.path.join(templates_dir, "*.html"))),
+               (os.path.join(templates_dir, "html"), glob(os.path.join(templates_dir, "html", "*.html"))),
+    (os.path.join(media_dir, "js"), glob(os.path.join(media_dir, 'js', '*.js'))),
+    (os.path.join(media_dir, "css"), glob(os.path.join(media_dir, 'css', '*.css'))),
+    (os.path.join(media_dir, "images"), glob(os.path.join(media_dir, 'images', '*.jpg'))+
+						    glob(os.path.join(media_dir, 'images', '*.gif'))+
+						    glob(os.path.join(media_dir, 'images', '*.png')))]
 
 # Add i18n files to data_files list
 os.path.walk(locale_dir, mo_find, data_files)
@@ -149,7 +158,7 @@ print
         os.chmod(uninstaller_filename, mode)
 
     def set_modules_path(self):
-        umit = os.path.join(self.install_scripts, "umit")
+        umit = os.path.join(self.install_scripts, "umitweb.py")
         modules = self.install_lib
 
         re_sys = re.compile("^import sys$")
@@ -196,6 +205,8 @@ print
                              "MISC_DIR":os.path.join(su, "misc"),
                              "PIXMAPS_DIR":os.path.join("share", "pixmaps"),
                              "ICONS_DIR":os.path.join("share", "icons"),
+			     "MEDIA_DIR":os.path.join(su, "umitweb_media"),
+			     "TEMPLATES_DIR": os.path.join(su, "templates"),
                              "UMIT_ICON":"umit_48.ico"}
 
         pcontent = ""
@@ -310,7 +321,7 @@ setup(name = 'umit',
       url = 'http://umit.sourceforge.net',
       download_url = 'http://sourceforge.net/project/showfiles.php?group_id=142490',
       author = 'Adriano Monteiro & Cleber Rodrigues',
-      author_email = 'py.adriano@gmail.com, cleber@globalred.com.br',
+      author_email = 'py.adriano@gmail.com, cleber@globalred.com.br, rodolfo.ueg@gmail.com',
       maintainer = 'Adriano Monteiro',
       maintainer_email = 'py.adriano@gmail.com',
       description = """UMIT is a nmap frontend, developed in Python and GTK and was \
@@ -321,8 +332,8 @@ could create scan profiles for faster and easier network scanning or even compar
 scan results to easily see any changes. A regular user will also be able to construct \
 powerful scans with UMIT command creator wizards.""",
       version = VERSION,
-      scripts = ['umit'],
-      packages = ['', 'umitCore', 'umitGUI', 'higwidgets'],
+      scripts = ['umitweb.py'],
+      packages = ['', 'umitCore', 'umitWeb', 'umitWeb.views', 'umitWeb.views.html'],
       data_files = data_files,
       cmdclass = {"install":umit_install,
                   "sdist":umit_sdist})
