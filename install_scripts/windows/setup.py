@@ -150,20 +150,26 @@ wizards.""",
       version = VERSION,
       scripts = ['umitweb.py'],
       packages = ['', 'umitCore', 'umitWeb', 'umitWeb.views',
-                  'umitWeb.views.html'],
+                  'umitWeb.views.html', 'higwidgets'],
       data_files = data_files,
       cmdclass = {"py2exe":umit_py2exe},
-      #windows = [{"script": "umitweb.py",
-      #            "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]}],
+      windows = [{"script": "management_console.pyw",
+                  "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]}],
       console = [{"script": "umitweb.py",
                   "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]}],
-      options = {"py2exe":{"compressed":1,
-                           "optimize":2,
-                           "packages":"encodings",
-                           "includes" : "pickle,\
+      options = {"py2exe":{"compressed": 1,
+                           "optimize": 2,
+                           "packages": "encodings",
+                           "includes" : "pango,\
+atk,\
+gobject,\
+pickle,\
 bz2,\
 encodings,\
 encodings.*,\
+cairo,\
+pangocairo,\
+atk,\
 psyco,\
 umitWeb.*,\
 umitWeb.views.*,\
