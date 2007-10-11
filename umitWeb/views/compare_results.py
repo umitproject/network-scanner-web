@@ -9,7 +9,6 @@ from umitCore.NmapParser import NmapParser
 from umitCore.Diff import Diff, ParserDiff
 from umitCore.UmitConf import DiffColors
 from umitCore.DiffHtml import DiffHtml
-from umitGUI.DiffCompare import diff_state
 from tempfile import mktemp
 
 logger = getLogger("compare_results")
