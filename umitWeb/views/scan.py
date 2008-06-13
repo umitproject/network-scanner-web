@@ -23,6 +23,7 @@ from umitWeb.Http import HttpResponse, Http404, Http500, Http403, HttpError
 from umitWeb.Auth import authenticate, ERROR
 from umitWeb.Server import UmitWebServer as server
 from umitWeb.WebLogger import getLogger
+from umitWeb.Json import ScanJsonParser
 from umitCore.NmapCommand import NmapCommand
 from umitCore.NmapParser import NmapParser, HostInfo
 from umitCore.UmitConf import CommandProfile
@@ -107,7 +108,8 @@ def check(req, resource_id):
             except:
                 parser.nmap_output = "\\n".join(self.scan_result.get_nmap_output().split("\n"))
             #del parser['nmap']
-            parsed_scan = str(__scan_to_json(parser))
+            #parsed_scan = #str(__scan_to_json(parser))
+            parsed_scan = ScanJsonParser(parser).parse()
             text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
             response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
                            " {'full': %s, 'plain': '%s'}}" % (parsed_scan, text_out))
@@ -242,71 +244,3 @@ def delete_scan(req, scan_id):
         return HttpResponse("{'result': 'FAIL', 'error': '%s'}" % str(e))
     
     return HttpResponse("{'result': 'OK'}")
-
-
-def __scan_to_json(scan):
-    attrs = [a for a in dir(scan) if not callable(getattr(scan, a)) \
-             and not a.startswith("_")]
-    
-    ret = {}
-    
-    for attr in attrs:
-        realAttribute = getattr(scan, attr)
-        if type(realAttribute) == ListType or type(realAttribute) == TupleType:
-            ret[attr] = __list_to_json(realAttribute)
-        elif type(realAttribute) == DictionaryType:
-            ret[attr] = __dict_to_json(realAttribute)
-        elif realAttribute.__class__ == HostInfo:
-            ret[attr] = __hostinfo_to_json(realAttribute)
-        else:
-            ret[attr] = str(realAttribute)
-            
-    return ret
-
-
-def __list_to_json(list):
-    ret = []
-    for x in list:
-        if type(x) == ListType or type(x) == TupleType:
-            ret.append(__list_to_json(x))
-        elif type(x) == DictionaryType:
-            ret.append(__dict_to_json(x))
-        elif x.__class__ == HostInfo:
-            ret.append(__hostinfo_to_json(x))
-        else:
-            ret.append(str(x))
-            
-    return ret
-
-
-def __dict_to_json(dic):
-    ret = {}
-    for k in dic.keys():
-        if type(dic[k]) == ListType:
-            ret[k] = __list_to_json(dic[k])
-        elif type(dic[k]) == DictionaryType:
-            ret[k] = __dict_to_json(dic[k])
-        elif dic[k].__class__ == HostInfo:
-            ret[k] = __hostinfo_to_json(dic[k])
-        else:
-            ret[k] = str(dic[k])
-    return ret
-
-
-def __hostinfo_to_json(host):
-    attrs = [a for a in dir(host) if not callable(getattr(host, a)) and \
-             not a.startswith("_")]
-    ret = {}
-    for k in attrs:
-        attr = getattr(host, k)
-        if type(attr) == ListType or type(attr) == TupleType:
-            ret[k] = __list_to_json(attr)
-        elif type(attr) == DictionaryType:
-            ret[k] = __dict_to_json(attr)
-        else:
-            ret[k] = str(attr)
-    ret['open_ports'] = str(host.get_open_ports())
-    ret['filtered_ports'] = str(host.get_filtered_ports())
-    ret['closed_ports'] = str(host.get_closed_ports())
-    ret['scanned_ports'] = str(host.get_scanned_ports())
-    return ret
