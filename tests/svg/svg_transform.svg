@@ -1,0 +1,75 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg id="root" width="100%" height="100%" version="1.2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="init()">
+    <title>SVG::Transform</title>
+    <desc>Sample tests with svg transform</desc>
+    <!-- Scripts -->
+    <script type="text/javascript" xlink:href="basic.js"></script>
+    <script type="text/ecmascript">
+        <![CDATA[
+        
+        var svgDoc;
+        var timeouts = new Array();
+        function init(){
+            svgDoc = document.getElementById("root");
+
+            getByTemplate("small-circle").each(function(el, i){
+
+                el.onclick = function(evt){
+                    if(timeouts[i]){
+                        clearInterval(timeouts[i]);
+                    }
+                    
+                    this.currentAngle = 0;
+                    this.maxAngle = 360;
+                    thisObj = this;
+                    
+                    
+                    timeouts[i] = setInterval(function(){
+                    
+                        if(thisObj.currentAngle > thisObj.maxAngle){
+                            clearInterval(thisObj.timeout);
+                            return;
+                        }
+                        
+                        tr = thisObj.getAttribute("transform").replace(/rotate\([0-9 ,\-.]+\)/, "");
+                        cx = parseInt(thisObj.getTransformation("translate")) * 4;
+                        tr += " rotate(" + (thisObj.currentAngle ++) + " -" + cx + " 0)";
+                        thisObj.setAttribute("transform", tr);
+                        $("txt1").childNodes[0].nodeValue = timeouts.join(" ,");
+                    }, 1);
+                }
+            });
+        }
+        
+        ]]>
+    </script>
+    <!-- End of Scripts -->
+    
+    <!-- Defs -->
+    <defs>
+      <circle r="30" cx="0" cy="0" id="small-circle"/>
+      <circle r="50" cx="0" cy="0" id="bg-circle" style="fill:none;stroke: #CCC;"/> 
+      <line x1="0" y1="0" x2="25" y2="0" id="connecting-line" style="stroke:#888"/> 
+    </defs>
+    <!-- End of Defs -->
+    
+    <!-- Drawing -->
+    <g id="another-circle" transform="translate(200,200)" style="stroke:black;stroke-width:2px">
+        <use xlink:href="#bg-circle" transform="scale(1.5)" style="stroke-width:.25" class="xyz"/>
+        <use xlink:href="#bg-circle" transform="scale(2)" style="stroke-width:.20"/>
+        <use xlink:href="#bg-circle" transform="scale(2.5)" style="stroke-width:.15"/>
+        <use xlink:href="#bg-circle" transform="scale(3)" style="stroke-width:.1"/>
+        <use xlink:href="#connecting-line" transform="translate(75)"/>
+        <use xlink:href="#connecting-line" transform="translate(100)"/>
+        <use xlink:href="#connecting-line" transform="translate(125)"/>
+        <use xlink:href="#small-circle" style="fill:red" transform="translate(75) scale(.25) rotate(10)"/>
+        <use xlink:href="#small-circle" style="fill:blue" transform="translate(100) scale(.25)"/>
+        <use xlink:href="#small-circle" style="fill:green" transform="translate(125) scale(.25)"/>
+        <use xlink:href="#small-circle" style="fill:yellow" transform="translate(150) scale(.25)"/>
+    </g>
+    <text x="10" y="400" id="txt1">Text.</text>
+    <!-- End of Drawing -->
+</svg>

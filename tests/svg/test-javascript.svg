@@ -9,7 +9,7 @@
     <script type="text/javascript" xlink:href="jquery.svg.package-1.1.1/jquery.svganim.js"></script>
     <script type="text/javascript" xlink:href="jquery.svg.package-1.1.1/jquery.svgfilter.js"></script>
     <script type="text/javascript" xlink:href="jquery.svg.package-1.1.1/jquery.svggraph.js"></script>
-    <!-- <script type="text/javascript" xlink:href="circle-anim.js"></script> -->
+    <!--  -->
     
     <script>
         <![CDATA[
@@ -20,18 +20,18 @@
         }
         
         
-        function circle(radius, angle0, angle1, steps, interval, obj){
+        function circle(radius, angle0, angle1, steps, interval, obj, centerX, centerY){
             var dangle = angle1 - angle0;
             var sangle = dangle  / steps;
-            var x = 700;
-            var y = 400;
-            var cx = x - radius * Math.cos(toRadians(angle0));
-            var cy = y + radius * Math.sin(toRadians(angle0));
-            
+            var cx = centerX;
+            var cy = centerY;
+            //var cx = x - radius * Math.cos(toRadians(angle0));
+            //var cy = y + radius * Math.sin(toRadians(angle0));
+            angle0r = toRadians(angle0);
             for(var i = 0; i < steps; i++){
                 angle0 += sangle;
-                x = cx + radius * Math.cos(angle0 * Math.PI / 180);
-                y = cy - radius * Math.sin(angle0 * Math.PI / 180);
+                x = cx + radius * Math.cos(angle0r);
+                y = cy - radius * Math.sin(angle0r);
                 $(obj).animate({'svg-cx': x, 'svg-cy': y}, interval / steps);
             }
             return [x, y];
@@ -61,13 +61,15 @@
             $("#moveCircle").click(function(){
                 x = this.cx.baseVal.value;
                 y = this.cy.baseVal.value;
-                cx = $("#c1").cx.baseVal.value;
-                cy = $("#c1").cx.vaseVal.value;
-                alert(x);
-                alert(y);
+                c1 = document.getElementById("c1");
+                cx = c1.cx.baseVal.value;
+                cy = c1.cx.baseVal.value;
+                r = c1.r.baseVal.value;
+                /*alert(x);
+                alert(y);*/
                 angle = 0;
                 angle1 = 90;
-                circle(300, angle, angle1, 360, 20, this);
+                circle(r, angle, angle1, 360, 20, this, cx, cy);
             });
             
             $("#moveCircle").mouseover(function(){
@@ -81,6 +83,8 @@
         ]]>
     </script>
     
-    <circle class="background-path" cx="400" cy="400" r="300" style="fill:none;stroke:#CCC;stroke-width:2" id="c1"/>
-    <circle class="node" r="10" cx="700" cy="400" id="moveCircle" style="fill:green"/>
+    <circle class="background-path" cx="400" cy="400" r="200" style="fill:none;stroke:#CCC;stroke-width:2" id="c1"/>
+    <circle class="background-path" cx="400" cy="400" r="250" style="fill:none;stroke:#CCC;stroke-width:2" id="c1"/>
+    <circle class="node" r="10" cx="600" cy="400" id="moveCircle" style="fill:green"/>
+    <circle class="node" r="10" cx="650" cy="400" id="moveCircle2" style="fill:green"/>
 </svg>

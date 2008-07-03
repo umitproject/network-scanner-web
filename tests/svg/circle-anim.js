@@ -1,47 +1,77 @@
-var circleMove = {
-  degress: 0,
-  radius: 300,
-  Rads: 0,
-  timeId: 0,
-  
-  moveElement: function(element, newX, newY){
-    e = $(element);
-    e.css({'svg-cx': newX, 'svg-cy': newY});
+var tickInt = 25;
+var PIon180 = Math.PI / 180;
+
+$ = function(id){
+  return document.getElementById(id);
+}
+
+function pos(x, y){
+  this.x = Math.round(x);
+  this.y = Math.round(y);
+}
+
+function Animation(id, path, steps){
+  this.elem = document.getElementById(id);
+  this.active = 0;
+  this.timer = null;
+  this.path = path;
+  this.pathIdx = 0;
+  this.numSteps = steps;
+}
+
+Animation.prototype = {
+  start: function(){
+    if(this.active) return;
+
+    var saveThis = this;  /* create a closure */
+
+    this.step();
+    this.active = 1;
+    
+    //this.times = setInterval(function(){saveThis.step()}, tickInt);
+    setInterval(function(){ var t = new Date(); alert(t)}, 2000)
   },
-  
-  calculateCoordinates: function(centerX, centerY){
-    //if the degree variable is greater than 360, reset it
-    if(circleMove.degrees > 360){
-      circleMove.degrees = 1;
+
+  stop: function(){
+    if(!this.timer) return false;
+    clearInterval(this.timer);
+    this.active = 0;
+  },
+
+  step: function(){
+    var nextPos = this.path.nextStep(this.pathIdx);
+    
+    this.moveTo(nextPos.x, nextPos.y);
+    if((this.numSteps > 0) && (this.pathIdx >= this.numSteps)){
+      this.stop();
+    }else{
+      this.pathIdx++;
     }
-    
-    circleMove.degrees ++;
-    circleMove.rads = circleMove.degreesToRadians(circleMove.degrees);
-    var newX = (centerX - (circleMove.radius * Math.cos(circleMove.rads)));
-    var newY = (centerY - (circleMove.radius * Math.sin(circleMove.rads)));
-    return [newX, newY];
   },
-  
-  degreesToRadians: function(degrees){
-    var pi = Math.PI;
-    return (degrees * (pi/180));
-  },
-  
-  circleElement: function(element, centerX, centerY, delayTime){
-    var newCoordinates = circleMove.calculateCoordinates(centerX, centerY);
-    circleMove.moveElement(element, newCoordinates[0], newCoordinates[1]);
-  },
-  
-  init: function(element, centerX, centerY, delayTime){
-    var theElement = null;
-    theElement = $(element);
-    
-    //remove the looping on the element if it's already been set:
-    clearInterval(circleMove.timeId);
-    
-    //starts the repetition.
-    circleMove.timeID = setInterval(function(){
-      circleMove.circleElement(theElement, centerX, centerY, delayTime);
-    }, delayTime);
-  }
+
+  moveTo: function(x, y){
+    this.elem.setAttribute("cx", x);
+    this.elem.setAttribute("cy", y);
+  } 
 };
+
+
+function Circle(initPos, radius, angle0, stepSize){
+  this.rad = radius;
+  this.startAngle = angle0;
+  this.aStep = stepSize;
+  this.cx = initPos.x - this.rad * Math.cos(angle0 * PIon180);
+  this.cy = initPos.y - this.rad * Math.sin(angle0 * PIon180);
+  this.currX = initPos.x;
+  this.currY = initPos.y;
+}
+
+Circle.prototype = {
+  nextStep: function(index){
+    var angle = this.startAngle - index * this.aStep; // +ve angles cw, we want ccw
+    
+    this.currX = this.cx + this.rad * Math.cos(angle * PIon180);
+    this.currY = this.cy + this.rad * Math.sin(angle * PIon180);
+    return new pos(this.currX, this.currY);
+  }
+}
