@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ def create_services_dump(services, services_dump):
     serv_file.close()
 
     print ">>> Creating %s file" % services_dump
-    serv_dump = open(services_dump, "w")
+    serv_dump = open(services_dump, "wb")
     cPickle.dump(services_dict, serv_dump)
     serv_dump.close()
     print ">>> Created!"

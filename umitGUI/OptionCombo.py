@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,10 +23,8 @@
 import gtk
 
 from umitCore.I18N import _
-from umitCore.Paths import Path
+from umitCore.OptionsConf import options_file
 from umitCore.NmapOptions import NmapOptions
-
-options = Path.options
 
 class OptionCombo(gtk.ComboBoxEntry):
     def __init__(self):
@@ -40,7 +39,7 @@ class OptionCombo(gtk.ComboBoxEntry):
 
     def update(self):
         try:
-            self.nmap_options = NmapOptions(options)
+            self.nmap_options = NmapOptions(options_file)
             self.options = self.nmap_options.get_options_list()
             self.options.sort()
         

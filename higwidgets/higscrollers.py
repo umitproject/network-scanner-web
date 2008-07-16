@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #         Cleber Rodrigues <cleber.gnu@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -33,4 +34,5 @@ class HIGScrolledWindow(gtk.ScrolledWindow):
     def __init__(self):
         gtk.ScrolledWindow.__init__(self)
         self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        #self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
         self.set_border_width(5)

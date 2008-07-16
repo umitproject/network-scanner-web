@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +21,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import cPickle
-
-from umitCore.Paths import Path
-
-os_dump = Path.os_dump
+from umitCore.OSListDump import os_dump_file
 
 def load_dumped_os():
-    of = open(os_dump)
+    of = open(os_dump_file, "rb")
     osd = cPickle.load(of)
     of.close()
     return osd

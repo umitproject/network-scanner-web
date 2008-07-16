@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,12 +22,10 @@
 
 import cPickle
 
-from umitCore.Paths import Path
-
-services_dump = Path.services_dump
+from umitCore.ServicesDump import services_dump_file
 
 def load_dumped_services():
-    serv_dump = open(services_dump)
+    serv_dump = open(services_dump_file, "rb")
     services_list = cPickle.load(serv_dump)
     serv_dump.close()
 
