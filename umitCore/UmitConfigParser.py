@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Copyright (C) 2005-2006 Insecure.Com LLC.
-# Copyright (C) 2007-2008 Adriano Monteiro Marques
-#
-# Author: Adriano Monteiro Marques <adriano@umitproject.org>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,8 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from os.path import exists
-from ConfigParser import ConfigParser, DEFAULTSECT
-from ConfigParser import NoOptionError, NoSectionError
+from ConfigParser import ConfigParser, DEFAULTSECT, NoOptionError, NoSectionError
 from umitCore.UmitLogging import log
 
 class UmitConfigParser(ConfigParser):
@@ -42,8 +40,8 @@ class UmitConfigParser(ConfigParser):
     def read(self, filename):
         log.debug(">>> Trying to parse: %s" % filename)
 
-        self.filenames = ConfigParser.read(self, filename)
-        return self.filenames
+        self.filename = ConfigParser.read(self, filename)
+        return self.filename
 
     def readfp(self, fp, filename=None):
         ConfigParser.readfp(self, fp, filename)
@@ -53,9 +51,9 @@ class UmitConfigParser(ConfigParser):
     def save_changes(self):
         if self.filenames:
             filename = None
-            if isinstance(self.filenames, basestring):
+            if type(self.filenames) == type(""):
                 filename = self.filenames
-            elif isinstance(self.filenames, list) and len(self.filenames) == 1:
+            elif type(self.filenames) == type([]) and len(self.filenames) == 1:
                 filename = self.filenames[0]
             else:
                 raise Exception("Wrong filename %s" % self.filenames)

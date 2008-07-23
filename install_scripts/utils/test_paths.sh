@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 uninstall_umit
 rm -rf ~/.umit

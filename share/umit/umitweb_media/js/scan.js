@@ -14,7 +14,7 @@ function loadHosts(hosts){
 				"solaris": "solaris",
 				"linux": "linux",
 				"freebsd": "freebsd",
-				"mac os x": "macosx",
+				"macos x": "macosx",
 				"openbsd": "openbsd",
 				"windows": "win",
 				"ubuntu": "ubuntu", 

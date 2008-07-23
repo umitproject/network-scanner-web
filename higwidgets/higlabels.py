@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Copyright (C) 2005-2006 Insecure.Com LLC.
-# Copyright (C) 2007-2008 Adriano Monteiro Marques
-#
-# Author: Adriano Monteiro Marques <adriano@umitproject.org>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #         Cleber Rodrigues <cleber.gnu@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -100,11 +99,11 @@ class HIGEntryLabel(gtk.Label):
     """
     Simple label, like the ones used to label entries
     """
-    def __init__(self, text=None, underline=False):
+    def __init__(self, text=None):
         gtk.Label.__init__(self, text)
         self.set_justify(gtk.JUSTIFY_LEFT)
         self.set_alignment(0, 0.50)
-        self.set_use_underline(underline)
+        self.set_use_underline(True)
         self.set_use_markup(True)
         self.set_line_wrap(True)
 
@@ -122,11 +121,7 @@ class HIGDialogLabel(gtk.Label):
 if __name__ == "__main__":
     w = gtk.Window()
     h = HIGHintSectionLabel("Label", "Hint")
-    test = HIGEntryLabel("x86_64")
-    box = gtk.VBox()
-    box.add(h)
-    box.add(test)
-    w.add(box)
+    w.add(h)
     w.connect("delete-event", lambda x, y: gtk.main_quit())
     w.show_all()
 

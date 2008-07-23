@@ -1,5 +1,4 @@
-#!/bin/sh
-
+#!/bin/bash
 
 echo "##################################################"
 echo "Dependencies installed in your system:"
@@ -23,7 +22,7 @@ else
 fi
 
 python -c "import gtk" > /dev/null 2> /dev/null
-if [ $? -eq 1 ]; then
+if [ $? -eq 127 ]; then
    echo "GTK Failed!";
    exit;
 else
@@ -31,7 +30,7 @@ else
 fi 
 
 python -c "import pygtk" > /dev/null 2> /dev/null
-if [ $? -eq 1 ]; then
+if [ $? -eq 127 ]; then
    echo "PyGTK Failed!";
    exit;
 else
@@ -39,7 +38,7 @@ else
 fi 
 
 python -c "import pysqlite2" > /dev/null 2> /dev/null
-if [ $? -eq 1 ]; then
+if [ $? -eq 127 ]; then
    echo "PySQLite 2 Failed!";
    exit;
 else
@@ -48,7 +47,7 @@ dbapi2.version_info";
 fi
 
 python -c "import psyco" > /dev/null 2> /dev/null
-if [ $? -eq 1 ]; then
+if [ $? -eq 127 ]; then
    echo "Psyco Failed, but not mandatory. Umit will work fine without it.";
 else
    python -c "import psyco; print 'Psyco version: %s.%s.%s' % psyco.version_info[:3]";

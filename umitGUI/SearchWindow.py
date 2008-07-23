@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Copyright (C) 2005-2006 Insecure.Com LLC.
-# Copyright (C) 2007-2008 Adriano Monteiro Marques
-#
-# Author: Adriano Monteiro Marques <adriano@umitproject.org>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +28,6 @@ from umitCore.UmitConf import is_maemo
 
 from higwidgets.higboxes import HIGVBox
 from higwidgets.higbuttons import HIGButton
-from higwidgets.higdialogs import HIGAlertDialog
 
 BaseSearchWindow = None
 hildon = None
@@ -71,7 +69,7 @@ class SearchWindow(BaseSearchWindow, object):
         self.search_gui = SearchGUI(self.notebook)
 
     def _pack_widgets(self):
-        BaseSearchWindow._pack_widgets(self)
+        BaseSearchWindow._pack_widgets(self)        
         self.vbox.pack_start(self.search_gui)
         self.vbox.pack_start(self.btn_box)
 
@@ -92,21 +90,7 @@ class SearchWindow(BaseSearchWindow, object):
     def close(self, widget=None, event=None):
         self.destroy()
 
-    def open_selected(self, widget=None, path=None,
-                      view_column=None, extra=None):
-        # This avoids dialog to be closed for no results.
-        import pdb;pdb.set_trace()
-        if len(self.results) <= 0:
-            dia = HIGAlertDialog(
-                parent=self,
-                message_format=_('No results'),
-                secondary_text=_('No such results to be opened.')
-            )
-            dia.run()
-            dia.destroy()
-
-            return
-
+    def open_selected(self, widget=None, path=None, view_column=None, extra=None):
         # Open selected results!
         self.load_method(self.results)
 

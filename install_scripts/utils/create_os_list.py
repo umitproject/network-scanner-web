@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Copyright (C) 2005-2006 Insecure.Com LLC.
-# Copyright (C) 2007-2008 Adriano Monteiro Marques
-#
-# Author: Adriano Monteiro Marques <adriano@umitproject.org>
-#         David Fifield <david@bamsoftware.com>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,98 +19,71 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-# This program reads Nmap OS fingerprint database files and writes their
-# contents in preprocessed pickled form to other files. One of the output files,
-# os_db.dmp, contains a dict mapping OS classes to lists of OS names. The other
-# file, os_classification.dmp, contains a list of tuples whose first element is
-# a condensed OS class and whose second element is the OS class separated with
-# spaces instead of "|"s.
-
+import re
 import cPickle
 import os.path
-import re
-import sys
 
-NMAP_OS_FINGERPRINTS = os.path.join("install_scripts", "utils", "nmap-os-fingerprints")
-NMAP_OS_DB = os.path.join("install_scripts", "utils", "nmap-os-db")
+def create_os_dump(os_db, os_fingerprints, os_dump):
+    os_dump = os.path.join("share", "umit", "misc", os_dump)
+    
+    osd = {}
+    os_db_file = open(os_db, "r")
+    os_fingerprints_file = open(os_fingerprints, "r")
 
-OS_DB_DUMP = os.path.join("share", "umit", "misc", "os_db.dmp")
-OS_CLASSIFICATION_DUMP = os.path.join("share", "umit", "misc", "os_classification.dmp")
+    osd.update(parse(os_db_file))
+    osd.update(parse(os_fingerprints_file))
 
-r_fingerprint = re.compile("^Fingerprint\s+(.*)")
-r_class = re.compile("^Class\s+(.*)")
+    print ">>> Creating %s file" % os_dump
+    of = open(os_dump, "w")
+    cPickle.dump(osd, of)
+    of.close()
+
 
 def parse(os_file):
-    """Return a dict that maps OS classes to lists of OS names that use that
-    class."""
     os_dict = {}
-    for fp in os_file.read().split("\n\n"):
-        os_name = None
-        for line in fp.split("\n"):
-            m = r_fingerprint.match(line)
-            if m:
-                os_name = m.groups()[0]
-                continue
-            m = r_class.match(line)
-            if m and os_name:
-                os_class = m.groups()[0]
-                l = os_dict.setdefault(os_class, [])
-                if os_name not in l:
-                    l.append(os_name)
+    os_db_splited = os_file.read().split("\n\n")
+
+    r_fingerprint = re.compile("Fingerprint\s+(.*)")
+    r_class = re.compile("Class\s+(.*)")
+
+    for osd in os_db_splited:
+        os_splited = osd.split("\n")
+
+        osd = None
+        osclass = None
+            
+        for o in os_splited[:5]:
+            f = r_fingerprint.match(o)
+            c = r_class.match(o)
+            if f:
+                osd = f.groups()[0]
+            elif c:
+                osclass = c.groups()[0]
+                    
+        if osd and osclass:
+            try:
+                os_dict[osclass]
+            except:
+                os_dict[osclass] = [osd]
+            else:
+                os_dict[osclass].append(osd)
+
+    os_file.close()
     return os_dict
 
-def write_os_db_dump(osd, file_name):
-    f = open(file_name, "wb")
-    try:
-        cPickle.dump(osd, f)
-    finally:
-        f.close()
-
-def write_os_classification_dump(osd, file_name):
-    f = open(file_name, "wb")
-    try:
-        os_classes = osd.keys()
-        os_classes.sort(lambda a, b: cmp(a.lower(), b.lower()))
-        pairs = []
-        for os_class in os_classes:
-            # Split up the class.
-            parts = [x.strip() for x in os_class.split("|")]
-            # The first part is joined with "|".
-            os_class = "|".join(parts)
-            # The second part is joined with " " with empty parts removed.
-            stripped = " ".join([x for x in parts if x != ""])
-            pairs.append((os_class, stripped))
-        cPickle.dump(pairs, f)
-    finally:
-        f.close()
 
 def load_dumped_os():
-    f = open(os_dump, "rb")
-    osd = cPickle.load(f)
-    f.close()
+    of = open(os_dump)
+    osd = cPickle.load(of)
+    of.close()
 
     return osd
 
 if __name__ == "__main__":
-    osd = {}
-    for file_name in (NMAP_OS_FINGERPRINTS, NMAP_OS_DB):
-        try:
-            f = open(file_name, "r")
-        except IOError:
-            print >> sys.stderr, """\
-Can't open %s for reading.
-This script (%s) must be run from the root of a
-Umit distribution.""" % (file_name, sys.argv[0])
-            sys.exit(1)
-        osd.update(parse(f))
-        f.close()
+    BASE_DIR = os.path.join("install_scripts", "utils")
 
-    if len(osd) == 0:
-        print >> sys.stderr, """\
-Something's wrong. No fingerprints were found by %s.""" % sys.argv[0]
-        sys.exit(1)
+    os_db = os.path.join(BASE_DIR, "nmap-os-db")
+    os_fingerprints = os.path.join(BASE_DIR, "nmap-os-fingerprints")
+    os_dump = "os_db.dmp"
 
-    print ">>> Writing OS DB dump to %s." % OS_DB_DUMP
-    write_os_db_dump(osd, OS_DB_DUMP)
-    print ">>> Writing OS classification dump to %s." % OS_CLASSIFICATION_DUMP
-    write_os_classification_dump(osd, OS_CLASSIFICATION_DUMP)
+    create_os_dump(os_db, os_fingerprints, os_dump)

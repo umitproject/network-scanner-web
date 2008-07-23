@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Copyright (C) 2005-2006 Insecure.Com LLC.
-# Copyright (C) 2007-2008 Adriano Monteiro Marques
-#
-# Author: Adriano Monteiro Marques <adriano@umitproject.org>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,23 +20,20 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys
-sys.path.append(".")
 import os
 import re
 import threading
-import unittest
 
 from tempfile import mktemp
 from types import StringTypes
-try:
-    from subprocess import Popen, PIPE
-except ImportError, e:
-    raise ImportError(str(e) + ".\n" + _("Python 2.4 or later is required."))
+from subprocess import Popen, PIPE
 
 from umitCore.NmapOptions import NmapOptions
-from umitCore.OptionsConf import options_file
+from umitCore.Paths import Path
 from umitCore.UmitLogging import log
 from umitCore.I18N import _, enc
+
+option_xml = Path.options
 
 # shell_state = True avoids python to open a terminal to execute nmap.exe
 # shell_state = False is needed to run correctly at Linux
@@ -46,17 +42,10 @@ shell_state = (sys.platform == "win32")
 nmap_command_path = "nmap"
 # Don't need the line below anymore
 #if sys.platform == "win32":
-#   nmap_command_path = os.path.join(os.path.split(os.path.abspath(\
-#                                      sys.executable))[0], "Nmap", "nmap.exe")
+#   nmap_command_path = os.path.join(os.path.split(os.path.abspath(sys.executable))[0], "Nmap", "nmap.exe")
 
 log.debug(">>> Platform: %s" % sys.platform)
 log.debug(">>> Nmap command path: %s" % nmap_command_path)
-
-def split_quoted(s):
-    """Like str.split, except that no splits occur inside quoted strings, and
-       quoted strings are unquoted."""
-    return [x.replace("\"", "") for x in re.findall('((?:"[^"]*"|[^"\s]+)+)',
-                                                    s)]
 
 class NmapCommand(object):
     def __init__(self, command=None):
@@ -110,16 +99,15 @@ class NmapCommand(object):
         # Removing output options that user may have set away from command
         found = re.findall('(-o[XGASN]{1}) {0,1}', command)
 
-        # Split back into individual options, honoring double quotes.
-        splited = split_quoted(command)
+        # Adequating double quoted options
+        splited = [x.replace("\"", "") for x in re.findall('([\w\-\,\./]+|".*")', command)]
+        #splited = command.split(' ')
 
         if found:
             for option in found:
                 pos = splited.index(option)
-                # Removes the element pos and pos+1 from splited list,
-                # in case of pos+1 being out of splited's range,
-                # just pos is removed then.
-                splited[pos:pos+2] = []
+                del(splited[pos+1])
+                del(splited[pos])
 
         # Saving the XML output to a temporary file
         splited.append('-oX')
@@ -148,11 +136,9 @@ class NmapCommand(object):
         #    command = command.replace('  ', ' ')
 
 
-        # The first join + split ensures to remove double spaces on 
-        # lists like this:
+        # The first join + split ensures to remove double spaces on lists like this:
         # ["nmap    ", "-T4", ...]
-        # And them, we must return a list of the command, that's why 
-        # we have the second split
+        # And them, we must return a list of the command, that's why we have the second split
         return " ".join(command.split()).split()
 
     def close(self):
@@ -178,8 +164,7 @@ class NmapCommand(object):
                 # Not sure if this works. Must research a bit more about this
                 # subprocess's method to see how it works.
                 # In the meantime, this should not raise any exception because
-                # we don't care if it killed the process as it never killed 
-                # it anyway.
+                # we don't care if it killed the process as it never killed it anyway.
                 from subprocess import TerminateProcess
                 TerminateProcess(self.command_process._handle, 0)
             except:
@@ -190,10 +175,9 @@ class NmapCommand(object):
             #self.command_process = Popen(self.command, bufsize=1, stdin=PIPE,
             #                             stdout=PIPE, stderr=PIPE)
             
-            # Because of problems with Windows, I passed only the file 
-            # descriptors to  Popen and set stdin to PIPE
-            # Python problems... Cross-platform execution of process 
-            # should be improved
+            # Because of problems with Windows, I passed only the file descriptors to \
+            # Popen and set stdin to PIPE
+            # Python problems... Cross-platform execution of process should be improved
             
             self._stdout_handler = open(self.stdout_output, "w+")
             self._stderr_handler = open(self.stderr_output, "w+")
@@ -204,8 +188,8 @@ class NmapCommand(object):
                                          stderr=self._stderr_handler.fileno(),
                                          shell=shell_state)
         else:
-            raise Exception("You have no command to run! Please, set \
-the command before trying to start scan!")
+            raise Exception("You have no command to run! Please, set the command \
+before trying to start scan!")
 
     def scan_state(self):
         if self.command_process == None:
@@ -213,11 +197,12 @@ the command before trying to start scan!")
 
         state = self.command_process.poll()
 
-        # Buffer is not been used anymore
-        # This line blocks the GUI execution, once the read method waits until a
-        # new content come to be buffered
+        ### Buffer is not been used anymore
+        ## This line blocks the GUI execution, once the read method waits until a
+        ## new content come to be buffered
         #self.command_buffer += self.command_process.stdout.read()
-
+        ###
+        
         if state == None:
             return True # True means that the process is still running
         elif state == 0:
@@ -227,16 +212,15 @@ the command before trying to start scan!")
             
             log.critical("An error occourried during the scan execution!")
             log.critical('%s' % self.command_stderr)
-            log.critical("Command that raised the exception: '%s'" % \
-                         " ".join(self.command))
+            log.critical("Command that raised the exception: '%s'" % " ".join(self.command))
             
-            raise Exception("An error occourried during the scan \
-execution!\n'%s'" % self.command_stderr)
+            raise Exception("An error occourried during the scan execution!\n'%s'" % \
+                            self.command_stderr)
 
     def scan_progress(self):
-        """Should return a tuple with the stage and status of the scan 
-        execution progress. Will work only when the runtime interaction 
-        problem is solved."""
+        """Should return a tuple with the stage and status of the scan execution progress.
+        Will work only when the runtime interaction problem is solved.
+        """
         pass
 
     def get_raw_output(self):
@@ -244,7 +228,7 @@ execution!\n'%s'" % self.command_stderr)
         raw_output = raw_desc.readlines()
         
         raw_desc.close()
-        return "".join(raw_output)
+        return "\\n".join(raw_output)
 
     def get_output(self):
         output_desc = open(self.stdout_output, "r")
@@ -290,21 +274,17 @@ execution!\n'%s'" % self.command_stderr)
 class CommandConstructor:
     def __init__(self, options = {}):
         self.options = {}
-        self.option_profile = NmapOptions(options_file)
+        self.option_profile = NmapOptions(option_xml)
         for k, v in options.items():
             self.add_option(k, v, False) # TODO: check this place further
 
     def add_option(self, option_name, args=[], level=False):
-        if (not option_name) or \
-           (option_name == "None" and not args and not level):
-            # this certainly shouldn't be added
-            return
         self.options[option_name] = (args, level)
         
 
     def remove_option(self, option_name):
         if option_name in self.options.keys():
-            self.options.pop(option_name)
+            del(self.options[option_name])
 
     def get_command(self, target):
         splited = ['%s' % nmap_command_path]
@@ -355,8 +335,7 @@ class WrongCommandType(Exception):
         self.command = command
 
     def __str__(self):
-        print "Command must be of type string! Got %s instead." % \
-              str(type(self.command))
+        print "Command must be of type string! Got %s instead." % str(type(self.command))
 
 class OptionDependency(Exception):
     def __init__(self, option, dependency):
@@ -390,19 +369,6 @@ COMMAND: %s
 
 
 
-class SplitQuotedTest(unittest.TestCase):
-    """A unittest class that tests the split_quoted function."""
-
-    def test_split(self):
-        self.assertEqual(split_quoted(''), [])
-        self.assertEqual(split_quoted('a'), ['a'])
-        self.assertEqual(split_quoted('a b c'), 'a b c'.split())
-
-    def test_quotes(self):
-        self.assertEqual(split_quoted('a "b" c'), ['a', 'b', 'c'])
-        self.assertEqual(split_quoted('a "b c"'), ['a', 'b c'])
-        self.assertEqual(split_quoted('a "b c""d e"'), ['a', 'b cd e'])
-        self.assertEqual(split_quoted('a "b c"z"d e"'), ['a', 'b czd e'])
 
 # Testing module functionality! ;-)
 if __name__ == '__main__':
@@ -429,11 +395,7 @@ if __name__ == '__main__':
     #    sleep (1)
     #print open(executando[3]).read()
 
-    unittest.TextTestRunner().run(unittest.TestLoader().\
-                                  loadTestsFromTestCase(SplitQuotedTest))
-
-    scan = NmapCommand('%s -T4 192.168.0.101"' % \
-                       nmap_command_path)
+    scan = NmapCommand('%s -T4 -iL "/home/adriano/umit/test/targets\ teste"' % nmap_command_path)
     scan.run_scan()
 
     while scan.scan_state():

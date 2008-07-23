@@ -27,4 +27,4 @@ class JsOutputHighlight(NmapOutputHighlight, object):
     
     def __init__(self, *args):
         NmapOutputHighlight.__init__(self, *args)
-        self.parser.read(Path.webconfig_file)
+        self.read(Path.webconfig_file)

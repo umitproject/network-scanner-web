@@ -107,6 +107,8 @@ def check(req, resource_id):
                 parser.nmap_output = nmapCommand.get_raw_output()
             except:
                 parser.nmap_output = "\\n".join(self.scan_result.get_nmap_output().split("\n"))
+            #del parser['nmap']
+            #parsed_scan = #str(__scan_to_json(parser))
             parsed_scan = ScanJsonParser(parser).parse()
             text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
             response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
@@ -133,7 +135,7 @@ def upload_result(req):
                 parser = NmapParser()
                 parser.set_xml_file(req.FILES['scan_result']['temp_file'])
                 parser.parse()
-                parsed_scan = ScanJsonParser(parser).parse()
+                parsed_scan = __scan_to_json(parser)
                 junk = r"odpojfsdkjfpisudŕij208u-0w9rsdnfkdfçwrtwqr/fsasd~/???çds"
                 key = md5.new(str(random.randint(0, sys.maxint-1)) \
                                   + str(random.randint(1, sys.maxint-1)//2) \
@@ -158,11 +160,10 @@ def upload_result(req):
             ftemp.flush()
             parser = NmapParser(ftemp.name)
             parser.parse()
-            json_parser = ScanJsonParser(parser)
             return HttpResponse("{'result': 'OK', 'output': {'plain': '%s', 'full': %s}}" % \
                                 (parser.get_nmap_output().replace("'", "\\'").\
                                 replace("\r", "").replace("\n", "\\n' + \n'"),
-                                json_parser.parse()), 
+                                str(__scan_to_json(parser))), 
                                 "text/plain")
     else:
         raise HttpError(400, "Invalid GET request.")

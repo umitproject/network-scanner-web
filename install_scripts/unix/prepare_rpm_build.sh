@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 python setup.py sdist
 mv dist/umit-0.9.4.tar.gz /usr/src/redhat/SOURCES

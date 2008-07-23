@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Copyright (C) 2005-2006 Insecure.Com LLC.
-# Copyright (C) 2007-2008 Adriano Monteiro Marques
-#
-# Author: Adriano Monteiro Marques <adriano@umitproject.org>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +21,9 @@
 
 import gtk
 
-from umitCore.TargetList import target_list
+from umitCore.Paths import Path
+
+target_list = Path.target_list
 
 class TargetCombo(gtk.ComboBoxEntry):
     def __init__(self):
@@ -36,18 +37,43 @@ class TargetCombo(gtk.ComboBoxEntry):
         self.update()
 
     def update(self):
-        t_model = self.get_model()
-        for i in range(len(t_model)):
-            iter = t_model.get_iter_root()
-            del(t_model[iter])
+        t_list = ''
+        try:
+            t_list_file = open(target_list)
+            t_list = t_list_file.readlines()
 
-        t_list = target_list.get_target_list()
-        for target in t_list[:15]:
-            t_model.append([target.replace('\n','')])
-
+            t_list_file.close()
+        except:
+            return None
+        else:
+            t_model = self.get_model()
+            for i in range(len(t_model)):
+                iter = t_model.get_iter_root()
+                del(t_model[iter])
+            
+            for i in t_list[:15]:
+                t_model.append([i.replace('\n','')])
+    
     def add_new_target(self, target):
-        target_list.add_target(target)
-        self.update()
+        t_list = ''
+        try:
+            t_list_file = open(target_list)
+            t_list = t_list_file.readlines()
+
+            t_list_file.close()
+        except:
+            return None
+        else:
+            target += '\n'
+            if target not in t_list:
+                t_list.insert(0,target)
+
+                t_list_file = open(target_list,'w')
+                t_list_file.writelines(t_list)
+                
+                t_list_file.close()
+                
+                self.update()
 
     def get_selected_target(self):
         return self.child.get_text()

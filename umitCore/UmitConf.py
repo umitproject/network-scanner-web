@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Copyright (C) 2005-2006 Insecure.Com LLC.
-# Copyright (C) 2007-2008 Adriano Monteiro Marques
-#
-# Author: Adriano Monteiro Marques <adriano@umitproject.org>
+# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,10 +25,11 @@ from types import StringTypes
 from ConfigParser import NoSectionError, NoOptionError
 
 from umitCore.Paths import Path
-from umitCore.ScanProfileConf import scan_profile_file
 from umitCore.UmitLogging import log
 from umitCore.UmitConfigParser import UmitConfigParser
 from umitCore.I18N import _
+
+scan_profile = Path.scan_profile
 
 # Check if running on Maemo
 MAEMO = False
@@ -97,7 +97,7 @@ class SearchConfig(UmitConfigParser, object):
         self.parser.add_section(self.section_name)
         self.directory = ""
         self.file_extension = "usr"
-        self.save_time = "60;Days"
+        self.save_time = "60;days"
         self.store_results = True
         self.search_db = True
 
@@ -133,7 +133,7 @@ class SearchConfig(UmitConfigParser, object):
             self._set_it("file_extension", file_extension)
 
     def get_save_time(self):
-        return self._get_it("save_time", "60;Days").split(";")
+        return self._get_it("save_time", "60;days").split(";")
 
     def set_save_time(self, save_time):
         if type(save_time) == type([]):
@@ -184,7 +184,7 @@ class Profile(UmitConfigParser, object):
         UmitConfigParser.__init__(self, *args)
 
         if not user_profile:
-            user_profile = scan_profile_file
+            user_profile = scan_profile
 
         fconf = open(user_profile, 'r')
         self.readfp(fconf, user_profile)
@@ -195,12 +195,14 @@ class Profile(UmitConfigParser, object):
         self.attributes = {}
 
     def _get_it(self, profile, attribute):
-        if self._verify_profile(profile):
+        if profile:
+            self._verify_profile(profile)
             return self.get(profile, attribute)
         return ""
 
     def _set_it(self, profile, attribute, value=''):
-        if self._verify_profile(profile):
+        if profile:
+            self._verify_profile(profile)
             return self.set(profile, attribute, value)
 
     def add_profile(self, profile_name, **attributes):
@@ -208,8 +210,7 @@ class Profile(UmitConfigParser, object):
         try: self.add_section(profile_name)
         except: return None
         
-        [self._set_it(profile_name, attr, attributes[attr]) \
-         for attr in attributes if attr != "options"]
+        [self._set_it(profile_name, attr, attributes[attr]) for attr in attributes if attr != "options"]
         options = attributes["options"]
         if type(options) in StringTypes:
             self._set_it(profile_name, "options", options)
@@ -228,13 +229,12 @@ class Profile(UmitConfigParser, object):
 
     def _verify_profile(self, profile_name):
         if profile_name not in self.sections():
-            return False
-        return True
+            raise ProfileNotFound(profile_name)
 
 class CommandProfile (Profile, object):
     def __init__(self, user_profile=''):
         if not user_profile:
-            user_profile = scan_profile_file
+            user_profile = scan_profile
         
         Profile.__init__(self, user_profile)
         
@@ -252,11 +252,7 @@ class CommandProfile (Profile, object):
 
     def get_options(self, profile):
         dic = {}
-        options_result = self._get_it(profile, 'options')
-        if options_result.strip()=='':
-            return dic
-        
-        for opt in options_result.split(','):
+        for opt in self._get_it(profile, 'options').split(','):
             try:
                 dic[unicode(opt.strip())] = self._get_it(profile, opt)
             except NoOptionError:
@@ -290,22 +286,19 @@ class CommandProfile (Profile, object):
                 'options':self.get_options(profile_name)}
 
 
-class NmapOutputHighlight(object):
+
+class NmapOutputHighlight(UmitConfigParser, object):
     setts = ["bold", "italic", "underline", "text", "highlight", "regex"]
     
-    def __init__(self):
-        self.parser = Path.config_parser
-
-    def save_changes(self):
-        self.parser.save_changes()
+    def __init__(self, *args):
+        UmitConfigParser.__init__(self, *args)
+        self.read(Path.config_file)
 
     def __get_it(self, p_name):
         property_name = "%s_highlight" % p_name
 
         try:
-            return self.sanity_settings([self.parser.get(property_name,
-                                                         prop,
-                                                         True) \
+            return self.sanity_settings([self.get(property_name, prop, True) \
                                          for prop in self.setts])
         except:
             settings = []
@@ -319,13 +312,13 @@ class NmapOutputHighlight(object):
 
             self.__set_it(p_name, settings)
 
-            return self.sanity_settings(settings)
+            return settings
 
     def __set_it(self, property_name, settings):
         property_name = "%s_highlight" % property_name
-        settings = self.sanity_settings(list(settings))
+        settings = self.sanity_settings(settings)
 
-        [self.parser.set(property_name, self.setts[pos], settings[pos]) \
+        [self.set(property_name, self.setts[pos], settings[pos]) \
          for pos in xrange(len(settings))]
 
     def sanity_settings(self, settings):
@@ -336,7 +329,6 @@ class NmapOutputHighlight(object):
 
         Sequence: [bold, italic, underline, text, highlight, regex]
         """
-        #log.debug(">>> Sanitize %s" % str(settings))
         
         settings[0] = self.boolean_sanity(settings[0])
         settings[1] = self.boolean_sanity(settings[1])
@@ -344,12 +336,10 @@ class NmapOutputHighlight(object):
 
         tuple_regex = "[\(\[]\s?(\d+)\s?,\s?(\d+)\s?,\s?(\d+)\s?[\)\]]"
         if type(settings[3]) == type(""):
-            settings[3] = [int(t) \
-                           for t in re.findall(tuple_regex, settings[3])[0]]
+            settings[3] = [int(t) for t in re.findall(tuple_regex, settings[3])[0]]
 
         if type(settings[4]) == type(""):
-            settings[4]= [int(h) \
-                          for h in re.findall(tuple_regex, settings[4])[0]]
+            settings[4]= [int(h) for h in re.findall(tuple_regex, settings[4])[0]]
 
         return settings
 
@@ -409,9 +399,9 @@ class NmapOutputHighlight(object):
     def get_enable(self):
         enable = True
         try:
-            enable = self.parser.get("output_highlight", "enable_highlight")
+            enable = self.get("output_highlight", "enable_highlight")
         except NoSectionError:
-            self.parser.set("output_highlight", "enable_highlight", str(True))
+            self.set("output_highlight", "enable_highlight", str(True))
         
         if enable == "False" or enable == "0" or enable == "":
             return False
@@ -419,9 +409,9 @@ class NmapOutputHighlight(object):
 
     def set_enable(self, enable):
         if enable == False or enable == "0" or enable == None or enable == "":
-            self.parser.set("output_highlight", "enable_highlight", str(False))
+            self.set("output_highlight", "enable_highlight", str(False))
         else:
-            self.parser.set("output_highlight", "enable_highlight", str(True))
+            self.set("output_highlight", "enable_highlight", str(True))
 
     date = property(get_date, set_date)
     hostname = property(get_hostname, set_hostname)
@@ -433,8 +423,8 @@ class NmapOutputHighlight(object):
     details = property(get_details, set_details)
     enable = property(get_enable, set_enable)
 
-    # These settings are made when there is nothing set yet. They set 
-    # the "factory" default to highlight colors
+    # These settings are made when there is nothing set yet. They set the "factory" \
+    # default to highlight colors
     default_highlights = {"date":{"bold":str(True),
                             "italic":str(False),
                             "underline":str(False),
@@ -446,7 +436,7 @@ class NmapOutputHighlight(object):
                             "underline":str(True),
                             "text":[0, 111, 65535],
                             "highlight":[65535, 65535, 65535],
-                "regex":"(\w{2,}://)*\w{2,}\.\w{2,}(\.\w{2,})*(/[\w{2,}]*)*"},
+                            "regex":"(\w{2,}://)*\w{2,}\.\w{2,}(\.\w{2,})*(/[\w{2,}]*)*"},
                           "ip":{"bold":str(True),
                             "italic":str(False),
                             "underline":str(False),
@@ -458,31 +448,32 @@ class NmapOutputHighlight(object):
                             "underline":str(False),
                             "text":[0, 1272, 28362],
                             "highlight":[65535, 65535, 65535],
-                        "regex":"PORT\s+STATE\s+SERVICE(\s+VERSION)?[^\n]*"},
+                            "regex":"PORT\s+STATE\s+SERVICE(\s+VERSION)?\s.*"},
                           "open_port":{"bold":str(True),
                             "italic":str(False),
                             "underline":str(False),
                             "text":[0, 41036, 2396],
                             "highlight":[65535, 65535, 65535],
-                            "regex":"\d{1,5}/.{1,5}\s+open\s+.*"},
+                            "regex":"\d{1,5}/.{1,5}\sopen\s.*"},
                           "closed_port":{"bold":str(False),
                             "italic":str(False),
                             "underline":str(False),
                             "text":[65535, 0, 0],
                             "highlight":[65535, 65535, 65535],
-                            "regex":"\d{1,5}/.{1,5}\s+closed\s+.*"},
+                            "regex":"\d{1,5}/.{1,5}\sclosed\s.*"},
                           "filtered_port":{"bold":str(False),
                             "italic":str(False),
                             "underline":str(False),
                             "text":[38502, 39119, 0],
                             "highlight":[65535, 65535, 65535],
-                            "regex":"\d{1,5}/.{1,5}\s+filtered\s+.*"},
+                            "regex":"\d{1,5}/.{1,5}\sfiltered\s.*"},
                           "details":{"bold":str(True),
                             "italic":str(False),
                             "underline":str(True),
                             "text":[0, 0, 0],
                             "highlight":[65535, 65535, 65535],
                             "regex":"^(\w{2,}[\s]{,3}){,4}:"}}
+
 
 class DiffColors(object):
     def __init__(self):
