@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Authors: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Authors: Adriano Monteiro Marques <adriano@umitproject.org>
 #          Cleber Rodrigues <cleber.gnu@gmail.com>
 #                           <cleber@globalred.com.br>
 #          
@@ -17,7 +19,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
 import os.path
@@ -25,8 +27,7 @@ import os.path
 from setuptools import setup
 from glob import glob
 
-VERSION = "0.9.4"
-REVISION = "1567"
+from umitCore.Version import VERSION
 
 # Directories for POSIX operating systems
 # These are created after a "install" or "py2exe" command
@@ -51,8 +52,8 @@ def mo_find(result, dirname, fnames):
     if files:
         result.append((dirname, files))
 
-svg = glob(os.path.join('share', 'pixmaps', '*.svg'))
-data_files = [ (pixmaps_dir, svg + glob(os.path.join(pixmaps_dir, '*.png')) +
+data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.svg')) +
+                             glob(os.path.join(pixmaps_dir, '*.png')) +
                              glob(os.path.join(pixmaps_dir, 'umit.o*'))),
 
                (config_dir, [os.path.join(config_dir, 'umit.conf')] +
@@ -85,25 +86,27 @@ os.path.walk(locale_dir, mo_find, data_files)
 
 ##################### Umit banner ########################
 print
-print "%s Umit %s-%s %s" % ("#"*10, VERSION, REVISION, "#"*10)
+print "%s Umit %s %s" % ("#"*10, VERSION, "#"*10)
 print
 ##########################################################
 
 setup(name = 'umit',
       license = 'GNU GPL (version 2 or later)',
-      url = 'http://umit.sourceforge.net',
-      download_url = 'http://sourceforge.net/project/showfiles.php?group_id=142490',
+      url = 'http://www.umitproject.org',
+      download_url = 'http://www.umitproject.org',
       author = 'Adriano Monteiro & Cleber Rodrigues',
-      author_email = 'py.adriano@gmail.com, cleber@globalred.com.br',
+      author_email = 'adriano@umitproject.org, cleber@globalred.com.br',
       maintainer = 'Adriano Monteiro',
-      maintainer_email = 'py.adriano@gmail.com',
-      description = """UMIT is a nmap frontend, developed in Python and GTK and was \
-started with the sponsoring of Google's Summer of Code.""",
-      long_description = """The project goal is to develop a nmap frontend that \
-is really useful for advanced users and easy to be used by newbies. With UMIT, a network admin \
-could create scan profiles for faster and easier network scanning or even compare \
-scan results to easily see any changes. A regular user will also be able to construct \
-powerful scans with UMIT command creator wizards.""",
+      maintainer_email = 'adriano@umitproject.org',
+      description = """Umit is a network scanning frontend, developed in \
+Python and GTK and was started with the sponsoring of Google's Summer of \
+Code.""",
+      long_description = """The project goal is to develop a network scanning \
+frontend that is really useful for advanced users and easy to be used by \
+newbies. With Umit, a network admin could create scan profiles for faster and \
+easier network scanning or even compare scan results to easily see any \
+changes. A regular user will also be able to construct powerful scans with \
+Umit command creator wizards.""",
       version = VERSION,
       scripts = ['umit.py'],
       app = ["umit.py"],

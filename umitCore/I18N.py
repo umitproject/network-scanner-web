@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,11 +18,27 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import locale
 
-LC_ALL = locale.setlocale(locale.LC_ALL, '')
+from umitCore.BasePaths import LOCALE_DIR
+
+try:
+    # If the content of the environment variable LANG contains a string which
+    # represents a language or encoding not supported by the system, the 
+    # following line will raise an exception.
+    LC_ALL = locale.setlocale(locale.LC_ALL, '')
+except locale.Error, error_msg:
+    # Here we tell user that it's system is set to an unsupported language,
+    # and that Umit will proceed using the system's default.
+    # Latter, we call setlocale again, but now providing None as the second
+    # argument, avoiding the occourrance of the exception.
+    # Gtk will raise a warning in this case, but will work just perfectly.
+    print "Your locale setting is not supported. Umit will continue using \
+using your system's preferred language."
+    LC_ALL = locale.setlocale(locale.LC_ALL, None)
+
 LANG, ENC = locale.getdefaultlocale()
 ERRORS = "ignore"
 
@@ -34,14 +51,13 @@ if LANG == None:
 
 try:
     import gettext
-    from gettext import gettext as _
-
-    gettext.install('umit', unicode=True)
-
 except ImportError:
     # define _() so program will not fail
     import __builtin__
     __builtin__.__dict__["_"] = str
+else:
+    lang = gettext.translation('umit', LOCALE_DIR, [LANG], fallback=True)
+    _ = lang.gettext
 
 
 def enc(string):
@@ -58,4 +74,4 @@ def enc(string):
     return string
 
 if __name__ == '__main__':
-    print _('UMIT - The nmap frontend')
+    print _('Umit - Take the red pill')

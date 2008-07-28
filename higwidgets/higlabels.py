@@ -1,24 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #         Cleber Rodrigues <cleber.gnu@gmail.com>
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# This library is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU Lesser General Public License as published 
+# by the Free Software Foundation; either version 2.1 of the License, or 
 # (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This library is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+# License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public License 
+# along with this library; if not, write to the Free Software Foundation, 
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA 
+
 """
 higwidgets/higlabels.py
 
@@ -99,11 +101,11 @@ class HIGEntryLabel(gtk.Label):
     """
     Simple label, like the ones used to label entries
     """
-    def __init__(self, text=None):
+    def __init__(self, text=None, underline=False):
         gtk.Label.__init__(self, text)
         self.set_justify(gtk.JUSTIFY_LEFT)
         self.set_alignment(0, 0.50)
-        self.set_use_underline(True)
+        self.set_use_underline(underline)
         self.set_use_markup(True)
         self.set_line_wrap(True)
 
@@ -121,7 +123,11 @@ class HIGDialogLabel(gtk.Label):
 if __name__ == "__main__":
     w = gtk.Window()
     h = HIGHintSectionLabel("Label", "Hint")
-    w.add(h)
+    test = HIGEntryLabel("x86_64")
+    box = gtk.VBox()
+    box.add(h)
+    box.add(test)
+    w.add(box)
     w.connect("delete-event", lambda x, y: gtk.main_quit())
     w.show_all()
 

@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import gtk
 import os.path
@@ -32,6 +33,8 @@ from umitGUI.OptionBuilder import *
 from umitGUI.ProfileEditor import *
 
 from umitCore.Paths import Path
+from umitCore.WizardConf import wizard_file
+from umitCore.TargetList import target_list
 from umitCore.NmapCommand import *
 from umitCore.UmitConf import Profile, CommandProfile
 from umitCore.I18N import _
@@ -42,10 +45,6 @@ if pixmaps_dir:
 else:
     logo = None
 
-wizard = Path.wizard
-target_list = Path.target_list
-
-
 class Wizard(HIGWindow):
     def __init__(self):
         HIGWindow.__init__(self)
@@ -54,7 +53,9 @@ class Wizard(HIGWindow):
         
         self.profile = CommandProfile()
         self.constructor = CommandConstructor()
-        self.options = OptionBuilder(wizard, self.constructor, self.update_command)
+        self.options = OptionBuilder(wizard_file,
+                                     self.constructor,
+                                     self.update_command)
         
         self.target = '<target>'
         
@@ -83,7 +84,7 @@ class Wizard(HIGWindow):
         self.add(self.main_vbox)
         
         self.__create_wizard_widgets()
-        self.set_title(_("UMIT Command constructor wizard"))
+        self.set_title(_("Umit Command constructor wizard"))
         
         self.main_vbox._pack_expand_fill(self.directions['Start'])
         self.set_notebook(None)
@@ -98,7 +99,8 @@ class Wizard(HIGWindow):
         else:
             return self.options.groups[pos-1], self.options.groups[pos+1]
 
-    def __create_steps(self, step_name, back_step, next_step, step_description, content):
+    def __create_steps(self, step_name, back_step, next_step,
+                       step_description, content):
         vbox = HIGVBox()
         vbox.set_spacing(12)
         
@@ -202,11 +204,13 @@ class Wizard(HIGWindow):
             p.show_all()
             
             self.close_wizard()
-    
+
     def _show_help(self, widget=None):
         import webbrowser
-        webbrowser.open("file://%s" % os.path.join(Path.docs_dir, "help.html"), new=2)
-    
+        webbrowser.open("file://%s" % os.path.join(Path.docs_dir,
+                                                   "help.html"),
+                                                   new=2)
+
     def choose_page(self):
         choose = ChoosePage()
         choose.bar.cancel.connect('clicked', self.close_wizard)
@@ -286,11 +290,12 @@ for this profile.'))
         finish = FinishPage()
         finish.bar.cancel.connect('clicked', self.close_wizard)
         finish.bar.help.connect('clicked', self._show_help)
-        finish.bar.back.connect('clicked', self.finish_back, finish, self.options.groups[-1])
+        finish.bar.back.connect('clicked', self.finish_back,
+                                finish, self.options.groups[-1])
         finish.bar.apply.connect('clicked', self.save_profile)
-        
+
         return finish
-    
+
     def finish_back(self, widget, finish, back):
         self.main_vbox.remove(finish)
         finish.hide()
@@ -330,8 +335,9 @@ for this profile.'))
         else:
             target = self.directions['Choose'].target_entry.get_text()
             cmd = command % target
-            
-            current_page = self.notebook.get_nth_page(self.notebook.get_current_page())
+
+            current_page = self.notebook.get_nth_page(\
+                self.notebook.get_current_page())
             if current_page == None:
                 current_page = self.notebook.add_scan_page(target)
 
@@ -349,7 +355,7 @@ class FinishPage(HIGVBox):
         HIGVBox.__init__(self)
         self.set_spacing(12)
         
-        self.description = HIGEntryLabel(_("""UMIT generated the nmap command. \
+        self.description = HIGEntryLabel(_("""Umit generated the nmap command. \
 Click Apply to finish this wizard."""))
         spacer = hig_box_space_holder()
         self.bar = ApplyBar()
@@ -408,7 +414,7 @@ class StartPage(HIGVBox):
         
         sec_vbox = HIGVBox()
         
-        self.description = HIGEntryLabel(_("""UMIT allow user to construct \
+        self.description = HIGEntryLabel(_("""Umit allow user to construct \
 powerful commands in two distinct ways:"""))
         self.novice_radio = gtk.RadioButton(None, _('Novice'))
         self.expert_radio = gtk.RadioButton(self.novice_radio, _('Expert'))
@@ -463,40 +469,13 @@ class ChoosePage(HIGVBox):
         self.completion.set_text_column(0)
         
         self.target_entry.set_completion(self.completion)
-        
-        try:
-            t_list = open(target_list)
-            list = t_list.readlines()
 
-            # Closing file to avoid file descriptor problems
-            t_list.close()
-        except: return None
-        else:
-            for i in list[:15]:
-                self.target_list.append([i.replace('\n','')])
+        for target in target_list.get_target_list()[:15]:
+            self.target_list.append([target.replace('\n','')])
     
     def add_new_target(self, target):
-        list = []
-        try:
-            t_list = open(target_list)
-            t_list.readlines()
+        target_list.add_target(target)
 
-            # Closing file to avoid file descriptor problems
-            t_list.close()
-        except:
-            return None
-
-        target += '\n' 
-        if target not in list:
-            list.insert(0, target)
-            try:
-                t_list = open(target_list, 'w')
-                t_list.writelines(list)
-
-                # Closing file to avoid file descriptor problems
-                t_list.close()
-            except:return None
-    
     def enable_target(self, widget=None):
         self.hbox.set_sensitive(True)
     

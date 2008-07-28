@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Authors: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +17,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import sys
 import os
@@ -25,51 +27,52 @@ import re
 from distutils.core import setup
 from distutils.command.install import install
 from distutils.command.sdist import sdist
+from distutils.command.build import build
 from distutils import log, dir_util
 
 from glob import glob
 from stat import *
 
-
-# The environ variables are catch only on package generating phase.
-# After package generation, the version and revision turns into a hardcoded string
-VERSION = os.environ.get("UMITWEB_VERSION", "0.1-beta1")
-REVISION = os.environ.get("UMITWEB_REVISION", "2721")
-
-VERSION_FILE = os.path.join("share", "umit", "config", "umit_version")
-SOURCE_PKG = False
-
+from umitCore.Version import VERSION
+from utils import msgfmt
 # Directories for POSIX operating systems
 # These are created after a "install" or "py2exe" command
 # These directories are relative to the installation or dist directory
 # Ex: python setup.py install --prefix=/tmp/umit
 # Will create the directory /tmp/umit with the following directories
-pixmaps_dir = os.path.join('share', 'pixmaps')
-icons_dir = os.path.join('share', 'icons')
-locale_dir = os.path.join('share', 'umit', 'locale')
+pixmaps_dir = os.path.join('share', 'pixmaps', 'umit')
+icons_dir = os.path.join('share', 'icons', 'umit')
+locale_dir = os.path.join('share', 'locale')
 config_dir = os.path.join('share', 'umit', 'config')
-docs_dir = os.path.join('share', 'umit', 'docs')
+docs_dir = os.path.join('share', 'doc', 'umit')
 misc_dir = os.path.join('share', 'umit', 'misc')
 media_dir = os.path.join('share', 'umit', 'umitweb_media')
 templates_dir = os.path.join('share', 'umit', 'templates')
 
-
-def mo_find(result, dirname, fnames):
+def extension_find(result, dirname, fnames, suffix):
     files = []
     for f in fnames:
         p = os.path.join(dirname, f)
-        if os.path.isfile(p) and f.endswith(".mo"):
+        if os.path.isfile(p) and f.endswith(suffix):
             files.append(p)
         
     if files:
         result.append((dirname, files))
+
+def mo_find(result, dirname, fnames):
+    return extension_find(result, dirname, fnames, ".mo")
+
+def po_find(result, dirname, fnames):
+    return extension_find(result, dirname, fnames, ".po")
 
 
 ################################################################################
 # Installation variables
 
 svg = glob(os.path.join('share', 'pixmaps', '*.svg'))
-data_files = [ (pixmaps_dir, svg + glob(os.path.join(pixmaps_dir, '*.png')) +
+data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.svg')) +
+                             glob(os.path.join(pixmaps_dir, '*.png')) +
+			     glob(os.path.join(pixmaps_dir, '*.xpm')) +
                              glob(os.path.join(pixmaps_dir, 'umit.o*'))),
 
                (config_dir, [os.path.join(config_dir, 'umit.conf')] +
@@ -80,8 +83,10 @@ data_files = [ (pixmaps_dir, svg + glob(os.path.join(pixmaps_dir, '*.png')) +
 
                (misc_dir, glob(os.path.join(misc_dir, '*.dmp'))), 
 
-               (icons_dir, glob(os.path.join('share', 'icons', '*.ico'))+
-                           glob(os.path.join('share', 'icons', '*.png'))),
+               (icons_dir, glob(os.path.join('share', 'icons', 'umit',
+                                             '*.ico'))+
+                           glob(os.path.join('share', 'icons', 'umit', 
+                                             '*.png'))),
 
                (docs_dir, glob(os.path.join(docs_dir, '*.html'))+
                           glob(os.path.join(docs_dir,
@@ -108,12 +113,39 @@ data_files = [ (pixmaps_dir, svg + glob(os.path.join(pixmaps_dir, '*.png')) +
 os.path.walk(locale_dir, mo_find, data_files)
 
 
-
 ################################################################################
 # Distutils subclasses
 
+class umit_build(build):
+    def delete_mo_files(self):
+        """ Remove *.mo files """
+        tmp = [] 
+        os.path.walk(locale_dir, mo_find, tmp)
+        for (path, t) in tmp:
+            os.remove(t[0])
+    def build_mo_files(self):
+        """Build mo files from po and put it into LC_MESSAGES """
+        tmp = [] 
+        os.path.walk(locale_dir, po_find, tmp)
+        for (path, t) in tmp:
+            full_path = os.path.join(path , "LC_MESSAGES", "umit.mo")
+            self.mkpath(os.path.dirname(full_path))
+            self.announce("Compiling %s -> %s" % (t[0],full_path))
+            msgfmt.make(t[0], full_path, False)
+        # like guess
+        os.path.walk(locale_dir, mo_find, data_files)
+    def run(self):
+        self.delete_mo_files()
+        self.build_mo_files()
+        build.run(self)
+
+
+
+
 class umit_install(install):
     def run(self):
+        # Add i18n files to data_files list
+        os.path.walk(locale_dir, mo_find, data_files)
         install.run(self)
 
         self.set_perms()
@@ -123,16 +155,17 @@ class umit_install(install):
         self.finish_banner()
 
     def create_uninstaller(self):
-        uninstaller_filename = os.path.join(self.install_scripts, "uninstall_umit")
+        uninstaller_filename = os.path.join(self.install_scripts,
+                                            "uninstall_umit")
         uninstaller = """#!/usr/bin/env python
-import os, sys
+import os, os.path, sys
 
 print
-print '%(line)s Uninstall Umit %(version)s-%(revision)s %(line)s'
+print '%(line)s Uninstall Umit %(version)s %(line)s'
 print
 
-answer = raw_input('Are you sure that you want to completly uninstall Umit %(version)s? \
-(yes/no) ')
+answer = raw_input('Are you sure that you want to completly uninstall \
+Umit %(version)s? (yes/no) ')
 
 if answer != 'yes' and answer != 'y':
     sys.exit(0)
@@ -140,11 +173,12 @@ if answer != 'yes' and answer != 'y':
 print
 print '%(line)s Uninstalling Umit %(version)s... %(line)s'
 print
-""" % {'version':VERSION, 'revision':REVISION, 'line':'-'*10}
+""" % {'version':VERSION, 'line':'-'*10}
 
         for output in self.get_outputs():
             uninstaller += "print 'Removing %s...'\n" % output
-            uninstaller += "os.remove('%s')\n" % output
+            uninstaller += "if os.path.exists('%s'): os.remove('%s')\n" % \
+                        (output, output)
 
         uninstaller += "print 'Removing uninstaller itself...'\n"
         uninstaller += "os.remove('%s')\n" % uninstaller_filename
@@ -198,20 +232,21 @@ print
 
 
     def fix_paths(self):
-        su = os.path.join("share", "umit")
-        interesting_paths = {"CONFIG_DIR":os.path.join(su, "config"),
-                             "DOCS_DIR":os.path.join(su, "docs"),
-                             "LOCALE_DIR":os.path.join(su, "locale"),
-                             "MISC_DIR":os.path.join(su, "misc"),
-                             "PIXMAPS_DIR":os.path.join("share", "pixmaps"),
-                             "ICONS_DIR":os.path.join("share", "icons"),
-			     "MEDIA_DIR":os.path.join(su, "umitweb_media"),
-			     "TEMPLATES_DIR": os.path.join(su, "templates"),
+        interesting_paths = {"CONFIG_DIR":config_dir,
+                             "DOCS_DIR":docs_dir,
+                             "LOCALE_DIR":locale_dir,
+                             "MISC_DIR":misc_dir,
+                             "PIXMAPS_DIR":pixmaps_dir,
+                             "ICONS_DIR":icons_dir,
+                             "MEDIA_DIR":"umitweb_media",
+			                 "TEMPLATES_DIR":"templates",
                              "UMIT_ICON":"umit_48.ico"}
 
         pcontent = ""
-        paths_file = os.path.join("umitCore", "Paths.py")
+        paths_file = os.path.join("umitCore", "BasePaths.py")
         installed_files = self.get_outputs()
+        
+        # Finding where the Paths.py file was installed.
         for f in installed_files:
             if re.findall("(%s)" % re.escape(paths_file), f):
                 paths_file = f
@@ -238,102 +273,73 @@ print
 
     def finish_banner(self):
         print 
-        print "%s Thanks for using Umit %s-%s %s" % \
-              ("#"*10, VERSION, REVISION, "#"*10)
+        print "%s Thanks for using Umit %s %s" % \
+              ("#"*10, VERSION, "#"*10)
         print
+
 
 
 class umit_sdist(sdist):
+    def read_manifest_no_mo(self):
+	""" Read Manifest without mo files """
+	manifest = open(self.manifest)
+	while 1:
+	    line = manifest.readline()
+	    if line == '':
+		break 
+	    if line[-1] == '\n':
+		line = line[0:-1]
+	    if line.find("umit.mo")!=-1:
+		self.filelist.files.remove(line)
     def run(self):
         self.keep_temp = 1
-        sdist.run(self)
-        self.finish_banner()
-
-    def make_release_tree(self, base_dir, files):
-        """Create the directory tree that will become the source
-        distribution archive.  All directories implied by the filenames in
-        'files' are created under 'base_dir', and then we hard link or copy
-        (if hard linking is unavailable) those files into place.
-        Essentially, this duplicates the developer's source tree, but in a
-        directory named after the distribution, containing only the files
-        to be distributed.
+	from distutils.filelist import FileList
+        #Rewrite: sdist.run(self)
+        self.manifest = "MANIFEST"
+        self.filelist = FileList()
+        self.check_metadata()	
+        self.get_file_list()
+	## Exclude mo files:
+	self.read_manifest_no_mo()
+        if self.manifest_only:
+            return 
+        self.make_distribution()
         
-        --- This is a copy of the distutils.command.sdist make_release_tree with
-        a slight modification, which forces the copy of the files instead of
-        hard linking them to the temp directory.
-        """
-        # Create all the directories under 'base_dir' necessary to
-        # put 'files' there; the 'mkpath()' is just so we don't die
-        # if the manifest happens to be empty.
-        self.mkpath(base_dir)
-        dir_util.create_tree(base_dir, files, dry_run=self.dry_run)
-
-        # And walk over the list of files, either making a hard link (if
-        # os.link exists) to each one that doesn't already exist in its
-        # corresponding location under 'base_dir', or copying each file
-        # that's out-of-date in 'base_dir'.  (Usually, all files will be
-        # out-of-date, because by default we blow away 'base_dir' when
-        # we're done making the distribution archives.)
-
-        # Removed the original if statement to force file copying
-        link = None
-        msg = "copying files to %s..." % base_dir
-
-        if not files:
-            log.warn("no files to distribute -- empty manifest?")
-        else:
-            log.info(msg)
-        for file in files:
-            if not os.path.isfile(file):
-                log.warn("'%s' not a regular file -- skipping" % file)
-            else:
-                dest = os.path.join(base_dir, file)
-                self.copy_file(file, dest, link=link)
-
-        self.distribution.metadata.write_pkg_info(base_dir)
-        # End of the modified version of make_release_tree
-
-        # Updating version, revision, splash and paths informations...
-        sys.path.append(os.path.join("install_scripts", "utils"))
-        from version_update import update_setup, update_paths, update_umit_version
-
-        update_setup(base_dir, VERSION, REVISION)
-        update_paths(base_dir, VERSION, REVISION)
-        update_umit_version(base_dir, VERSION, REVISION)
-
+        self.finish_banner()
+    
     def finish_banner(self):
         print 
-        print "%s The packages for Umit %s-%s are in ./dist %s" % \
-              ("#" * 10, VERSION, REVISION, "#" * 10)
+        print "%s The packages for Umit %s are in ./dist %s" % \
+              ("#" * 10, VERSION, "#" * 10)
         print
-
-if SOURCE_PKG:
-    umit_sdist = sdist
 
 ##################### Umit banner ########################
 print
-print "%s Umit for Linux %s-%s %s" % ("#" * 10, VERSION, REVISION, "#" * 10)
+print "%s Umit for Linux %s %s" % ("#" * 10, VERSION, "#" * 10)
 print
 ##########################################################
 
 setup(name = 'umit',
       license = 'GNU GPL (version 2 or later)',
-      url = 'http://umit.sourceforge.net',
-      download_url = 'http://sourceforge.net/project/showfiles.php?group_id=142490',
+      url = 'http://www.umitproject.org',
+      download_url = 'http://www.umitproject.org',
       author = 'Adriano Monteiro & Cleber Rodrigues',
-      author_email = 'py.adriano@gmail.com, cleber@globalred.com.br, rodolfo.ueg@gmail.com',
+      author_email = 'py.adriano@gmail.com, cleber@globalred.com.br, rodolfo.ueg@umitproject.org',
       maintainer = 'Adriano Monteiro',
-      maintainer_email = 'py.adriano@gmail.com',
-      description = """UMIT is a nmap frontend, developed in Python and GTK and was \
-started with the sponsoring of Google's Summer of Code.""",
-      long_description = """The project goal is to develop a nmap frontend that \
-is really useful for advanced users and easy to be used by newbies. With UMIT, a network admin \
-could create scan profiles for faster and easier network scanning or even compare \
-scan results to easily see any changes. A regular user will also be able to construct \
-powerful scans with UMIT command creator wizards.""",
+      maintainer_email = 'adriano@gmail.com',
+      description = """Umit is a network scanning frontend, developed in \
+Python and GTK and was started with the sponsoring of Google's Summer \
+of Code.""",
+      long_description = """The project goal is to develop a network scanning \
+frontend that is really useful for advanced users and easy to be used by \
+newbies. With Umit, a network admin could create scan profiles for faster and \
+easier network scanning or even compare scan results to easily see any \
+changes. A regular user will also be able to construct powerful scans with \
+Umit command creator wizards.""",
       version = VERSION,
       scripts = ['umitweb.py'],
       packages = ['', 'umitCore', 'umitWeb', 'umitWeb.views', 'umitWeb.views.html'],
       data_files = data_files,
       cmdclass = {"install":umit_install,
+                  "build":umit_build,
                   "sdist":umit_sdist})

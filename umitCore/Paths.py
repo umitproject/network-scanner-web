@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,32 +20,23 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from os import R_OK, W_OK, access, mkdir, getcwd, environ, getcwd
-from os.path import exists, join, split, abspath, dirname
+from os import R_OK, W_OK, access, mkdir, getcwd
+from os.path import exists, join, split, abspath
 import sys
 
 from umitCore.UmitLogging import log
 from umitCore.UmitConfigParser import UmitConfigParser
+from umitCore.TempConf import create_temp_conf_dir
+from umitCore.Version import VERSION
 from umitCore.BasePaths import base_paths, HOME
-from umitCore.I18N import _
+from umitCore.BasePaths import CONFIG_DIR, LOCALE_DIR, MISC_DIR
+from umitCore.BasePaths import ICONS_DIR, PIXMAPS_DIR, DOCS_DIR
 
-VERSION = environ.get("UMIT_VERSION", "0.9.5")
-REVISION = environ.get("UMIT_REVISION", "2549")
-
-main_dir = ""
-if hasattr(sys, "frozen"):
-    main_dir = dirname(sys.executable)
-
-CONFIG_DIR = join(main_dir, "share", "umit", "config")
 UMIT_ICON = join(main_dir, "share", "icons", "umit_48.ico")
-LOCALE_DIR = join(main_dir, "share", "umit", "locale")
-MISC_DIR = join(main_dir, "share", "umit", "misc")
-MEDIA_DIR = join("share", "umit", "umitweb_media")
-ICONS_DIR = join(main_dir, "share", "icons")
-TEMPLATES_DIR = join("share", "umit", "templates")
-PIXMAPS_DIR = join(main_dir, "share", "pixmaps")
-DOCS_DIR = join(main_dir, "share", "umit", "docs")
 
+
+MEDIA_DIR = join("share", "umit", "umitweb_media")
+TEMPLATES_DIR = join("share", "umit", "templates")
 
 #######
 # Paths
@@ -108,8 +100,7 @@ class Paths(object):
             main_config_dir = join(split(base_dir)[0], CONFIG_DIR)
 
         else:
-            raise Exception("Couldn't find the Umit's Config Directory! \
-Aborting...")
+            main_config_dir = create_temp_conf_dir(VERSION)
 
         # Main config file, based on the main_config_dir got above
         main_config_file = join(main_config_dir, base_paths['config_file'])
@@ -123,8 +114,8 @@ Aborting...")
                and check_access(supposed_file, R_OK and W_OK):
             config_dir = base_paths['user_dir']
             config_file = supposed_file
-            log.debug(">>> Using config files in user home \
-directory: %s" % config_file)
+            log.debug(">>> Using config files in user home directory: %s" \
+                      % config_file)
 
         elif not exists(supposed_file)\
              and not check_access(base_paths['user_dir'],
@@ -175,17 +166,21 @@ user home: %s" % config_file)
         self.templates_dir = TEMPLATES_DIR
 
         log.debug(">>> Config file: %s" % config_file)
+        log.debug(">>> Locale: %s" % self.locale_dir)
+        log.debug(">>> Pixmaps: %s" % self.pixmaps_dir)
+        log.debug(">>> Icons: %s" % self.icons_dir)
+        log.debug(">>> Misc: %s" % self.misc_dir)
+        log.debug(">>> Docs: %s" % self.docs_dir)
 
     def update_config_dir(self, config_dir):
+        # Do any updates of configuration files. Not yet implemented.
         pass
 
     def check_version(self, config_dir):
         version_file = join(config_dir, base_paths['umit_version'])
 
         if exists(version_file):
-            ver = open(version_file).readlines()[0].\
-                                     split("\n")[0].\
-                                     split("\r")[0]
+            ver = open(version_file).readline().strip()
 
             log.debug(">>> This Umit Version: %s" % VERSION)
             log.debug(">>> Version of the files in %s: %s" % (config_dir, ver))
@@ -269,9 +264,7 @@ def create_user_dir(config_file, user_home):
     main_dir = split(config_file)[0]
     copy_config_file("options.xml", main_dir, user_dir)
     copy_config_file("profile_editor.xml", main_dir, user_dir)
-    copy_config_file("recent_scans.txt", main_dir, user_dir)
     copy_config_file("scan_profile.usp", main_dir, user_dir)
-    copy_config_file("target_list.txt", main_dir, user_dir)
     copy_config_file("umit_version", main_dir, user_dir)
     copy_config_file("wizard.xml", main_dir, user_dir)
     copy_config_file("umitweb.conf", main_dir, user_dir)
@@ -291,11 +284,17 @@ def copy_config_file(filename, dir_origin, dir_destiny):
 
     if not exists(destiny):
         # Quick copy
-        open(destiny, 'w').write(open(origin).read())
+        origin_file = open(origin, 'r')
+        destiny_file = open(destiny, 'w')
+        destiny_file.write(origin_file.read())
+        origin_file.close()
+        destiny_file.close()
     return destiny
 
 def check_access(path, permission):
-    return exists(path) and access(path, permission)
+    if type(path) in StringTypes:
+        return exists(path) and access(path, permission)
+    return False
 
 def return_if_exists(path, create=False):
     path = abspath(path)
@@ -333,6 +332,9 @@ if __name__ == '__main__':
     print ">>> UMITDB:", Path.umitdb
     print ">>> SERVICES DUMP:", Path.services_dump
     print ">>> OS DB DUMP:", Path.os_dump
+    print ">>> UMIT VERSION:", Path.umit_version
+    print ">>> OS CLASSIFICATION DUMP:", Path.os_classification
+    print ">>> NMAP COMMAND PATH:", Path.nmap_command_path
     print ">>> UMIT VERSION:", Path.umit_version
     print ">>> OS CLASSIFICATION DUMP:", Path.os_classification
     print ">>> NMAP COMMAND PATH:", Path.nmap_command_path

@@ -1,6 +1,10 @@
-# Copyright (C) 2005-2007 Insecure.Com LLC.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
-# Authors: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Authors: Adriano Monteiro Marques <adriano@umitproject.org>
 #          Frederico Silva Ribeiro <ribeiro.fsilva@gmail.com>
 #          Guilherme Polo <ggpolo@gmail.com>
 #
@@ -16,7 +20,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os.path
 

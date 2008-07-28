@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import gtk
 import os.path
@@ -25,7 +26,8 @@ import os.path
 from higwidgets.higwindows import HIGWindow
 from higwidgets.higboxes import HIGVBox
 from higwidgets.higbuttons import HIGButton
-from higwidgets.higboxes import HIGVBox, HIGHBox, HIGSpacer, hig_box_space_holder
+from higwidgets.higboxes import HIGVBox, HIGHBox
+from higwidgets.higboxes import HIGSpacer, hig_box_space_holder
 from higwidgets.higlabels import HIGSectionLabel, HIGEntryLabel
 from higwidgets.higtables import HIGTable
 from higwidgets.higdialogs import HIGAlertDialog
@@ -117,8 +119,6 @@ class SearchGUI(gtk.HPaned, object):
         #self.general_finish_hbox = HIGHBox()
         
         self.general_section = HIGSectionLabel(_("General search parameters"))
-        #self.general_start_section = HIGSectionLabel(_("Scan started in range"))
-        #self.general_finish_section = HIGSectionLabel(_("Scan finished in range"))
         
         self.general_table = HIGTable()
 
@@ -141,8 +141,6 @@ class SearchGUI(gtk.HPaned, object):
         #self.host_lastboot_hbox = HIGHBox()
         
         self.host_section = HIGSectionLabel(_("Host search parameters"))
-        #self.host_uptime_section = HIGSectionLabel(_("Hosts with uptime in range"))
-        #self.host_lastboot_section = HIGSectionLabel(_("Hosts with lastboot in range"))
         
         self.host_table = HIGTable()
 
@@ -181,7 +179,8 @@ class SearchGUI(gtk.HPaned, object):
         # OS
         self.os_vbox = HIGVBox()
         self.os_hbox = HIGHBox()
-        self.os_section = HIGSectionLabel(_("Operating System search parameters"))
+        self.os_section = HIGSectionLabel(_("Operating System search \
+parameters"))
         self.os_table = HIGTable()
         
         self.os_osclass_label = HIGEntryLabel(_("OS class"))
@@ -197,7 +196,7 @@ class SearchGUI(gtk.HPaned, object):
         self.opt_base_hbox = HIGHBox()
         self.opt_local_section = HIGSectionLabel(_("Local files"))
         self.opt_local_table = HIGTable()
-        self.opt_base_section = HIGSectionLabel(_("Data base"))
+        self.opt_base_section = HIGSectionLabel(_("Database"))
         self.opt_base_table = HIGTable()
 
         self.opt_path_label = HIGEntryLabel(_("Directory"))
@@ -207,9 +206,10 @@ class SearchGUI(gtk.HPaned, object):
         self.opt_path_entry = PathEntry()
         self.opt_extension_entry = gtk.Entry()
         self.opt_savetime_entry = SaveTime()
-        self.opt_save_check = gtk.CheckButton(_("Save scan results in data base for \
-latter search"))
-        self.opt_search_check = gtk.CheckButton(_("Search saved scan results in data base"))
+        self.opt_save_check = gtk.CheckButton(_("Save scan results in data \
+base for latter search"))
+        self.opt_search_check = gtk.CheckButton(_("Search saved scan results \
+in data base"))
 
         
     def _pack_widgets(self):
@@ -219,8 +219,10 @@ latter search"))
         self.result_vbox._pack_expand_fill(self.result_hbox)
 
         self.result_scrolled.set_size_request(185, -1)
+        #self.result_scrolled.set_shadow_type(gtk.SHADOW_ETCHED_IN)
         self.result_scrolled.add(self.result_view)
-        self.result_scrolled.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.result_scrolled.set_policy(gtk.POLICY_AUTOMATIC,
+                                        gtk.POLICY_AUTOMATIC)
         self.result_hbox._pack_noexpand_nofill(hig_box_space_holder())
         self.result_hbox._pack_expand_fill(self.result_scrolled)
 
@@ -260,7 +262,8 @@ latter search"))
         self.general_table.attach_entry(self.general_profile_combo, 1, 2, 1, 2)
         self.general_table.attach_entry(self.general_option_combo, 1, 2, 2, 3)
         
-        self.search_notebook.append_page(self.general_vbox, gtk.Label(_("General")))
+        self.search_notebook.append_page(self.general_vbox,
+                                         gtk.Label(_("General")))
 
         # Host page
         self.host_vbox.set_border_width(12)
@@ -312,7 +315,8 @@ latter search"))
         self.serv_table.attach_entry(self.serv_product_entry, 1, 2, 2, 3)
         self.serv_table.attach_entry(self.serv_service_combo, 1, 2, 3, 4)
         
-        self.search_notebook.append_page(self.serv_vbox, gtk.Label(_("Service")))
+        self.search_notebook.append_page(self.serv_vbox,
+                                         gtk.Label(_("Service")))
 
         # OS page
         self.os_vbox.set_border_width(12)
@@ -357,7 +361,8 @@ latter search"))
         self.opt_base_table.attach_entry(self.opt_savetime_entry, 1, 2, 0, 1)
 
 
-        self.search_notebook.append_page(self.opt_vbox, gtk.Label(_("Search options")))
+        self.search_notebook.append_page(self.opt_vbox,
+                                         gtk.Label(_("Search options")))
 
         self.pack1(self.search_vbox, True, False)
         self.pack2(self.result_vbox, True, False)
@@ -366,7 +371,8 @@ latter search"))
         self.os_osclass_combo.connect("changed", self.update_osmatch)
         self.search_button.connect("clicked", self.start_search)
 
-        self.opt_extension_entry.connect("focus-out-event", self.update_extension_entry)
+        self.opt_extension_entry.connect("focus-out-event",
+                                         self.update_extension_entry)
         self.opt_save_check.connect("toggled", self.update_save_check)
         self.opt_search_check.connect("toggled", self.update_search_check)
         self.opt_path_entry.connect_entry_change(self.update_path_entry)
@@ -393,9 +399,10 @@ latter search"))
            not self.directory:
             self.search_notebook.set_current_page(-1)
             d = HIGAlertDialog(message_format=_("No search method selected!"),
-                               secondary_text=_("Umit can search results on directories or \
-inside it's own database. Please, select a method by choosing a directory or by checking \
-the search data base option at the 'Search options' tab before start the search"))
+                               secondary_text=_("Umit can search results on \
+directories or inside it's own database. Please, select a method by choosing \
+a directory or by checking the search data base option at the 'Search options' \
+tab before start the search"))
             d.run()
             d.destroy()
             return
@@ -446,14 +453,17 @@ the search data base option at the 'Search options' tab before start the search"
         elif parsed_result.nmap_xml_file:
             title = os.path.split(parsed_result.nmap_xml_file)[-1]
         elif parsed_result.profile_name and parsed_result.target:
-            title = "%s on %s" % (parsed_result.profile_name, parsed_result.target)
+            title = "%s on %s" % (parsed_result.profile_name,
+                                  parsed_result.target)
         else:
             title = "Scan %s" % (self.scan_num)
             self.scan_num += 1
 
         try:
             date = localtime(float(parsed_result.start))
-            date_field = "%02d %s %04d" % (date[2], months[date[1]][:3], date[0])
+            date_field = "%02d %s %04d" % (date[2],
+                                           months[date[1]][:3],
+                                           date[0])
         except ValueError:
             date_field = _("Unknown")
 
@@ -722,7 +732,9 @@ class Date(gtk.HBox, object):
 
     def set_date(self, date):
         # Localtime Format: (year, month, day)
-        self.date_button.set_label("%02d %s %04d" % (date[2], months[date[1]][:3], date[0]))
+        self.date_button.set_label("%02d %s %04d" % (date[2],
+                                                     months[date[1]][:3],
+                                                     date[0]))
         self._date = date
 
     def get_date(self):
@@ -754,7 +766,9 @@ class DateCalendar(gtk.Window, object):
         self.add(self.calendar)
 
     def connect_calendar(self, method):
-        self.calendar.connect("day-selected-double-click", self.kill_calendar, method)
+        self.calendar.connect("day-selected-double-click",
+                              self.kill_calendar,
+                              method)
 
     def kill_calendar(self, widget, method):
         method(widget)

@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Copyright (C) 2005 Insecure.Com LLC.
 #
-# Author: Adriano Monteiro Marques <py.adriano@gmail.com>
+# Copyright (C) 2005-2006 Insecure.Com LLC.
+# Copyright (C) 2007-2008 Adriano Monteiro Marques
+#
+# Author: Adriano Monteiro Marques <adriano@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,12 +18,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import gtk
 import gobject
 
-from umitCore.Paths import VERSION, REVISION
+from umitCore.Version import VERSION
 
 class Splash(gtk.Window):
     def __init__(self, image, time=1700):
@@ -39,23 +40,21 @@ class Splash(gtk.Window):
         self.set_resizable(False)
         self.realize()
 
-        self.fixed = gtk.Fixed()
         self.verbox = gtk.VBox()
         self.version = gtk.Label("%s" % VERSION)
-        self.revision = gtk.Label("Rev. %s" % REVISION)
 
         self.version.set_use_markup(True)
-        self.version.set_markup("<span size='24000' weight='heavy'>\
+        self.version.set_markup("<span size='22000' weight='heavy'>\
 %s</span>" % VERSION)
-        self.revision.set_use_markup(True)
-        self.revision.set_markup("<span size='10000' weight='heavy'>\
-Rev. %s</span>" % REVISION)
 
-        self.verbox.pack_start(self.version, False, False)
-        self.verbox.pack_start(self.revision, False, False)
+        # These constants are derived from the dimensions of the open space in
+        # the splash graphic. We attempt to center the version number.
+        self.verbox.set_size_request(152, 56)
+        self.verbox.pack_start(self.version, True, False)
 
-        self.fixed.put(self.verbox, width - 110, height - 55)
-        self.add(self.fixed)
+        fixed = gtk.Fixed()
+        fixed.put(self.verbox, width - 152, height - 56)
+        self.add(fixed)
 
         self.hid = self.connect("expose-event", self.set_bg, mask, pixmap)
         self.set_bg(self, None, mask, pixmap)
@@ -71,7 +70,6 @@ Rev. %s</span>" % REVISION)
 
     def set_bg(self, widget, event, mask, pixmap):
         if self.window != None:
-            self.input_shape_combine_mask(mask, 0, 0)
             self.window.set_back_pixmap(pixmap, False)
         else:
             gobject.idle_add(self.set_bg, widget, event, mask, pixmap)
