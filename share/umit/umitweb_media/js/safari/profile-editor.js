@@ -9,10 +9,10 @@ ProfileEditorDialog = Dialog.extend({
         this.parent(options);
         this.options.content.empty();
 
-        var self = this;
-        var title = new Element("h3");
-        var commandConstructorDiv = new Element("div");
-        var lbl = new Element("label");
+        self = this;
+        title = new Element("h3");
+        commandConstructorDiv = new Element("div");
+        lbl = new Element("label");
         lbl.setHTML("<strong>Command: </strong>");
         divCommandConstructor = new Element("input", {"id": "divCommandConstructor",
                                             "style": "border:1px #DDD solid;margin: 5px;padding:4px; width: 95%;", "type": "text"});
@@ -21,14 +21,13 @@ ProfileEditorDialog = Dialog.extend({
         commandConstructorDiv.adopt(divCommandConstructor);
         
         title.setText("UMIT Profile Editor");
-        var tabber = new Element("div", {"class": "tabber", "id": "tabberCommand"});
+        tabber = new Element("div", {"class": "tabber", "id": "tabberCommand"});
         
-        var tabProfileDetails = new Element("div", {'class': "tabbertab", 'style': "height: 305px;", 'title': "Profile"});
-        
+        tabProfileDetails = new Element("div", {class: "tabbertab", style: "height: 305px;", title: "Profile"});
         tabProfileDetails.setHTML("<b>Profile Information</b><p/>Please, enter the profile name, " +
                                   "and optionally, enter a hint, description and annotation for this " +
                                    "new profile:");
-        var spnProfile = new Element("table");
+        spnProfile = new Element("table");
         spnProfile.setHTML("<tr><td valign='top'><label for='pprofile_name'><strong>Profile Name:</strong>&nbsp;&nbsp;</label></td>" +
                            "<td><input type='text' id='pprofile_name' size='40'/></td></tr>" +
                            "<tr><td valign='top'><label for='profile_int'>Hint:&nbsp;&nbsp;</label></td>" +
@@ -42,18 +41,12 @@ ProfileEditorDialog = Dialog.extend({
         
         new Json.Remote("/profile_editor/", {onComplete: function(sections){
             varData = sections;
-            
-            for(var k in sections){
-                var s = sections[k];
-                var tab = new Element("div");
-                tab.addClass("tabbertab");
-                tab.title = k;
-                tab.setStyle({"overflow": "auto", "height": "305px"});
-                
-                //tab.setHTML("<b>" + s.label + "</b>");
-                
-                var table = new Element("table", {width: "100%"});
-                var tableContent = "<tr>";
+            for(k in sections){
+                s = sections[k]
+                tab = new Element("div", {class: "tabbertab", title: k, styles: {"overflow": "auto", "height": "305px"}});
+                tab.setHTML("<b>" + s.label + "</b>");
+                table = new Element("table", {width: "100%"});
+                tableContent = "<tr>";
                 s.options.each(function(op){
                     if(op.type == "list"){
                         tableContent += "<tr><td width='0'></td>"
@@ -81,13 +74,13 @@ ProfileEditorDialog = Dialog.extend({
                 
                 tabber.getElements("select").each(function(el){
                     el.addEvent("change", function(e){
-                        for(var i = 0; i < this.length; i++){
-                            var v = this[i].value;
+                        for(i = 0; i < this.length; i++){
+                            v = this[i].value;
                             if(i != this.selectedIndex){
                                 removeCommand(v);
                             }
                         }
-                        var v = this[this.selectedIndex].value;
+                        v = this[this.selectedIndex].value;
                         updateProfile(v);
                     });
                 });
@@ -95,8 +88,8 @@ ProfileEditorDialog = Dialog.extend({
                 
                 tabber.getElements("input[type=checkbox]").each(function(el){
                     el.addEvent("change", function(e){
-                        var v = this.value;
-                        var cmpl = ($defined($("txt-" + v.id)))? $("txt-" + v.id).value: "";
+                        v = this.value;
+                        cmpl = ($defined($("txt-" + v.id)))? $("txt-" + v.id).value: "";
                         if(this.checked){
                             updateProfile(v, cmpl);
                         }else{
@@ -108,21 +101,21 @@ ProfileEditorDialog = Dialog.extend({
                 tabber.getElements("input[class='wiz-input']").each(function(el){
                     el.addEvent("focus", function(e){
                         $(this.id.substring("txt-".length)).checked = true;
-                        var v = $(this.id.substring("txt-".length)).value
-                        var cmpl = this.value;
+                        v = $(this.id.substring("txt-".length)).value
+                        cmpl = this.value;
                         updateProfile(v, cmpl);
                     });
                     
                     el.addEvent("keyup", function(e){
-                        var v = $(this.id.substring("txt-".length)).value
-                        var cmpl = this.value;
+                        v = $(this.id.substring("txt-".length)).value
+                        cmpl = this.value;
                         updateProfile(v, cmpl);
                     });
                 });
             }
             
             self.options.content.removeClass("hide");
-            var to = {};
+            to = {};
             to.div = tabber;
             tabber.tabber = new tabberObj(to);
             
@@ -139,9 +132,9 @@ ProfileEditorDialog = Dialog.extend({
         this.options.content.adopt(new Element("hr"));
         this.options.content.setStyle("padding", "10px;");
         
-        var actionDiv = new Element("div", {style: "text-align: right"});
-        var btnOK = new Element("input", {type: "button", value:"OK", styles: {"width": "80px;"}});
-        var btnCancel = new Element("input", {type: "button", value:"Cancel", style: "margin-right: 20px"});
+        actionDiv = new Element("div", {style: "text-align: right"});
+        btnOK = new Element("input", {type: "button", value:"OK", styles: {"width": "80px;"}});
+        btnCancel = new Element("input", {type: "button", value:"Cancel", style: "margin-right: 20px"});
     
         actionDiv.adopt(btnCancel);
         actionDiv.adopt(btnOK);
@@ -155,7 +148,7 @@ ProfileEditorDialog = Dialog.extend({
                 alert("Unnamed profile!\nou must provide a name for this profile.");
                 return;
             }
-            var args = {
+            args = {
                 name: $("pprofile_name").value,
                 command: divCommandConstructor.value,
                 hint: $("profile_hint").value,
@@ -163,7 +156,7 @@ ProfileEditorDialog = Dialog.extend({
                 annotation: $("profile_annotation").value
             }
                         
-            var xhr = new XHR({method: "post",
+            xhr = new XHR({method: "post",
                            onSuccess: function(req){
                            alert("Profile saved succefully!");
                            updateProfiles();
@@ -177,25 +170,22 @@ ProfileEditorDialog = Dialog.extend({
         
         this.options.content.adopt(tabber);
         this.options.content.adopt(actionDiv);
-        var divLoading = new Element("div");
-        divLoading.addClass('ajax-loading');
-        divLoading.setStyle({"float": "left", "width": "100%"});
+        divLoading = new Element("div", {class: 'ajax-loading', style: "float: left; width: 100%"});
         this.window.adopt(divLoading);
         
     }
 });
 
 function updateProfile(value, complement){
-	var commandLine = $("divCommandConstructor");
+	commandLine = $("divCommandConstructor");
 	
-	var target = "<target>"
+	target = "<target>"
 	
 	commandLine.value = commandLine.value.replace(" " + target, "");
-	var oldValue = commandLine.value;
+	oldValue = commandLine.value;
 
-	var regex = new RegExp(value.replace(" ", "[ ]+").replace("%s", "[^ ^$]*"));
+	regex = new RegExp(value.replace(" ", "[ ]+").replace("%s", "[^ ^$]*"));
 	
-	var newValue = null;
 	if($defined(complement)){
 		newValue = value.replace("%s", complement);
 	}else{

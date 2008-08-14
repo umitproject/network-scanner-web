@@ -2449,7 +2449,9 @@ Element.extend({
 	*/
 
 	setHTML: function(){
-		this.innerHTML = $A(arguments).join('');
+	    if($A(arguments)){
+		    this.innerHTML = $A(arguments).join('');
+	    }
 		return this;
 	},
 

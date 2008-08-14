@@ -22,9 +22,9 @@ from umitCore.UmitConf import NmapOutputHighlight
 from umitCore.Paths import Path
 from umitWeb.WebLogger import getLogger
 
-class JsOutputHighlight(NmapOutputHighlight, object):
+class JsOutputHighlight(NmapOutputHighlight):
     logger  = getLogger("JsOutputHighlight")
     
     def __init__(self, *args):
         NmapOutputHighlight.__init__(self, *args)
-        self.read(Path.webconfig_file)
+        self.parser.read(Path.webconfig_file)

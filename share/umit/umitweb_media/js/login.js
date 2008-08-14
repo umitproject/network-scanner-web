@@ -1,17 +1,21 @@
 doLogin = function(e){
+    try{
     new Event(e).stop();
     $("spinner").removeClass("hide");
     $("error").addClass("hide")
     $("spacer").addClass("hide");
     processResult = function(result){
-	if(result == "OK"){
-	    location.href = "/"
-	}else{
+	    if(result == "OK"){
+    	    location.href = "/"
+    	}else{
             $("spinner").addClass("hide");
-	    $("error").empty().removeClass("hide").setText("Incorrect username or password")
-	}
+    	    $("error").empty().removeClass("hide").setText("Incorrect username or password")
+    	}
     }
     this.send({onComplete: processResult});
+    }catch(e){
+        alert(e);
+    }
     return false;
 }
 

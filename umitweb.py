@@ -39,7 +39,7 @@ Path.set_umit_conf(split(sys.argv[0])[0])
 from umitWeb.Server import UmitWebServer
 
 def main():
-    if sys.platform.startswith("linux"):
+    if sys.platform in ["linux" "darwin"]:
         if os.getuid() != 0:
             raise Exception, "Server MUST run as root."
         

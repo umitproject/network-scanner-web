@@ -63,7 +63,7 @@ def diff_colors(req):
     data.append("'added': '#%s%s%s'" % tuple(map(toHex, dc.added)))
     data.append("'modified': '#%s%s%s'" % tuple(map(toHex, dc.modified)))
     data.append("'not_present': '#%s%s%s'" % tuple(map(toHex, dc.not_present)))
-    response.write("diff_colors = {%s}" % ",".join(data))
+    response.write("var diff_colors = {%s}" % ",".join(data))
     return response
 
 

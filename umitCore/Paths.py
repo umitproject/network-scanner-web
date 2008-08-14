@@ -24,6 +24,8 @@ from os import R_OK, W_OK, access, mkdir, getcwd
 from os.path import exists, join, split, abspath
 import sys
 
+from types import StringTypes
+
 from umitCore.UmitLogging import log
 from umitCore.UmitConfigParser import UmitConfigParser
 from umitCore.TempConf import create_temp_conf_dir
@@ -32,7 +34,7 @@ from umitCore.BasePaths import base_paths, HOME
 from umitCore.BasePaths import CONFIG_DIR, LOCALE_DIR, MISC_DIR
 from umitCore.BasePaths import ICONS_DIR, PIXMAPS_DIR, DOCS_DIR
 
-UMIT_ICON = join(main_dir, "share", "icons", "umit_48.ico")
+UMIT_ICON = join("share", "icons", "umit_48.ico")
 
 
 MEDIA_DIR = join("share", "umit", "umitweb_media")

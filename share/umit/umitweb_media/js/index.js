@@ -1,18 +1,19 @@
-var varData = ""
+var varData = "";
 
-scanLock = false;
+var scanLock = false;
 
-lastHost = null;
-lastService = null;
+var lastHost = null;
+var lastService = null;
 var scanEvent = null;
 var scanId = null;
 var saved = false;
 var nmapOutput = "";
 var sSlide;
 var hSlide;
+var rs; // Instance of a Dialog
 
 function openScan(){
-	isToRun = true;
+	var isToRun = true;
 	if(saved == false && scanId != null){
 		text = "The given scan has unsaved changes!\n" +
 			"If you want to continue, click 'OK'.\n" +
@@ -55,54 +56,54 @@ function openCommandWizard(){
 
 window.addEvent("domready", function(){
     if($defined($("frmScan"))){
-	$("frmScan").addEvent("submit", runScan);
+        $("frmScan").addEvent("submit", runScan);
 	
-	$("toggleHosts").addEvent("click", function(e){
-		if(!this.hasClass("active")){
-		    ts = $("toggleServices");
-		    this.addClass("active");
-		    ts.removeClass("active");
-		    $("hosts").setStyle("display", "block");
-		    $("services").setStyle("display", "none");
-		}
-		new Event(e).stop();
-	});
+	    $("toggleHosts").addEvent("click", function(e){
+		    if(!this.hasClass("active")){
+    		    var ts = $("toggleServices");
+    		    this.addClass("active");
+    		    ts.removeClass("active");
+    		    $("hosts").setStyle("display", "block");
+    		    $("services").setStyle("display", "none");
+    		}
+    		new Event(e).stop();
+    	});
 	
-	$("toggleServices").addEvent("click", function(e){
-		if(!this.hasClass("active")){
-		    th = $("toggleHosts");
-		    this.addClass("active");
-		    th.removeClass("active");
-		    $("hosts").setStyle("display", "none");
-		    $("services").setStyle("display", "block");
-		}
-		new Event(e).stop();
-	});
+	    $("toggleServices").addEvent("click", function(e){
+            if(!this.hasClass("active")){
+        	    var th = $("toggleHosts");
+        	    this.addClass("active");
+        	    th.removeClass("active");
+        	    $("hosts").setStyle("display", "none");
+        	    $("services").setStyle("display", "block");
+        	}
+        	new Event(e).stop();
+        });
+
+        $("toggleHosts").addClass("active");
+        $("services").setStyle("display", "none");
 	
-	$("toggleHosts").addClass("active");
-	$("services").setStyle("display", "none");
+    	updateProfiles();
 	
-	updateProfiles();
-	
-	$("profiles").addEvent("change", function(event){
-		cmd = this.options[this.selectedIndex].value;
-		if($("target").value != ""){
-			cmd = cmd.replace("<target>", $("target").value);
-		}
-		$("command").value = cmd;
-		new Event(event).stop();
-	});
+	    $("profiles").addEvent("change", function(event){
+    		var cmd = this.options[this.selectedIndex].value;
+    		if($("target").value != ""){
+    			cmd = cmd.replace("<target>", $("target").value);
+    		}
+    		$("command").value = cmd;
+    		new Event(event).stop();
+    	});
         $("divSpinner").addClass("hide");
         $("body").removeClass("hide");
     }
 
    $("highlight_out").addEvent("change", function(e){
-	new Event(e).stop();
-	if(!nmapOutput || nmapOutput.trim().length == 0){ return }
-	if(this.checked){
-		$("nmap-output").setHTML(formatNmapOutput(nmapOutput));
-	}else{
-		$("nmap-output").setText(nmapOutput);
-	}
+	    new Event(e).stop();
+    	if(!nmapOutput || nmapOutput.trim().length == 0){ return }
+    	if(this.checked){
+    		$("nmap-output").setHTML(formatNmapOutput(nmapOutput));
+    	}else{
+    		$("nmap-output").setText(nmapOutput);
+    	}
    });
 });

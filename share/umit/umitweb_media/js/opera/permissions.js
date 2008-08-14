@@ -1,5 +1,3 @@
-currentConstraints = [];
-
 PermissionDialog = Dialog.extend({
     options: {
         title: "Permission Management",
@@ -11,48 +9,48 @@ PermissionDialog = Dialog.extend({
         this.parent(options);
         this.options.content.empty();
 
-        var self = this;
-        var tabber = new Element("div", {"class": "tabber", "id": "tabberPermission"});
+        self = this;
+        tabber = new Element("div", {"class": "tabber", "id": "tabberPermission"});
         
-        var tabMain = new Element("div", {class: "tabbertab", style: "height: 175px;", title: "Main Information"});
+        tabMain = new Element("div", {class: "tabbertab", style: "height: 175px;", title: "Main Information"});
         tabber.adopt(tabMain);
-        var tabConstraints = new Element("div", {class: "tabbertab", style: "height: 175px;", title: "Constraints"});
+        tabConstraints = new Element("div", {class: "tabbertab", style: "height: 175px;", title: "Constraints"});
         tabber.adopt(tabConstraints);
         
-        var tbl = new Element("table");
+        tbl = new Element("table");
         tabMain.adopt(tbl);
-        var divType = new Element("span");
+        divType = new Element("span");
         divType.setText("Base Type:* ");
-        var selectPermType = new Element("select");
-        var opt1 = new Element("option", {"value": "allow"});
+        selectPermType = new Element("select");
+        opt1 = new Element("option", {"value": "allow"});
         opt1.setText("Allow");
-        var opt2 = new Element("option", {"value": "deny"});
+        opt2 = new Element("option", {"value": "deny"});
         opt2.setText("Deny");
         selectPermType.adopt(opt1);
         selectPermType.adopt(opt2);
         divType.adopt(selectPermType);
-        var inputId = new Element("input", {"size": "30", "type": "text", "style": "margin-right:10px;"});
-        var txtDescription = new Element("textarea", {"style": "width: 435px; height: 115px;"});
-        var fsDescription = new Element("fieldset", {"style": "padding:0;margin:0"});
-        var legend = new Element("legend");
+        inputId = new Element("input", {"size": "30", "type": "text", "style": "margin-right:10px;"});
+        txtDescription = new Element("textarea", {"style": "width: 435px; height: 115px;"});
+        fsDescription = new Element("fieldset", {"style": "padding:0;margin:0"});
+        legend = new Element("legend");
         legend.setText("Description");
         fsDescription.adopt(legend);
         fsDescription.adopt(txtDescription);
         
         currentConstraints = [];
         
-        var tblContents = new Element("table");
-        var dvConstraints = new Element("div", {"styles": {"height": "167px", "width": "415px", "border": "#CCC 1px solid", "overflow": "auto"}});
-        var tblConstraints = new Element("table", {"id": "constraints_table", "class": "std_table"});
+        tblContents = new Element("table");
+        dvConstraints = new Element("div", {"styles": {"height": "167px", "width": "415px", "border": "#CCC 1px solid", "overflow": "auto"}});
+        tblConstraints = new Element("table", {"id": "constraints_table", "class": "std_table"});
         dvConstraints.adopt(tblConstraints);
         
-        var lnkMoveUp = new Element("a", {"href": "javascript:void(null)"});
-        var imgMoveUp = new Element("img", {"src": "/media/images/up.png", "alt":"Move constraint up", "title":"Move constraint up"});
+        lnkMoveUp = new Element("a", {"href": "javascript:void(null)"});
+        imgMoveUp = new Element("img", {"src": "/media/images/up.png", "alt":"Move constraint up", "title":"Move constraint up"});
         lnkMoveUp.adopt(imgMoveUp);
         lnkMoveUp.addEvent("click", function(e){
-            for(var j = 1; j < currentConstraints.length; j++){
+            for(j = 1; j < currentConstraints.length; j++){
                 if(currentConstraints[j]["check"].checked){
-                    var aux = currentConstraints[j-1];
+                    aux = currentConstraints[j-1];
                     currentConstraints[j-1] = currentConstraints[j];
                     currentConstraints[j] = aux;
                     fillConstraintTable();
@@ -61,13 +59,13 @@ PermissionDialog = Dialog.extend({
             }
         });
         
-        var lnkMoveDown = new Element("a", {"href": "javascript:void(null)"});
-        var imgMoveDown = new Element("img", {"src": "/media/images/down.png", "alt":"Move constraint down", "title":"Move constraint down"});
+        lnkMoveDown = new Element("a", {"href": "javascript:void(null)"});
+        imgMoveDown = new Element("img", {"src": "/media/images/down.png", "alt":"Move constraint down", "title":"Move constraint down"});
         lnkMoveDown.adopt(imgMoveDown);
         lnkMoveDown.addEvent("click", function(e){
-            for(var j = currentConstraints.length - 2; j >= 0; j--){
+            for(j = currentConstraints.length - 2; j >= 0; j--){
                 if(currentConstraints[j]["check"].checked){
-                    var aux = currentConstraints[j+1];
+                    aux = currentConstraints[j+1];
                     currentConstraints[j+1] = currentConstraints[j];
                     currentConstraints[j] = aux;
                     fillConstraintTable();
@@ -76,18 +74,18 @@ PermissionDialog = Dialog.extend({
             }
         });
         
-        var lnkAdd = new Element("a", {"href": "javascript:void(null)"});
-        var imgAdd = new Element("img", {"src": "/media/images/plus.png", "alt":"Add new constraint", "title":"Add new constraint"});
+        lnkAdd = new Element("a", {"href": "javascript:void(null)"});
+        imgAdd = new Element("img", {"src": "/media/images/plus.png", "alt":"Add new constraint", "title":"Add new constraint"});
         lnkAdd.adopt(imgAdd);
         lnkAdd.addEvent("click", function(e){
             addPermissionRow();
         });
         
-        var lnkRemove = new Element("a", {"href": "javascript:void(null)"});
-        var imgRemove = new Element("img", {"src": "/media/images/minus.png", "alt":"Remove constraint", "title":"Remove constraint"});
+        lnkRemove = new Element("a", {"href": "javascript:void(null)"});
+        imgRemove = new Element("img", {"src": "/media/images/minus.png", "alt":"Remove constraint", "title":"Remove constraint"});
         lnkRemove.adopt(imgRemove);
         lnkRemove.addEvent("click", function(e){
-            for(var j = 0; j < currentConstraints.length; j++){
+            for(j = 0; j < currentConstraints.length; j++){
                 if(currentConstraints[j]["check"].checked){
                     if(j > 0){
                         currentConstraints[j]["check"].checked = true;
@@ -96,7 +94,7 @@ PermissionDialog = Dialog.extend({
                     break;
                 }
             }
-            var cc = [];
+            cc = [];
             currentConstraints.each(function(c){
                 if(typeof c != "undefined"){
                     cc.include(c);
@@ -114,7 +112,7 @@ PermissionDialog = Dialog.extend({
         tabConstraints.adopt(tblContents);
         
         if(self.options.data){
-            var d = self.options.data;
+            d = self.options.data;
             inputId.value = d.id;
             txtDescription.value = d.description;
             inputId.readOnly = true;
@@ -143,13 +141,13 @@ PermissionDialog = Dialog.extend({
         });
         
         btnOK.addEvent("click", function(e){
-            var reqFields = [inputId]
-            var saveURL = "add/"
+            reqFields = [inputId]
+            saveURL = "add/"
             if(self.options.data){
                 saveURL = "edit/" + self.options.data.id + "/"
             }
             
-            for(var k = 0; k < reqFields.length; k++){
+            for(k = 0; k < reqFields.length; k++){
                 if(reqFields[k].value.trim().length == 0){
                     alert("Please, fill all the entries marked with a '*'.");
                     reqFields[k].focus();
@@ -157,8 +155,8 @@ PermissionDialog = Dialog.extend({
                 }
             }
             
-            var constraint_types = []
-            var constraints = []
+            constraint_types = []
+            constraints = []
             currentConstraints.each(function(c){
                 constraint_types.extend([c["type"].value]);
                 constraints.extend([c["content"].value]);
@@ -170,7 +168,7 @@ PermissionDialog = Dialog.extend({
                 return;
             }
             
-            var args = {
+            args = {
                 id: inputId.value,
                 type: selectPermType[selectPermType.selectedIndex].value,
                 description: txtDescription.value.trim(),
@@ -178,10 +176,10 @@ PermissionDialog = Dialog.extend({
                 constraints: constraints.join("\n")
             }
                         
-            var xhr = new XHR({method: "post",
+            xhr = new XHR({method: "post",
                             onSuccess: function(req){
                                 try{
-                                    var response = null;
+                                    response = null;
                                     eval('response = ' + req);
                                     varData = req
                                 }catch(e){
@@ -207,12 +205,12 @@ PermissionDialog = Dialog.extend({
         
         this.options.content.adopt(tabber);
         this.options.content.adopt(actionDiv);
-        var to = {
+        to = {
             "div": tabber
         }
         tabber.tabber = new tabberObj(to);
         if(self.options.data){
-            var d = self.options.data;
+            d = self.options.data;
             d.constraints.each(function(constraint){
                 addPermissionRow(constraint.type, constraint.content, constraint, tblConstraints);
             });
@@ -220,44 +218,42 @@ PermissionDialog = Dialog.extend({
     }
 });
 
-
-// Helper functions
 function fillTableData(permissions){
-    var t = $("permissions_table").getElement("tbody").empty();
+    t = $("permissions_table").getElement("tbody").empty();
 
-    for(var index = 0; index < permissions.length; index++){
-        var p = permissions[index];
+    for(index = 0; index < permissions.length; index++){
+        p = permissions[index];
         if(p.id != "allow-all" && p.id != "deny-all"){
-            var ch = new Element("input", {"type": "checkbox", "id": "chk-" + p.id});
-            var lnkEdit = new Element("a", {"href": "javascript:void(null)", "id": "" + p.id});
+            ch = new Element("input", {"type": "checkbox", "id": "chk-" + p.id});
+            lnkEdit = new Element("a", {"href": "javascript:void(null)", "id": "" + p.id});
             lnkEdit.setText(p.id);
             lnkEdit.addEvent("click", function(e){
                 new Event(e).stop();
                 openPermissionDialog(this.id);
             });
             
-            var constraints = [];
-            for(var j = 0; j < p.constraints.length; j++){
-                var c = p.constraints[j];
+            constraints = [];
+            for(j = 0; j < p.constraints.length; j++){
+                c = p.constraints[j];
                 constraints.include(c["content"] + " <span style='color:#505050'><i>(" + c["type"] + ")</i></span>");
             }
-            var imgType = new Element("img", {"src": "/media/images/" + (p.type=="allow"? "open": "closed") + ".png",
+            imgType = new Element("img", {"src": "/media/images/" + (p.type=="allow"? "open": "closed") + ".png",
                                           "title": p.type, "alt": p.type});
-            var line = [ch, lnkEdit, {"value": imgType, "attrs": {"align": "center"}}, p.description, constraints.join("<br/>")]
-            var className = (index % 2 == 0)? "light": "dark";
+            line = [ch, lnkEdit, {"value": imgType, "attrs": {"align": "center"}}, p.description, constraints.join("<br/>")]
+            className = (index % 2 == 0)? "light": "dark";
             tr = addTableRow(t, line);
             tr.addClass(className);
         }
     }
 }
 
-
+var currentConstraints = [];
 
 function fillConstraintTable(tbl){
-    var t = tbl==null? $("constraints_table").empty(): tbl;
-    for(var j = 0; j < currentConstraints.length; j++){
-        var c =  currentConstraints[j];
-        var args = {};
+    t = tbl==null? $("constraints_table").empty(): tbl;
+    for(j = 0; j < currentConstraints.length; j++){
+        c =  currentConstraints[j];
+        args = {};
         addTableRow(t, [c["check"], "Type: ", c["type"], "Content: ", c["content"]]);
         
         c["check"].removeEvents();
@@ -283,13 +279,13 @@ function fillConstraintTable(tbl){
 function addPermissionRow(type, content, data, tbl){
     type = (type)? type: "";
     content = (content)? content: "";
-    var inputCheck = new Element("input", {"type": "radio", "name": "current"});
+    inputCheck = new Element("input", {"type": "radio", "name": "current"});
     inputCheck.checked = true;
-    var selectType = new Element("select");
-    var optCommand = new Element("option");
+    selectType = new Element("select");
+    optCommand = new Element("option");
     optCommand.setText("command");
     selectType.add(optCommand, null);
-    var inputContent = new Element("input", {"type": "text"});
+    inputContent = new Element("input", {"type": "text"});
     if(data){
         inputContent.value = data["content"];
         if(optCommand.value == data["type"]){
@@ -306,7 +302,7 @@ function loadPermissionsTableData(){
     new Json.Remote("search/", {
         onComplete: fillTableData,
         onFailure: function(req){
-            var t = $("permissions_table").getElement("tbody").empty();
+            t = $("permissions_table").getElement("tbody").empty();
             addTableRow(t, [{"value": "Error loading data. Please see umitweb.log for details.", "attrs": {"colSpan": "4"}}], {"class": "error"});
         }
     }).send();
@@ -368,7 +364,7 @@ window.addEvent("domready", function(e){
             }
         },
         onFailure: function(req){
-            var t = $("permissions_table").getElement("tbody").empty();
+            t = $("permissions_table").getElement("tbody").empty();
             addTableRow(t, [{"value": "Error loading data. Please see umitweb.log for details.", "attrs": {"colSpan": "5"}} ], {"class": "error"});
         }});
     });

@@ -119,3 +119,7 @@ td a{
     overflow:auto;
     height:350px;
 }
+
+.dialog{
+    z-index: 500;
+}

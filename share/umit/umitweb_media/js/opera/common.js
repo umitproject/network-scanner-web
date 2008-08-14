@@ -1,9 +1,9 @@
-var last_host_scanned = "<target>";
-var slides = {};
+last_host_scanned = "<target>"
+var slides = {}
 
 fillCommand = function(value){
-    $('command').value = $('command').value.replace(last_host_scanned, value);
-    last_host_scanned = value;
+    $('command').value = $('command').value.replace(last_host_scanned, value)
+    last_host_scanned = value
 }
 
 function clearScanData(){
@@ -16,9 +16,9 @@ function clearScanData(){
 }
 
 function toggle(target){
-    var tgDiv = $(target + "-detail")
+    tgDiv = $(target + "-detail")
     
-    var tgSwitcher = $(target + "-switch")
+    tgSwitcher = $(target + "-switch")
     
     tgDiv.toggleClass("hide");
 
@@ -73,36 +73,36 @@ function setInputStyles(){
 }
 
 function addTableRow(table, row, lineAttrs){
-	var tr = new Element("tr");
+	tr = new Element("tr");
 	if(lineAttrs){
-		for(var attr in lineAttrs){
+		for(attr in lineAttrs){
 		    tr[attr] = lineAttrs[attr];
 		}
 	}
-	for(var i = 0; i < row.length; i++){
-		var td = new Element("td")
+	for(i = 0; i < row.length; i++){
+		td = new Element("td")
 		if($type(row[i]) == "string"){
 		    td.setHTML(row[i]);
 		}else if($type(row[i]) == "element"){
 		    td.adopt(row[i]);
 		}else{
-            for(var attr in row[i].attrs){
-                td[attr] = row[i].attrs[attr]
-            }
-            if($type(row[i].value) == "string"){
-                td.setHTML(row[i].value);
-            }else{
-                td.adopt(row[i].value);
-            }
+                    for(attr in row[i].attrs){
+                        td[attr] = row[i].attrs[attr]
+                    }
+                    if($type(row[i].value) == "string"){
+                        td.setHTML(row[i].value);
+                    }else{
+                        td.adopt(row[i].value);
+                    }
 		}
 		tr.adopt(td)
 	}
 	table.adopt(tr)
-    return tr;
+        return tr;
 }
 
 function showError(req, target){
-	var messages = {
+	messages = {
 		403: {"title": "Access Denied",
 		      "description": "Your access has been " +
 				"denied when you tried to " +
@@ -111,18 +111,18 @@ function showError(req, target){
 				"administrator if you have " +
 				"access to access this page."}
 	}
-	var div = new Element("div", {'class': "error"})
+	div = new Element("div", {'class': "error"})
 	if(messages[req.status]){
 		div.setHTML(messages[req.status]["description"]);
-		var header = new Element("h3", {styles: {"display": "block", "color": "red"}});
+		header = new Element("h3", {styles: {"display": "block", "color": "red"}});
 		header.setText(messages[req.status]['title']);
 		$(target).empty().adopt(div);
 		header.injectBefore(div);
 	}else{
-		var regexp = /.*Message:((.*[\r]?[\n]?)*)/g
-		var txt = req.responseText.match(regexp)[0]
+		regexp = /.*Message:((.*[\r]?[\n]?)*)/g
+		txt = req.responseText.match(regexp)[0]
 		//txt = req.responseText
-		var header = new Element("h3", {styles: {"display": "block", "color": "red"}});
+		header = new Element("h3", {styles: {"display": "block", "color": "red"}});
 		header.setText("Response Code:" + req.status)
 		$(target).empty().adopt(div);
 		header.injectBefore(div);
@@ -132,8 +132,8 @@ function showError(req, target){
 
 function removeCommand(value){
 	commandLine = $("divCommandConstructor");
-	var oldValue = commandLine.value;
-	var regex = new RegExp(value.replace(" ", "[ ]+").replace("%s", "[^ ^$]*"));
+	oldValue = commandLine.value;
+	regex = new RegExp(value.replace(" ", "[ ]+").replace("%s", "[^ ^$]*"));
 	
 	if(oldValue.match(regex)){
 		commandLine.value = oldValue.replace(regex, "");
@@ -142,14 +142,14 @@ function removeCommand(value){
 }
 
 function updateProfiles(){
-    new Json.Remote("/scan/profiles/", {onComplete: function(result){
-        $("profiles").empty();
-		for(var i = 0; i < result.length; i++){
-			var opt = new Element("option", {"value": result[i][1]})
+	new Json.Remote("/scan/profiles/", {onComplete: function(result){
+                $("profiles").empty();
+		for(i = 0; i < result.length; i++){
+			opt = new Element("option", {"value": result[i][1]})
 			opt.setText(result[i][0]);
 			$("profiles").adopt(opt);
 		}
-		var cmd = $("profiles").options[0].value;
+		cmd = $("profiles").options[0].value;
 		if($("target").value != ""){
 			cmd = cmd.replace("<target>", $("target").value);
 		}
@@ -157,26 +157,20 @@ function updateProfiles(){
 	}}).send();
 }
 
-function emptyTBody(tbody){
-    for(var i = 0; i < tbody.rows.length; i++){
-        tbody.deleteRow(0);
-    }
-}
-
 window.addEvent("domready", function(){
     setInputStyles();
-    var size = getViewportSize();
+    size = getViewportSize();
     $$("div[class='tab-placeholder']").each(function(div){
-	    div.style.height = (size[1]-271) + "px";
+	div.style.height = (size[1]-271) + "px";
     });
 	
     if($defined($("hosts")))
-	    $("hosts").style.height = (size[1]-220) + "px";
+	$("hosts").style.height = (size[1]-220) + "px"
     if($defined($("services")))
-	    $("services").style.height = (size[1]-220) + "px";
+	$("services").style.height = (size[1]-220) + "px"
 	
     if($defined($("body"))){
-	    $("body").setStyle("width", (size[0]) + "px");
+	$("body").setStyle("width", (size[0]) + "px");
         $("umit-title").setStyle("width", size[0]-60 + "px");
     }
     if($defined($("footer")))

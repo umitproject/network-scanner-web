@@ -1,22 +1,21 @@
 var varData = null;
-var handler = null;
 
 DiffHandler = new Class({
     "color": function(){
         if(diff_text != null){
-            var last_tag = null;
-            var new_text = [];
-            var removed = /^-.*/;
-            var styles = {
+            last_tag = null;
+            new_text = [];
+            removed = /^-.*/;
+            styles = {
                 added: {"style": "background-color:" + diff_colors.added,
                         "regex": /^\+.*/},
                 removed: {"style": "background-color:" + diff_colors.not_present,
                           "regex": /^-.*/}
             };
-            var new_lines = [];
-            for(var i = 0; i < diff_text.length; i++){
-                var found = false;
-                var line = diff_text[i];
+            new_lines = [];
+            for(i = 0; i < diff_text.length; i++){
+                found = false;
+                line = diff_text[i];
                 for(k in styles){
                     if(line.match(styles[k].regex)){
                         found = true;
@@ -36,22 +35,22 @@ DiffHandler = new Class({
         }
     },
     "showCompareTable": function(childs, color, spaces, classLine){
-        var tbl = $("compare-table").getElement("tbody");
-        var self = this;
+        tbl = $("compare-table").getElement("tbody");
+        self = this;
         
         if(spaces == null){
             spaces = "";
         }
         
         childs.each(function(c){
-            var spn1rstCell = new Element("span");
+            spn1rstCell = new Element("span");
             spn1rstCell.setHTML("<span>" + spaces + "</span>");
-            var lnk = new Element("a", {"href": "javascript:void(null)", "styles": {"display": "inline"}});
+            lnk = new Element("a", {"href": "javascript:void(null)", "styles": {"display": "inline"}});
             lnk.adopt(new Element("img", {"src": "/media/images/plus.png", "styles": {"display": "inline"}}));
             spn1rstCell.appendText(c.state);
             spn1rstCell.setStyle("margin:0");
             spn1rstCell.setStyle("padding:0");
-            var tr = addTableRow(tbl, [{"value": spn1rstCell, "attrs": {"padding": "0"}}, 
+            tr = addTableRow(tbl, [{"value": spn1rstCell, "attrs": {"padding": "0"}}, 
                                   {"value": c.section, "attrs": {"styles": {"white-space": "nowrap", "padding": "0"}}}, 
                                   {"value": c.property, "attrs": {"styles": {"white-space": "nowrap", "padding": "0"}}}, 
                                   {"value": c.value1, "attrs": {"styles": {"white-space": "nowrap", "padding": "0"}}}, 
@@ -140,7 +139,7 @@ function toggleLine(line){
 function updateResults(){
     new Json.Remote("/scans/", {
         onComplete: function(scans){
-            var D = scans;
+            D = scans;
             scans.each(function(scan){
                 $$($("s1-result"), $("s2-result")).each(function(el){
                     opt = new Element("option", {"value": scan.id});
@@ -182,7 +181,7 @@ function getScan(scanID, target){
 
 function makeDiff(){
     if($("scan1-detail").getText().length > 0 && $("scan2-detail").getText().length > 0){
-        var args = {
+        args = {
             "scan1": $("scan1-detail").getText(),
             "scan2": $("scan2-detail").getText(),
             "scan1-xml": $("scan1-xml").getText(),
@@ -191,7 +190,7 @@ function makeDiff(){
         new XHR({
             method: "post",
             onSuccess: function(response){
-                var result = Json.evaluate(response);
+                result = Json.evaluate(response);
                 diff_text = result.text;
                 diff_compare = result.compare;
                 if($("color-diff").checked){
@@ -205,7 +204,7 @@ function makeDiff(){
 }
 
 function viewHTMLDiff(){
-    var args = {
+    args = {
         scan1: $("scan1-detail").getText(),
         scan2: $("scan2-detail").getText()
     }
@@ -214,12 +213,8 @@ function viewHTMLDiff(){
         method: "post",
         onSuccess: function(response){
             w = window.open("", "_blank");
-            if(w == null){
-                alert("Oops! UmitWeb has encountered a pop-pup blocker! please, allow UmitWeb to open pop-up windows.");
-            }else{
-                w.document.write(response);
-                w.document.close();
-            }
+            w.document.write(response);
+            w.document.close();
         }
     }).send("make_html_diff/", Object.toQueryString(args));
 }

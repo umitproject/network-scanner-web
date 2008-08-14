@@ -10,29 +10,29 @@ CommandWizardDialog = Dialog.extend({
         this.parent(options);
         this.options.content.empty();
 
-        var self = this;
-        var title = new Element("h3");
-        var commandConstructorDiv = new Element("div");
-        var lbl = new Element("label");
+        self = this;
+        title = new Element("h3");
+        commandConstructorDiv = new Element("div");
+        lbl = new Element("label");
         lbl.setHTML("<strong>Command: </strong>");
-        var divCommandConstructor = new Element("input", {"id": "divCommandConstructor",
+        divCommandConstructor = new Element("input", {"id": "divCommandConstructor",
                                             "style": "border:1px #DDD solid;margin: 5px;padding:4px; width: 95%;", "type": "text"});
         divCommandConstructor.value = "nmap <target>";
         commandConstructorDiv.adopt(lbl);
         commandConstructorDiv.adopt(divCommandConstructor);
         
         title.setText("UMIT Command Constructor Wizard");
-        var tabber = new Element("div", {"class": "tabber", "id": "tabberCommand"});
+        tabber = new Element("div", {"class": "tabber", "id": "tabberCommand"});
         
         
-        var tabBegin = new Element("div", {"class": "tabbertab", "style": "height: 285px"});
+        tabBegin = new Element("div", {class: "tabbertab", style: "height: 285px"});
         tabBegin.setHTML("UMIT Allow user to construct powerful commands in two distinct ways:<p/>" +
                          "<input type='radio' id='novice' name='novice_expert' checked='checked'/><label for='novice'>Novice</label><p/>"+
                          "<input type='radio' id='expert' name='novice_expert'/><label for='expert'>Expert</label>");
         tabber.adopt(tabBegin);
         
-        var tabSelectType = new Element("div", {"class": "tabbertab", "style": "height: 285px"});
-        var htext = "You wish to create a new profile, or just want to quickly create a command and run it once?<p/>";
+        tabSelectType = new Element("div", {class: "tabbertab", style: "height: 285px"});
+        htext = "You wish to create a new profile, or just want to quickly create a command and run it once?<p/>";
         htext += "<input type='radio' name='type' id='type_profile' checked='checked'/><label for='type_profile'>Profile</label><p/>";
         htext += "<input type='radio' name='type' id='type_command'/><label for='type_command'>Command</label><br/>";
         htext += "&nbsp;&nbsp;&nbsp;<label for='command_target'>Target:</label>"
@@ -40,92 +40,64 @@ CommandWizardDialog = Dialog.extend({
         tabSelectType.setHTML(htext);
         tabber.adopt(tabSelectType);
         
-        var tabProfileDetails = new Element("div", {"class": "tabbertab", "style": "height: 285px;"});
+        tabProfileDetails = new Element("div", {class: "tabbertab", style: "height: 285px;"});
         tabProfileDetails.setText("Please, enter the profile name, " +
                                   "and optionally, enter a hint, description and annotation for this " +
                                    "new profile:");
-        var spnProfile = new Element("table");
-        tabProfileDetails.adopt(spnProfile);
-        addTableRow(spnProfile, [{'valign': 'top', 
-                                  'value': "<label for='pprofile_name'><strong>Profile Name:</strong>&nbsp;&nbsp;</label>"},
-                                  "<input type='text' id='pprofile_name' size='40'/>"]);
-                                  
-        addTableRow(spnProfile, [{'valign': 'top',
-                                  'value': "<label for='pprofile_name'><strong>Profile Name:</strong>&nbsp;&nbsp;</label>"},
-                                  "<input type='text' id='profile_hint' size='40'/>"]);
-        addTableRow(spnProfile, [{'valign': 'top',
-                                  'value': "<label for='profile_description'>Description:&nbsp;&nbsp;</label>"},
-                                  "<textarea id='profile_description' rows='4' cols='37'></textarea>"]);
-                                  
-        addTableRow(spnProfile, [{'valign': 'top',
-                                  'value': "<label for='profile_annotation'>Annotation:&nbsp;&nbsp;</label>"},
-                                  "<textarea id='profile_annotation' rows='4' cols='37'></textarea>"]);
-        
-                                
-        /*spnProfile.setHTML("<tbody><tr><td valign='top'><label for='pprofile_name'><strong>Profile Name:</strong>&nbsp;&nbsp;</label></td>" +
-                           "<td><input type='text' id='pprofile_name' size='40'/></td></tr>" +                           
+        spnProfile = new Element("table");
+        spnProfile.setHTML("<tr><td valign='top'><label for='pprofile_name'><strong>Profile Name:</strong>&nbsp;&nbsp;</label></td>" +
+                           "<td><input type='text' id='pprofile_name' size='40'/></td></tr>" +
                            "<tr><td valign='top'><label for='profile_int'>Hint:&nbsp;&nbsp;</label></td>" +
-                           "<td><input type='text' id='profile_hint' size='40'/></td></tr>" +                          
+                           "<td><input type='text' id='profile_hint' size='40'/></td></tr>" +
                            "<tr><td valign='top'><label for='profile_description'>Description:&nbsp;&nbsp;</label></td>"+
                            "<td><textarea id='profile_description' rows='4' cols='37'></textarea></td></tr>" +
-                           
                            "<tr><td valign='top'><label for='profile_annotation'>Annotation:&nbsp;&nbsp;</label></td>" +
-                           "<td><textarea id='profile_annotation' rows='4' cols='37'></textarea></td></tr></tbody>");*/
-        
+                           "<td><textarea id='profile_annotation' rows='4' cols='37'></textarea></td></tr>");
+        tabProfileDetails.adopt(spnProfile);
         tabber.adopt(tabProfileDetails);
         
         new Json.Remote("/wizard/", {onComplete: function(sections){
             varData = sections;
-            for(var k in sections){
-                var s = sections[k];
-                var tab = new Element("div", {"class": "tabbertab", "style": "height: 285px;"});
+            for(k in sections){
+                s = sections[k]
+                tab = new Element("div", {class: "tabbertab", style: "height: 285px;"});
                 tab.setHTML("<b>" + s.label + "</b>");
-                var table = new Element("table", {"width": "100%"});
-                
+                table = new Element("table", {width: "100%"});
+                tableContent = "<tr>";
                 s.options.each(function(op){
-                    var row = [];
                     if(op.type == "list"){
-                        row.push({"width": "0", "value": ""});
-                        row.push("<label for='" + op.label + "'>" + op.label + "</label>");
-                        
-                        var selectTag = new Element("select", {"id": op.label});
-                        for(var y=0; y < op.options.length; y++){
-                            var lbl = op.options[y];
-                            var opt = new Element("option", {"value": lbl.command});
-                            opt.text = (lbl.name == "None")? "": lbl.name;
-                            try{
-                                selectTag.add(opt, null);
-                            }catch(e){
-                                // IE only
-                                selectTag.add(opt);
-                            }
+                        tableContent += "<tr><td width='0'></td>"
+                        tableContent += "<td><label for='" + op.label + "'>" + op.label + "</label></td>"
+                        tableContent += "<td><select id='" + op.label + "'>"
+                        for(y=0; y < op.options.length; y++){
+                            lbl = op.options[y];
+                            tableContent += "<option value='" + lbl.command + "'>" + ((lbl.name == "None")? "": lbl.name) + "</option>"
                         }
-                        row.push({"value": selectTag});
-                        addTableRow(table, row);
-
+                        tableContent += "</select></td></tr>"
                     }else if(op.type == "check"){
-                        row.push({"width": "0", "value": "input type='checkbox' id='" + op.label + "' value='" + op.command + "'/>"});
-                        row.push("<label for='" + op.label + "'>" + op.label + "</label>");
+                        tableContent += "<tr><td width='0'><input type='checkbox' id='" + op.label + "' value='" + op.command + "'/></td>"
+                        tableContent += "<td><label for='" + op.label + "'>" + op.label + "</label></td>"
                         if(op.arg_type){
-                            row.push("<input type='text' size='15' id='txt-" + op.label + "' class='wiz-input'/>");
+                            tableContent += "<td><input type='text' size='15' id='txt-" + op.label + "' class='wiz-input'/></td>"
                         }
-                        addTableRow(table, row);
+                        tableContent += "</tr>"
                     }
                 });
-
+                tableContent += "</tr>";
+                table.setHTML(tableContent);
                 tab.adopt(table);
                 tabber.adopt(tab);
                 divLoading.addClass("hide");
                 
                 tabber.getElements("select").each(function(el){
                     el.addEvent("change", function(e){
-                        for(var i = 0; i < this.length; i++){
-                            var v = this[i].value;
+                        for(i = 0; i < this.length; i++){
+                            v = this[i].value;
                             if(i != this.selectedIndex){
                                 removeCommand(v);
                             }
                         }
-                        var v = this[this.selectedIndex].value;
+                        v = this[this.selectedIndex].value;
                         updateCommand(v);
                     });
                 });
@@ -133,8 +105,8 @@ CommandWizardDialog = Dialog.extend({
                 
                 tabber.getElements("input[type=checkbox]").each(function(el){
                     el.addEvent("change", function(e){
-                        var v = this.value;
-                        var cmpl = ($defined($("txt-" + v.id)))? $("txt-" + v.id).value: "";
+                        v = this.value;
+                        cmpl = ($defined($("txt-" + v.id)))? $("txt-" + v.id).value: "";
                         if(this.checked){
                             updateCommand(v, cmpl);
                         }else{
@@ -146,20 +118,20 @@ CommandWizardDialog = Dialog.extend({
                 tabber.getElements("input[class='wiz-input']").each(function(el){
                     el.addEvent("focus", function(e){
                         $(this.id.substring("txt-".length)).checked = true;
-                        var v = $(this.id.substring("txt-".length)).value;
-                        var cmpl = this.value;
+                        v = $(this.id.substring("txt-".length)).value
+                        cmpl = this.value;
                         updateCommand(v, cmpl);
                     });
                     
                     el.addEvent("keyup", function(e){
-                        var v = $(this.id.substring("txt-".length)).value;
-                        var cmpl = this.value;
+                        v = $(this.id.substring("txt-".length)).value
+                        cmpl = this.value;
                         updateCommand(v, cmpl);
                     });
                 });
             }
             
-            var tabFinish = new Element("div", {"class": "tabbertab", "style": "height: 285px;"});
+            tabFinish = new Element("div", {class: "tabbertab", style: "height: 285px;"});
             tabFinish.setHTML("UMIT generated the nmap command. Click Apply to finish this wizard.");
             tabber.adopt(tabFinish);
             
@@ -173,16 +145,16 @@ CommandWizardDialog = Dialog.extend({
             self.close();
         }}).send();
         this.options.content.addClass("hide");
-        var to = tabberOptions;
+        to = tabberOptions;
         this.options.content.adopt(title);
         this.options.content.adopt(commandConstructorDiv);
         this.options.content.adopt(new Element("hr"));
         this.options.content.setStyle("padding", "10px;");
         
-        var actionDiv = new Element("div", {"style": "text-align: right"});
-        var btnNext = new Element("input", {"type": "button", "value":"Next"});
-        var btnPrevious = new Element("input", {"type": "button", "value":"Previous", "style": "margin-right: 6px"});
-        var btnCancel = new Element("input", {"type": "button", "value":"Cancel", "style": "margin-right: 20px"});
+        actionDiv = new Element("div", {style: "text-align: right"});
+        btnNext = new Element("input", {type: "button", value:"Next"});
+        btnPrevious = new Element("input", {type: "button", value:"Previous", style: "margin-right: 6px"});
+        btnCancel = new Element("input", {type: "button", value:"Cancel", style: "margin-right: 20px"});
     
         actionDiv.adopt(btnCancel);
         actionDiv.adopt(btnPrevious);
@@ -203,7 +175,7 @@ CommandWizardDialog = Dialog.extend({
         btnPrevious.disabled = true;
         
         btnNext.addEvent("click", function(e){
-            var size = tabber.tabber.tabs.length-2;
+            size = tabber.tabber.tabs.length-2;
             switch(tabber.tabberCount){
                 case 0:
                     if(!$("novice").checked){
@@ -211,7 +183,7 @@ CommandWizardDialog = Dialog.extend({
                         return;*/
                     
                         self.close();
-                        var rs = new ProfileEditorDialog();
+                        rs = new ProfileEditorDialog();
                         rs.run();
                         return;
                     }
@@ -232,7 +204,7 @@ CommandWizardDialog = Dialog.extend({
                     break;
                 case 2:
                     if($("pprofile_name").value.trim().length == 0){
-                        alert("Unnamed profile!\nYou must provide a name for this profile.");
+                        alert("Unnamed profile!\nou must provide a name for this profile.");
                         return;
                     }
                     break;
@@ -243,11 +215,11 @@ CommandWizardDialog = Dialog.extend({
                     $("command").value = divCommandConstructor.value;
                     if($("type_command").checked){
                         $("target").value = $("command_target").value;
-                        var lastHost = $("target").value;
+                        lastHost = $("target").value;
                         runScan(e);
                         self.close();
                     }else if($("type_profile").checked){
-                        var args = {
+                        args = {
                             name: $("pprofile_name").value,
                             command: divCommandConstructor.value,
                             hint: $("profile_hint").value,
@@ -255,7 +227,7 @@ CommandWizardDialog = Dialog.extend({
                             annotation: $("profile_annotation").value
                         }
                         
-                        var xhr = new XHR({method: "post",
+                        xhr = new XHR({method: "post",
                                       onSuccess: function(req){
                                         alert("Profile saved succefull!");
                                         updateProfiles();
@@ -274,7 +246,7 @@ CommandWizardDialog = Dialog.extend({
         
         
         btnPrevious.addEvent("click", function(e){
-            var size = tabber.tabber.tabs.length-2;
+            size = tabber.tabber.tabs.length-2;
             switch(tabber.tabberCount){
                 default:
                     btnNext.value = "Next";
@@ -291,26 +263,25 @@ CommandWizardDialog = Dialog.extend({
             tabber.tabber.tabShow(tabber.tabberCount);
             btnNext.disabled = false;
         });
-        divLoading = new Element("div", {"class": 'ajax-loading', "style": "float: left; width: 100%"});
+        divLoading = new Element("div", {class: 'ajax-loading', style: "float: left; width: 100%"});
         this.window.adopt(divLoading);
     }
 });
 
 
 function updateCommand(value, complement){
-	var commandLine = $("divCommandConstructor");
-	var target = "";
+	commandLine = $("divCommandConstructor");
 	if($("type_command").checked){
-		target = $("command_target").value.trim();
+		target = $("command_target").value.trim()
 	}else{
-		target = "<target>";
+		target = "<target>"
 	}
 	
 	commandLine.value = commandLine.value.replace(" " + target, "");
-	var oldValue = commandLine.value;
+	oldValue = commandLine.value;
 
-	var regex = new RegExp(value.replace(" ", "[ ]+").replace("%s", "[^ ^$]*"));
-	var newValue = "";
+	regex = new RegExp(value.replace(" ", "[ ]+").replace("%s", "[^ ^$]*"));
+	
 	if($defined(complement)){
 		newValue = value.replace("%s", complement);
 	}else{

@@ -1,43 +1,38 @@
-var h;
-
 function loadHosts(hosts){
-	var tbHosts = $("hosts_table").getElement("tbody");
-	emptyTBody(tbHosts);
-	for(var iH = 0; iH < hosts.length; iH++){
-		h = hosts[iH];
-		var txt = "";
+	tbHosts = $("hosts_table").getElement("tbody").empty();
+	for(iH = 0; iH < hosts.length; iH++){
+		h = hosts[iH]
 		if(h.hostnames.length > 0){
-			txt = h.hostnames[0].hostname;
+			txt = h.hostnames[0].hostname
 		}else{
-			txt = h.ip.addr;
+			txt = h.ip.addr
 		}
 		
-		var img_src = '/media/images/unknown_24.png';
+		img_src = '/media/images/unknown_24.png';
 		if($defined(h.osmatch.name) && h.osmatch.name != ""){
-			var oses = {"irix": "irix",
+			oses = {"irix": "irix",
 				"solaris": "solaris",
 				"linux": "linux",
 				"freebsd": "freebsd",
-				"mac os x": "macosx",
+				"macos x": "macosx",
 				"openbsd": "openbsd",
 				"windows": "win",
 				"ubuntu": "ubuntu", 
 				"red hat": "redhat"}
 			img_src = "/media/images/default_24.png"
-			for(var k in oses){
+			for(k in oses){
 				if(h.osmatch.name.toLowerCase().contains(k)){
-					img_src = "/media/images/" + oses[k] + "_24.png";
-					break;
+					img_src = "/media/images/" + oses[k] + "_24.png"
 				}
 			}
 		}
-		var img = new Element("img", {'src': img_src});
+		img = new Element("img", {'src': img_src});
 		
-		var lnk = new Element("a", {'href': 'javascript:void(null)'});
-		var vX = iH
+		lnk = new Element("a", {'href': 'javascript:void(null)'});
+		vX = iH
 		lnk.addEvent("click", function(e){
 			e = new Event(e);
-			var pId = this.parentNode.parentNode.getAttribute("id").substr("host-".length);
+			pId = this.parentNode.parentNode.getAttribute("id").substr("host-".length);
 			selectHost(e, hosts, pId);
 		});
 		lnk.setText(txt);
@@ -119,22 +114,21 @@ function selectHost(event, sHosts, index){
 }
 
 function loadPortsTab(pHosts){
-	var tbody = $("ports_table").getElement("tbody");
-	emptyTBody(tbody);
-	var lines = new Array();
-	var count = 0;
-	for(var k = 0; k < pHosts.length; k++){
-		for(var i = 0; i < pHosts[k].ports.length; i++){
-			for(var j = 0; j < pHosts[k].ports[i].port.length; j++){
-				var port = pHosts[k].ports[i].port[j];
-				var img = new Element("img");
+	tbody = $("ports_table").getElement("tbody").empty();
+	lines = new Array();
+	count = 0;
+	for(k = 0; k < pHosts.length; k++){
+		for(i = 0; i < pHosts[k].ports.length; i++){
+			for(j = 0; j < pHosts[k].ports[i].port.length; j++){
+				port = pHosts[k].ports[i].port[j];
+				img = new Element("img");
 				img.src = "/media/images/" + ((port.port_state == "open")? "open": "closed") + ".png";
 				if(port.port_state == "open"){
 					img.src = "/media/images/open.png";
 				}else{
-					
+					img
 				}
-				var found = false;
+				found = false;
 				for(m = 0; m < lines.length; m++){
 					if(lines[m][1] == port.portid){
 						found = true;
@@ -150,7 +144,7 @@ function loadPortsTab(pHosts){
 		}
 	}
 	for(k = 0; k < lines.length; k++){
-		addTableRow(tbody, lines[k]);
+		addTableRow(tbody, lines[k])
 	}
 }
 
@@ -201,7 +195,7 @@ function loadHostsTab(hostset){
 		
 		tbl = new Element("table");
 		
-		var img_src = "/media/images/unknown_48.png";
+		img_src = "/media/images/unknown_48.png"
 		if($defined(h.osmatch.name) && h.osmatch.name != ""){
 			oses = {"irix": "irix",
 				"solaris": "solaris",
@@ -213,10 +207,9 @@ function loadHostsTab(hostset){
 				"ubuntu": "ubuntu", 
 				"red hat": "redhat"}
 			img_src = "/media/images/default_48.png";
-			for(var k in oses){
+			for(k in oses){
 				if(h.osmatch.name.toLowerCase().contains(k)){
 					img_src = "/media/images/" + oses[k] + "_48.png"
-					break;
 				}
 			}
 		}
@@ -554,8 +547,7 @@ function selectService(scan, service_id, event){
 		$("service-" + s).addClass("selected");
 	});
 	
-	st = $("hosts_s_table").getElement("tbody")
-	emptyTBody(st);
+	st = $("hosts_s_table").getElement("tbody").empty();
 	$("hosts_s_table_placeholder").setStyle("display", "block");
 	$("ports_table_placeholder").setStyle("display", "none");
 	$("tabber-result").tabber.tabShow(0);
@@ -582,22 +574,20 @@ function selectService(scan, service_id, event){
 function loadServices(scan){
     ports = scan.list_port;
     if(ports){
-        
-	    resultServices = [];
+	services = new Array();
         ports.each(function(port){
-            var st = $("services_table").getElement("tbody");
-            
-            var lnk = new Element("a", {"href": "javascript:void(null)"});
+            st = $("services_table").getElement("tbody");
+            lnk = new Element("a", {"href": "javascript:void(null)"});
             lnk.setText(port.service_name);
             lnk.addEvent("click", function(e){
                 e = new Event(e);
                 selectService(scan, port.service_name, e);
             });
-	        if(!resultServices.contains(port.service_name)){
-    		    resultServices.include(port.service_name);
-    		    addTableRow(st, [lnk], {"id": "service-" + port.service_name});
-    	    }
-        });
+	    if(!services.contains(port.service_name)){
+		services.include(port.service_name);
+		addTableRow(st, [lnk], {"id": "service-" + port.service_name});
+	    }
+        })
     }
 }
 
@@ -713,8 +703,7 @@ function checkScanStatus(scanID){
 			      },
 			      onFailure: function(req){
 			        $("nmap-output").removeClass("ajax-loading");
-			        emptyTBody($("hosts_table").getElement("tbody"));
-			        
+			        $("hosts_table").getElement("tbody").empty();
 				if(req.status == 200){
 					$("nmap-output").setHTML(req.responseText);
 				}else{
@@ -742,7 +731,7 @@ function runScan(e){
 		result_box = $("nmap-output");
 		result_box.empty().addClass("ajax-loading");
 		tbHosts = $("hosts_table").getElement("tbody");
-		emptyTBody(tbHosts);
+		tbHosts.empty();
 		tr = new Element("tr");
 		td1 = new Element("td");
 		td1.adopt(new Element("img", {'src': '/media/images/spinner.gif'}));
@@ -753,13 +742,40 @@ function runScan(e){
 		tbHosts.adopt(tr);
 		//tr2 = tr.cloneNode();
 		
-		emptyTBody($("ports_table").getElement("tbody"));
+		$("ports_table").getElement("tbody").empty();
 		$("hosts_tab").empty();
 		$("scan_details").empty();
 		$("tabber-result").tabber.tabShow(1);
-		emptyTBody($("services_table").getElement("tbody"));
-		var txtContent = $("profiles")[$("profiles").selectedIndex].textContent;
-		$("profile_name").value = txtContent;
+		$("services_table").getElement("tbody").empty();
+		$("profile_name").value = $("profiles")[$("profiles").selectedIndex].textContent
+	
+		/*reqObj = $("frmScan").send({onComplete: function(tResult){
+				result = Json.evaluate(tResult);
+				if(result.result == "OK"){
+					    checkScanStatus(result.id)
+				}else{
+					    result_box.removeClass("ajax-loading").addClass("ajax-error");
+					    result_box.setText(result.status);
+				}
+			  },
+			  onFailure: function(req){
+			    result_box.removeClass("ajax-loading");
+			    $("hosts_table").getElement("tbody").empty();
+			    if(req.status == 200){
+				$("nmap-output").setHTML(req.responseText);
+			    }else{
+				showError(req, "nmap-output");
+			    }
+			    scanLock = false;
+			  }
+		});
+		reqObj.$events.onStateChange = [function(req){
+			alert(req.readyState);
+			request = req;
+			if(req.readyState == 3){
+				checkIfFinished();
+			}
+		}]*/
 	
 		args = {
 			target: $("target").value,

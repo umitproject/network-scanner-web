@@ -29,19 +29,11 @@ UploadResultDialog = Dialog.extend({
         rdDatabase = new Element("input", {"type": "radio", "name": "type", "value": "database", "id": "rdDatabase", "checked": "checked"});
         selectScan = new Element("select", {"name": "scanId"});
         selectScan.setStyle("width", "60px");
-        opt = new Element("option", {"value": "0"});
-        opt.text = "--- Select a saved scan ---";
-        try{
-            selectScan.add(opt, null);
-        }catch(e){
-            //IE only
-            selectScan.add(opt);
-        }
-        try{
-            selectScan.setStyle("width", "300px;");
-        }catch(e){
-            // IE doesn't support <select> resizing
-        }
+        opt = new Element("option");
+        opt.setText("--- Select a saved scan ---");
+        opt.value = "0";
+        selectScan.add(opt, null);
+        selectScan.setStyle("width", "300px;");
         selectScan.addEvent("focus", function(e){
             rdDatabase.checked = true;
         });
@@ -49,12 +41,8 @@ UploadResultDialog = Dialog.extend({
             onComplete: function(scans){
                 scans.each(function(s){
                     opt = new Element("option", {"value": s.id});
-                    opt.text = s.name + " (" + s.date + ")";
-                    try{
-                        selectScan.add(opt, null);
-                    }catch(e){
-                        selectScan.add(opt);
-                    }
+                    opt.setText(s.name + " (" + s.date + ")");
+                    selectScan.add(opt, null);
                 });
             }
         }).send();
@@ -71,19 +59,11 @@ UploadResultDialog = Dialog.extend({
         frm.adopt(fieldSetFile);
         frm.adopt(fieldSetDatabase);
         frm.adopt(btnSubmit);
-        var thisDialog = this;
+        self = this
         frm.addEvent("submit", function(e){
             iFrame.addEvent("load", function(e2){
-                var txt = null;
-                
-                if(window.ie){
-                    txt = this.contentWindow.document.getElementsByTagName("pre")[0].innerText;
-                }else{
-                    txt = this.contentDocument.getElementsByTagName("pre")[0].textContent;
-                }
-                
                 try{
-                    result = Json.evaluate(txt);
+                    result = Json.evaluate(this.contentDocument.getElementsByTagName("pre")[0].textContent);
                     if(result.result == "OK" && $defined(result.output.full)){
                         varData = result.output.full;
                         loadScanData(varData);
@@ -99,7 +79,7 @@ UploadResultDialog = Dialog.extend({
                         alert(result.output);
                     }
                 }catch(e){
-                    $("nmap-output").setText(txt);
+                    $("nmap-output").setText(this.contentDocument.getElementsByTagName("pre")[0].textContent);
                 }
             });
         });
@@ -162,7 +142,7 @@ SaveResultDialog = Dialog.extend({
         this.options.content.setStyle("padding", "3px;");
         this.options.content.adopt(iFrame);
         this.options.content.adopt(frm);
-        var thisDialog = this;
+        self = this;
         frm.addEvent("submit", function(e){
             
             if(txtFilename.value.trim().length == 0){
@@ -184,7 +164,7 @@ SaveResultDialog = Dialog.extend({
                             eval("response = " + req);
                             if(response.result == "OK"){
                                 alert("Scan saved succefully!");
-                                thisDialog.close();
+                                self.close();
                             }else{
                                 alert("Error loading data. Check umitweb.log for details.");
                             }

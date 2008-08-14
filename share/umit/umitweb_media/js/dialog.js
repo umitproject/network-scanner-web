@@ -7,15 +7,14 @@ Dialog = new Class({
         height: 100
     },
     initialize: function(options){
-        self = this;
+        var self = this;
         this.options = $merge(this.options, options || {});
         this.window = new Element("div", {"class": "dialog"});
-        header = new Element("h2");
-	d = new Drag.Move(this.window, {handle: header});
-        lblTitle = new Element("label");
+        var thisHeader = new Element("h2");
+        var lblTitle = new Element("label");
         lblTitle.setText(this.options.title);
-        header.adopt(lblTitle);
-        lnk = new Element("a", {"href": "javascript: void(null)"});
+        thisHeader.adopt(lblTitle);
+        var lnk = new Element("a", {"href": "javascript: void(null)"});
         lnk.setText("X");
         lnk.setStyle("position", "absolute");
         lnk.setStyle("right", "0");
@@ -24,16 +23,30 @@ Dialog = new Class({
             new Event(e).stop();
             self.close();
         });
-        header.adopt(lnk);
+        thisHeader.adopt(lnk);
         
         this.window.setStyle("position", "absolute");
         this.window.setStyle("left", "" + ((getViewportSize()[0]/2)-(this.options.width/2)) + "px");
         this.window.setStyle("top", "" + ((getViewportSize()[1]/2) - (this.options.height/2)) + "px");
         this.window.setStyle("width", this.options.width);
         this.window.setStyle("height", this.options.height);
+        this.window.setStyle("zIndex", "101")
         
-        this.window.adopt(header);
+        this.window.adopt(thisHeader);
         this.window.adopt(this.options.content);
+        var d = new Drag.Move(this.window, {'handle': thisHeader});
+        
+        if(window.ie){
+            var iFrame = new Element("iframe");
+            iFrame.src = "javascript:false";
+            iFrame.scrolling = "no";
+            iFrame.frameBorder = "0";
+            iFrame.setStyle("width", this.options.width);
+            iFrame.setStyle("height", this.options.height);
+            iFrame.style.zIndex = "-1";
+            iFrame.setStyle("position", "absolute");
+            iFrame.injectBefore(thisHeader);
+        }
     },
     
     run: function(){

@@ -135,14 +135,14 @@ def upload_result(req):
                 parser = NmapParser()
                 parser.set_xml_file(req.FILES['scan_result']['temp_file'])
                 parser.parse()
-                parsed_scan = __scan_to_json(parser)
+                parsed_scan = ScanJsonParser(parser).parse()
                 junk = r"odpojfsdkjfpisudŕij208u-0w9rsdnfkdfçwrtwqr/fsasd~/???çds"
                 key = md5.new(str(random.randint(0, sys.maxint-1)) \
                                   + str(random.randint(1, sys.maxint-1)//2) \
                                   + junk).hexdigest()
                 req.session['scan_result_' + key] = open(req.FILES['scan_result']['temp_name'], 'r').read()
                 text_out = parser.nmap_output.replace("'", "\\'").replace("\r", "").replace("\n", "\\n' + \n'")
-                parsed_scan = str(parsed_scan).replace("\n", "\\n' + \n'")
+                parsed_scan = parsed_scan.replace("\n", "\\n' + \n'")
                 return HttpResponse(("{'result': 'OK', 'id': '%s', 'output': " + \
                                     "{'plain': '%s', 'full': %s}}") % \
                                     (key, text_out, parsed_scan), "text/plain")
@@ -163,14 +163,13 @@ def upload_result(req):
             return HttpResponse("{'result': 'OK', 'output': {'plain': '%s', 'full': %s}}" % \
                                 (parser.get_nmap_output().replace("'", "\\'").\
                                 replace("\r", "").replace("\n", "\\n' + \n'"),
-                                str(__scan_to_json(parser))), 
+                                ScanJsonParser(parser).parse()), 
                                 "text/plain")
     else:
         raise HttpError(400, "Invalid GET request.")
 
 @authenticate(ERROR)
 def save_result(req, scan_id):
-    print req.POST
     if req.POST:
         scan = req.session.get("scan_result_" + scan_id, None)
         parser = NmapParser()
