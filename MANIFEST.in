@@ -1,4 +1,4 @@
-include umit README COPYING COPYING_HIGWIDGETS
+include umit umitweb.py README COPYING COPYING_HIGWIDGETS
 recursive-include share/pixmaps/umit *.png *.svg *.xpm umit.opf umit.opt
 recursive-include share/icons/umit *.ico
 recursive-include share/locale/id/LC_MESSAGES/ *.mo
@@ -23,8 +23,16 @@ recursive-include share/doc/umit/searching *.xml
 recursive-include share/doc/umit/wizard *.xml
 recursive-include share/doc/umit/screenshots *.png
 recursive-include share/umit/config *.xml *.conf *.usp umit_version
+recursive-include share/umit/templates *.html COPYING
+recursive-include share/umit/templates/html *.html COPYING
+recursive-include share/umit/umitweb_media/css *.css COPYING
+recursive-include share/umit/umitweb_media/js *.js COPYING
+recursive-include share/umit/umitweb_media/images *.ico *.png COPYING
 recursive-include share/umit/misc *.dmp
 recursive-include umitCore *.py
 recursive-include umitGUI *.py
+recursive-include umitWeb *.py
+recursive-include umitWeb/views *.py
+recursive-include umitWeb/views/html *.py
 recursive-include higwidgets *.py
 recursive-include utils *.py
