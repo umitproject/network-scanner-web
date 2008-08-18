@@ -31,7 +31,7 @@ DiffHandler = new Class({
             $("diff-pane").setHTML(new_lines.join("<br/>"));
         }
         if(diff_compare != null){
-            $("compare-table").getElement("tbody").empty();
+            emptyTBody($("compare-table").getElement("tbody"));
             this.showCompareTable(diff_compare, true);
         }
     },
@@ -103,7 +103,7 @@ DiffHandler = new Class({
             $("diff-pane").setHTML(diff_text.join("<br/>"));
         }
         if(diff_compare != null){
-            $("compare-table").getElement("tbody").empty();
+            emptyTBody($("compare-table").getElement("tbody"));
             this.showCompareTable(diff_compare, false);
         }
     }
@@ -144,8 +144,13 @@ function updateResults(){
             scans.each(function(scan){
                 $$($("s1-result"), $("s2-result")).each(function(el){
                     opt = new Element("option", {"value": scan.id});
-                    opt.setText(scan.name + " (" + scan.date + ")");
-                    el.add(opt, null);
+                    if(window.ie){
+                        opt.text = scan.name + "(" + scan.date + ")";
+                        el.add(opt);
+                    }else{
+                        opt.setText(scan.name + " (" + scan.date + ")");
+                        el.add(opt, null);
+                    }
                 });
             });
         },
@@ -258,7 +263,7 @@ window.addEvent("domready", function(){
     
     $$($("u1-result"), $("u2-result")).each(function(el){
         el.addEvent("change", function(e){
-            id = this.id[1];
+            id = this.id.substr(1, 1);
             if($("u" + id + "-result").value.length > 0){
                 $("spinner" + id + "-file").removeClass("hide");
                 $("iframe-scan" + id).removeEvents();

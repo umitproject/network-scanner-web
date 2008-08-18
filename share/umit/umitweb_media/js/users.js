@@ -9,12 +9,12 @@ UserDialog = Dialog.extend({
         this.parent(options);
         this.options.content.empty();
 
-        self = this;
+        var thisObj = this;
         tabber = new Element("div", {"class": "tabber", "id": "tabberUser"});
         
-        tabMain = new Element("div", {class: "tabbertab", style: "height: 145px;", title: "Main Information"});
+        tabMain = new Element("div", {"class": "tabbertab", "style": "height: 145px;", "title": "Main Information"});
         tabber.adopt(tabMain);
-        tabRoles = new Element("div", {class: "tabbertab", style: "height: 145px;", title: "Roles"});
+        tabRoles = new Element("div", {"class": "tabbertab", "style": "height: 145px;", "title": "Roles"});
         tabber.adopt(tabRoles);
         
         tbl = new Element("table");
@@ -27,8 +27,8 @@ UserDialog = Dialog.extend({
         lblSuperuser = new Element("label", {"for": "check_superuser"});
         lblSuperuser.setText("User can create other users?");
         
-        if(self.options.data){
-            d = self.options.data;
+        if(thisObj.options.data){
+            d = thisObj.options.data;
             inputName.value = d.name;
             inputLogin.value = d.login;
             inputSuperuser.checked = d.superuser;
@@ -38,7 +38,7 @@ UserDialog = Dialog.extend({
         addTableRow(tbl, ["", "Name:*", inputName]);
         addTableRow(tbl, ["", "Login:*", inputLogin]);
         addTableRow(tbl, ["", "Password:*", inputPassword]);
-        if(self.options.data){
+        if(thisObj.options.data){
             hintPassword = new Element("span", {"class": "hint"});
             hintPassword.setText("Fill the field above ONLY if you want to change the password.");
             addTableRow(tbl, [{"value": hintPassword, "attrs": {"colSpan": "3"}}]);
@@ -87,7 +87,7 @@ UserDialog = Dialog.extend({
             btnMoveDown.addEvent("click", function(e){
                 for(j = selectedRoles.length-2; j >= 0; j--){
                     if(selectedRoles[j].selected){
-                        opt = selectedRoles[j];
+                        var opt = selectedRoles[j];
                         optBefore = selectedRoles[j+1];
                         opt.injectAfter(optBefore);
                     }
@@ -144,24 +144,24 @@ UserDialog = Dialog.extend({
             tabRoles.adopt(selectRolesTable);
             tabRoles.adopt(lbl);
             
-            self.options.content.removeClass("hide");
+            thisObj.options.content.removeClass("hide");
             to = {};
             to.div = tabber;
             tabber.tabber = new tabberObj(to);
             
             divLoading.addClass("hide");
-            self.options.content.removeClass("hide");
+            thisObj.options.content.removeClass("hide");
             setInputStyles();
-            if(self.options.data){
-                for(j = 0; j < self.options.data.roles.length; j++){
-                    opt = $$("option[value=" + self.options.data.roles[j] + "]")[0];
+            if(thisObj.options.data){
+                for(j = 0; j < thisObj.options.data.roles.length; j++){
+                    opt = $$("option[value=" + thisObj.options.data.roles[j] + "]")[0];
                     selectedRoles.add(opt, null);
                 }
             }
         },
         onFailure: function(req){
             alert("Error while UMIT loading roles. See umitweb.log for details.");
-            self.close();
+            thisObj.close();
         }}).send();
         
         this.options.content.addClass("hide");
@@ -175,14 +175,14 @@ UserDialog = Dialog.extend({
         actionDiv.adopt(btnOK);
         
         btnCancel.addEvent("click", function(e){
-            self.close();
+            thisObj.close();
         });
         
         btnOK.addEvent("click", function(e){
             reqFields = [inputName, inputLogin]
             saveURL = "add/"
-            if(self.options.data){
-                saveURL = "edit/" + self.options.data.login + "/"
+            if(thisObj.options.data){
+                saveURL = "edit/" + thisObj.options.data.login + "/"
             }else{
                 reqFields.include(inputPassword)
             }
@@ -236,7 +236,7 @@ UserDialog = Dialog.extend({
                                     alert("User information saved succefully!");
                                     
                                     loadUsersTableData();
-                                    self.close();
+                                    thisObj.close();
                                 }else{
                                     alert(response.error);
                                     return;
@@ -250,14 +250,15 @@ UserDialog = Dialog.extend({
         
         this.options.content.adopt(tabber);
         this.options.content.adopt(actionDiv);
-        divLoading = new Element("div", {class: 'ajax-loading', style: "float: left; width: 100%"});
+        divLoading = new Element("div", {"class": 'ajax-loading', "style": "float: left; width: 100%"});
         this.window.adopt(divLoading);
         
     }
 });
 
 function fillTableData(users){
-    t = $("users_table").getElement("tbody").empty();
+    var t = $("users_table").getElement("tbody");
+    emptyTBody(t);
 
     for(index = 0; index < users.length; index++){
         u = users[index];
@@ -282,7 +283,8 @@ function loadUsersTableData(){
     new Json.Remote("get_all/", {
         onComplete: fillTableData,
         onFailure: function(req){
-            t = $("users_table").getElement("tbody").empty();
+            var t = $("users_table").getElement("tbody");
+            emptyTBody(t);
             addTableRow(t, [{"value": "Error loading data. Please see umitweb.log for details.", "attrs": {"colSpan": "5"}} ], {"class": "error"});
         }
     }).send();
@@ -305,7 +307,7 @@ function openUserDialog(data){
             },
             onFailure: function(req){
                 alert("Error while UMIT loading user information. See umitweb.log for details.");
-                self.close();
+                thisObj.close();
             }
         }).send();
     }
@@ -345,7 +347,8 @@ window.addEvent("domready", function(e){
             }
         },
         onFailure: function(req){
-            t = $("users_table").getElement("tbody").empty();
+            var t = $("users_table").getElement("tbody");
+            emptyTBody(t);
             addTableRow(t, [{"value": "Error loading data. Please see umitweb.log for details.", "attrs": {"colSpan": "5"}} ], {"class": "error"});
         }});
     });

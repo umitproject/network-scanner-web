@@ -100,6 +100,7 @@ class HttpRequest(object):
             
             if pdata:
                 if "multipart/form-data" not in self.headers.get('content-type', 'x-www-urlencoded'):
+                    self.logger.debug("Simple Form! Encoding: %s" % str(self.headers))
                     if "+" in pdata:
                         unquote_func = unquote_plus
                     else:
@@ -110,6 +111,7 @@ class HttpRequest(object):
                         self.POST[unquote_func(key)] = unquote_func(value)
                 else:
                     #multipart/form-data form
+                    self.logger.debug("Multipart form!")
                     boundary = re.findall(r".*;[\s][Bb][Oo][Uu][Nn][Dd][Aa][Rr][Yy]=([^;]*).*", self.headers['content-type'])
                     if boundary:
                         boundary = boundary[0]
@@ -148,6 +150,7 @@ class HttpRequest(object):
                         else:
                             #Type: Plain text
                             self.POST[match_text.groupdict()['name']] = data[2:-2]
+                    self.logger.debug("FILES: %s" % str(self.FILES))
             else:
                 print "No pdata!"
         self.COOKIES = SimpleCookie(self.headers.get("cookie", ""))

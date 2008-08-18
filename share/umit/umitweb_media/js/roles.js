@@ -1,3 +1,5 @@
+var divLoading = null;
+
 RoleDialog = Dialog.extend({
     options: {
         title: "Role Management",
@@ -12,9 +14,9 @@ RoleDialog = Dialog.extend({
         var self = this;
         var tabber = new Element("div", {"class": "tabber", "id": "tabberRole"});
         
-        var tabMain = new Element("div", {class: "tabbertab", style: "height: 175px;", title: "Main Information"});
+        var tabMain = new Element("div", {"class": "tabbertab", "style": "height: 175px;", "title": "Main Information"});
         tabber.adopt(tabMain);
-        tabPermissions = new Element("div", {class: "tabbertab", style: "height: 175px;", title: "Permissions"});
+        tabPermissions = new Element("div", {"class": "tabbertab", "style": "height: 175px;", "title": "Permissions"});
         tabber.adopt(tabPermissions);
         
         var tbl = new Element("table");
@@ -52,8 +54,13 @@ RoleDialog = Dialog.extend({
                 var p = permissions[k];
                 if(p != "allow-all" && p != "deny-all"){
                     var opt = new Element("option", {"value": p});
-                    opt.setText(p);
-                    selectPermissions.add(opt, null);
+                    if(window.ie){
+                        opt.text = p;
+                        selectPermissions.add(opt);
+                    }else{
+                        opt.setText(p);
+                        selectPermissions.add(opt, null);
+                    }
                 }
             }
             
@@ -94,7 +101,11 @@ RoleDialog = Dialog.extend({
                     }
                 }
                 for(var j = 0; j < options.length; j++){
-                    selectedPermissions.add(options[j], null);
+                    try{
+                        selectedPermissions.add(options[j], null);
+                    }catch(exception){
+                        selectedPermissions.add(options[j]);
+                    }
                 }
             });
             
@@ -109,7 +120,11 @@ RoleDialog = Dialog.extend({
                     }
                 }
                 for(var j = 0; j < options.length; j++){
-                    selectPermissions.add(options[j], null);
+                    try{
+                        selectPermissions.add(options[j], null);
+                    }catch(exception){
+                        selectPermissions.add(options[j]);
+                    }
                 }
             });
             
@@ -136,10 +151,18 @@ RoleDialog = Dialog.extend({
             var selectLast = new Element("select");
             var optDeny = new Element("option", {"value": "deny-all"});
             var optAllow = new Element("option", {"value": "allow-all"});
-            optDeny.setText("Deny all commands");
-            optAllow.setText("Allow all commands");
-            selectLast.add(optDeny, null);
-            selectLast.add(optAllow, null);
+            
+            if(window.ie){
+                optDeny.text = "Deny all commands";
+                optAllow.text = "Allow all commands";
+                selectLast.add(optDeny);
+                selectLast.add(optAllow);
+            }else{
+                optDeny.setText("Deny all commands");
+                optAllow.setText("Allow all commands");
+                selectLast.add(optDeny, null);
+                selectLast.add(optAllow, null);
+            }
             addTableRow(selectPermissionsTable, [{"value": selectLast, "attrs": {"colSpan": "4"}}]);
             lblLast.injectBefore(selectLast);
             tabPermissions.adopt(selectPermissionsTable);
@@ -156,7 +179,11 @@ RoleDialog = Dialog.extend({
             if(self.options.data){
                 for(var j = 0; j < self.options.data.permissions.length - 1; j++){
                     var opt = $$("option[value=" + self.options.data.permissions[j] + "]")[0];
-                    selectedPermissions.add(opt, null);
+                    if(window.ie){
+                        selectedPermissions.add(opt);
+                    }else{
+                        selectedPermissions.add(opt, null);
+                    }
                 }
                 if(self.options.data.permissions[self.options.data.permissions.length-1] == "allow-all"){
                     optAllow.selected = true;
@@ -173,9 +200,9 @@ RoleDialog = Dialog.extend({
         this.options.content.addClass("hide");
         this.options.content.setStyle("padding", "10px;");
         
-        var actionDiv = new Element("div", {style: "text-align: right"});
-        var btnOK = new Element("input", {type: "button", value:"OK", styles: {"width": "80px;"}});
-        var btnCancel = new Element("input", {type: "button", value:"Cancel", style: "margin-right: 20px"});
+        var actionDiv = new Element("div", {"style": "text-align: right"});
+        var btnOK = new Element("input", {"type": "button", "value":"OK", "styles": {"width": "80px;"}});
+        var btnCancel = new Element("input", {"type": "button", "value":"Cancel", "style": "margin-right: 20px"});
     
         actionDiv.adopt(btnCancel);
         actionDiv.adopt(btnOK);
@@ -248,14 +275,15 @@ RoleDialog = Dialog.extend({
         
         this.options.content.adopt(tabber);
         this.options.content.adopt(actionDiv);
-        divLoading = new Element("div", {class: 'ajax-loading', style: "float: left; width: 100%"});
+        divLoading = new Element("div", {"class": 'ajax-loading', "style": "float: left; width: 100%"});
         this.window.adopt(divLoading);
         
     }
 });
 
 function fillTableData(roles){
-    var t = $("roles_table").getElement("tbody").empty();
+    var t = $("roles_table").getElement("tbody");
+    emptyTBody(t);
 
     for(var index = 0; index < roles.length; index++){
         var r = roles[index];
@@ -340,7 +368,8 @@ window.addEvent("domready", function(e){
             }
         },
         onFailure: function(req){
-            var t = $("roles_table").getElement("tbody").empty();
+            var t = $("roles_table").getElement("tbody");
+            emptyTBody(t);
             addTableRow(t, [{"value": "Error loading data. Please see umitweb.log for details.", "attrs": {"colSpan": "5"}} ], {"class": "error"});
         }});
     });

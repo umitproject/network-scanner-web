@@ -73,16 +73,15 @@ UploadResultDialog = Dialog.extend({
         frm.adopt(btnSubmit);
         var thisDialog = this;
         frm.addEvent("submit", function(e){
+            this.enctype = "multipart/form-data";
             iFrame.addEvent("load", function(e2){
-                var txt = null;
-                
-                if(window.ie){
-                    txt = this.contentWindow.document.getElementsByTagName("pre")[0].innerText;
-                }else{
-                    txt = this.contentDocument.getElementsByTagName("pre")[0].textContent;
-                }
                 
                 try{
+                    if(window.ie){
+                        txt = this.contentWindow.document.getElementsByTagName("pre")[0].innerText;
+                    }else{
+                        txt = this.contentDocument.getElementsByTagName("pre")[0].textContent;
+                    }
                     result = Json.evaluate(txt);
                     if(result.result == "OK" && $defined(result.output.full)){
                         varData = result.output.full;
@@ -99,19 +98,27 @@ UploadResultDialog = Dialog.extend({
                         alert(result.output);
                     }
                 }catch(e){
+                    alert(e);
+                    if(window.ie){
+                        txt = this.contentWindow.document.getElementsByTagName("pre")[0].innerText;
+                    }else{
+                        txt = this.contentDocument.getElementsByTagName("pre")[0].textContent;
+                    }
                     $("nmap-output").setText(txt);
                 }
             });
         });
         
         this.options.content.setStyle("padding", "3px;");
-        iFrame = new Element("iframe", {"name": "iframe_result"});
+        iFrame = new Element("iframe", {"name": "iframe_result", "id": "iframe_result"});
         iFrame.setStyle("width", "0");
         iFrame.setStyle("height", "0");
         iFrame.setStyle("display", "none");
         
         this.options.content.adopt(iFrame);
+        
         this.options.content.adopt(frm);
+        
         frm.target = "iframe_result";
     }
 });

@@ -1,6 +1,7 @@
 var w;
 function fillTableData(scans){
-    t = $("scans_table").getElement("tbody").empty();
+    t = $("scans_table").getElement("tbody");
+    emptyTBody(t);
 
     for(index = 0; index < scans.length; index++){
         s = scans[index];
@@ -67,7 +68,8 @@ function loadScansTableData(){
     new Json.Remote("/scans/", {
         onComplete: fillTableData,
         onFailure: function(req){
-            t = $("scans_table").getElement("tbody").empty();
+            t = $("scans_table").getElement("tbody");
+            emptyTBody(t);
             addTableRow(t, [{"value": "Error loading data. Please see umitweb.log for details.", "attrs": {"colSpan": "4"}} ], {"class": "error"});
         }
     }).send();
@@ -109,7 +111,8 @@ window.addEvent("domready", function(e){
             }
         },
         onFailure: function(req){
-            t = $("scans_table").getElement("tbody").empty();
+            t = $("scans_table").getElement("tbody");
+            emptyTBody(t);
             addTableRow(t, [{"value": "Error loading data. Please see umitweb.log for details.", "attrs": {"colSpan": "5"}} ], {"class": "error"});
         }});
     });

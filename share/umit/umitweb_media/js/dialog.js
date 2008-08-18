@@ -37,7 +37,7 @@ Dialog = new Class({
         var d = new Drag.Move(this.window, {'handle': thisHeader});
         
         if(window.ie){
-            var iFrame = new Element("iframe");
+            var iFrame = new Element("iframe", {"id": "__false_ifame__", "name": "__false_iframe__"});
             iFrame.src = "javascript:false";
             iFrame.scrolling = "no";
             iFrame.frameBorder = "0";

@@ -147,6 +147,7 @@ def upload_result(req):
                                     "{'plain': '%s', 'full': %s}}") % \
                                     (key, text_out, parsed_scan), "text/plain")
             except Exception, ex:
+                logger.error("ERROR PARSING SCAN: %s" % str(ex))
                 return HttpResponse("{'result': 'FAIL', 'output': '%s'}" % str(ex).replace("'", "\\'"), "text/plain")
         else:
             scan_id = req.POST['scanId']

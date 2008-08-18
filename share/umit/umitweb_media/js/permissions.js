@@ -14,9 +14,9 @@ PermissionDialog = Dialog.extend({
         var self = this;
         var tabber = new Element("div", {"class": "tabber", "id": "tabberPermission"});
         
-        var tabMain = new Element("div", {class: "tabbertab", style: "height: 175px;", title: "Main Information"});
+        var tabMain = new Element("div", {"class": "tabbertab","style": "height: 175px;", "title": "Main Information"});
         tabber.adopt(tabMain);
-        var tabConstraints = new Element("div", {class: "tabbertab", style: "height: 175px;", title: "Constraints"});
+        var tabConstraints = new Element("div", {"class": "tabbertab", "style": "height: 175px;", "title": "Constraints"});
         tabber.adopt(tabConstraints);
         
         var tbl = new Element("table");
@@ -132,8 +132,8 @@ PermissionDialog = Dialog.extend({
         this.options.content.setStyle("padding", "10px;");
         
         actionDiv = new Element("div", {style: "text-align: right"});
-        btnOK = new Element("input", {type: "button", value:"OK", styles: {"width": "80px;"}});
-        btnCancel = new Element("input", {type: "button", value:"Cancel", style: "margin-right: 20px"});
+        btnOK = new Element("input", {type: "button", "value":"OK", "styles": {"width": "80px;"}});
+        btnCancel = new Element("input", {type: "button", "value":"Cancel", "style": "margin-right: 20px"});
     
         actionDiv.adopt(btnCancel);
         actionDiv.adopt(btnOK);
@@ -171,11 +171,11 @@ PermissionDialog = Dialog.extend({
             }
             
             var args = {
-                id: inputId.value,
-                type: selectPermType[selectPermType.selectedIndex].value,
-                description: txtDescription.value.trim(),
-                constraint_types: constraint_types.join("\n"),
-                constraints: constraints.join("\n")
+                "id": inputId.value,
+                "type": selectPermType[selectPermType.selectedIndex].value,
+                "description": txtDescription.value.trim(),
+                "constraint_types": constraint_types.join("\n"),
+                "constraints": constraints.join("\n")
             }
                         
             var xhr = new XHR({method: "post",
@@ -223,7 +223,8 @@ PermissionDialog = Dialog.extend({
 
 // Helper functions
 function fillTableData(permissions){
-    var t = $("permissions_table").getElement("tbody").empty();
+    var t = $("permissions_table").getElement("tbody");
+    emptyTBody(t);
 
     for(var index = 0; index < permissions.length; index++){
         var p = permissions[index];
@@ -254,7 +255,9 @@ function fillTableData(permissions){
 
 
 function fillConstraintTable(tbl){
-    var t = tbl==null? $("constraints_table").empty(): tbl;
+    var t = tbl==null? $("constraints_table"): tbl;
+    var tb = t.getElement("tbody");
+    emptyTBody(tb);
     for(var j = 0; j < currentConstraints.length; j++){
         var c =  currentConstraints[j];
         var args = {};
@@ -306,7 +309,8 @@ function loadPermissionsTableData(){
     new Json.Remote("search/", {
         onComplete: fillTableData,
         onFailure: function(req){
-            var t = $("permissions_table").getElement("tbody").empty();
+            var t = $("permissions_table").getElement("tbody");
+            emptyTBody(t);
             addTableRow(t, [{"value": "Error loading data. Please see umitweb.log for details.", "attrs": {"colSpan": "4"}}], {"class": "error"});
         }
     }).send();
@@ -368,7 +372,8 @@ window.addEvent("domready", function(e){
             }
         },
         onFailure: function(req){
-            var t = $("permissions_table").getElement("tbody").empty();
+            var t = $("permissions_table").getElement("tbody");
+            emptyTBody(t);
             addTableRow(t, [{"value": "Error loading data. Please see umitweb.log for details.", "attrs": {"colSpan": "5"}} ], {"class": "error"});
         }});
     });
