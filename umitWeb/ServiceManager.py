@@ -25,6 +25,8 @@ class UmitServiceManager(HIGMainWindow):
     def __init__(self):
         HIGMainWindow.__init__(self)
         self.vbox = gtk.VBox()
+        self.service_table = gtk.Table(5, 2)
+        self.notebook = gtk.Notebook()
         try:
             self.service_manager = WindowsService("UMIT")
             self.umit_status = self.service_manager.status()
@@ -33,8 +35,11 @@ class UmitServiceManager(HIGMainWindow):
             self.umit_status = str(ex)
             
         self.set_title("UMIT Service Manager")
+
+        self.notebook.append_page(self.vbox, gtk.Label("Status"))
+        self.notebook.append_page(self.service_table, gtk.Label("Service Configuration"))
         
-        self.add(self.vbox)
+        self.add(self.notebook)
         
         self.set_icon_from_file(join(Path.icons_dir, "umit_16.ico"))
         
@@ -81,6 +86,7 @@ class UmitServiceManager(HIGMainWindow):
         gtk.main_quit()
         
     def _create_widgets(self):
+        self.service_table.set_border_width(5)
         self.status_bar = gtk.Statusbar()
         self.hbox = gtk.HBox()
         self.hbox.set_border_width(5)
@@ -124,6 +130,19 @@ class UmitServiceManager(HIGMainWindow):
         self.menuitem_stop = gtk.MenuItem("Stop service")
         self.menuitem_restart = gtk.MenuItem("Restart service")
         self.menuitem_exit = gtk.MenuItem("Exit")
+
+        self.port_entry = gtk.SpinButton(climb_rate=1, digits=0)
+        self.port_entry.set_range(1, 65535)
+        #FIXME: Add WebConf configuration data here
+        self.port_entry.set_value(8059)
+
+        self.address_entry = gtk.Entry()
+        #FIXME: Add WebConf configuration data here
+        self.address_entry.set_text("0.0.0.0")
+
+        self.service_status_checkbutton = gtk.CheckButton("Start UmitWeb Service at Startup")
+        self.console_checkbutton = gtk.CheckButton("Start Management Console at Startup")
+        self.apply_button = gtk.Button("Apply Changes")
         
     
     def _pack_widgets(self):
@@ -152,6 +171,14 @@ class UmitServiceManager(HIGMainWindow):
         self.popup_menu.attach(self.menuitem_restart, 0, 1, 3, 4)
         self.popup_menu.attach(gtk.SeparatorMenuItem(), 0, 1, 4, 5)
         self.popup_menu.attach(self.menuitem_exit, 0, 1, 5, 6)
+
+        self.service_table.attach(gtk.Label("Address:"), 0, 1, 0, 1, gtk.FILL)
+        self.service_table.attach(self.address_entry, 1, 2, 0, 1)
+        self.service_table.attach(gtk.Label("Port Number:"), 0, 1, 1, 2, gtk.FILL)
+        self.service_table.attach(self.port_entry, 1, 2, 1, 2)
+        self.service_table.attach(self.service_status_checkbutton, 0, 2, 2, 3)
+        self.service_table.attach(self.console_checkbutton, 0, 2, 3, 4)
+        self.service_table.attach(self.apply_button, 0, 2, 4, 5, yoptions=gtk.EXPAND)
         
         
     def _connect_signals(self):
