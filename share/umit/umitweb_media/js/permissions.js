@@ -256,8 +256,7 @@ function fillTableData(permissions){
 
 function fillConstraintTable(tbl){
     var t = tbl==null? $("constraints_table"): tbl;
-    var tb = t.getElement("tbody");
-    emptyTBody(tb);
+    emptyTBody(t);
     for(var j = 0; j < currentConstraints.length; j++){
         var c =  currentConstraints[j];
         var args = {};

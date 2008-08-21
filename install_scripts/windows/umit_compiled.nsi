@@ -1,4 +1,4 @@
-; Added Path var 
+; Added Path var
 ; From: http://nsis.sourceforge.net/Path_Manipulation
 !ifndef _AddToPath_nsh
 !define _AddToPath_nsh
@@ -336,7 +336,7 @@ Function un.RemoveFromEnvVar
 FunctionEnd
  
  
- 
+
  
 !ifndef IsNT_KiCHiK
 !define IsNT_KiCHiK
@@ -446,8 +446,8 @@ FunctionEnd
 !include "MUI.nsh"
 ; MUI Settings:
 ;
-;!define MUI_ICON "share\icons\umit_32.ico" # Installer icon
-;!define MUI_UNICON "share\icons\trash_32.ico" # Uninstaller icon
+;!define MUI_ICON "share\icons\umit\umit_32.ico" # Installer icon
+;!define MUI_UNICON "share\icons\umit\trash_32.ico" # Uninstaller icon
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "share\pixmaps\umit\splash.bmp"
 !define MUI_HEADERIMAGE_UNBITMAP "share\pixmaps\umit\splash.bmp"
@@ -532,7 +532,8 @@ Section "Install as windows service"
   CreateShortCut "$SMPROGRAMS\Umit\Start UMIT server instance.lnk" "net" "start UMIT" $INSTDIR\umit_48.ico
   CreateShortCut "$SMPROGRAMS\Umit\Stop UMIT server instance.lnk" "net" "stop UMIT" $INSTDIR\umit_48.ico
   CreateShortCut "$SMPROGRAMS\Umit\UMIT Management Console.lnk" "$INSTDIR\management_console.exe" "" "$INSTDIR\umit_48.ico"
-  
+  CreateShortCut "$SMPROGRAMS\Umit\Uninstall UMIT.lnk" "$INSTDIR\Umit-Uninstaller.exe" "" "$INSTDIR\umit_48.ico"
+
   Push "$INSTDIR\Nmap\bin"
   Call AddToPath
   MessageBox MB_YESNO|MB_ICONQUESTION "You need to restart your computer to make UMIT work find. Do you want to reboot your computer now?" IDNO +2

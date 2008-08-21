@@ -34,7 +34,7 @@ from umitCore.BasePaths import base_paths, HOME
 from umitCore.BasePaths import CONFIG_DIR, LOCALE_DIR, MISC_DIR
 from umitCore.BasePaths import ICONS_DIR, PIXMAPS_DIR, DOCS_DIR
 
-UMIT_ICON = join("share", "icons", "umit_48.ico")
+UMIT_ICON = join("share", "icons", "umit", "umit_48.ico")
 
 
 MEDIA_DIR = join("share", "umit", "umitweb_media")

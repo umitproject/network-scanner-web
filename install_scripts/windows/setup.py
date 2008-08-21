@@ -82,8 +82,8 @@ data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.svg')) +
 
                (misc_dir, glob(os.path.join(misc_dir, '*.dmp'))), 
 
-               (icons_dir, glob(os.path.join('share', 'icons', '*.ico'))+
-                           glob(os.path.join('share', 'icons', '*.png'))),
+               (icons_dir, glob(os.path.join('share', 'icons', 'umit', '*.ico'))+
+                           glob(os.path.join('share', 'icons', 'umit', '*.png'))),
 
                (docs_dir, glob(os.path.join(docs_dir, '*.html'))+
                           glob(os.path.join(docs_dir,
@@ -99,7 +99,7 @@ data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.svg')) +
                           glob(os.path.join(docs_dir,
                                             'screenshots', '*.png'))),
                 (os.path.join(media_dir, 'js'),
-                          glob(os.path.join(media_dir, 'js', '*.js'))), 
+                          glob(os.path.join(media_dir, 'js', '*.js'))),
                (os.path.join(media_dir, 'css'),
                           glob(os.path.join(media_dir, 'css', '*.css'))),
                (os.path.join(media_dir, 'images'), 
@@ -157,9 +157,9 @@ Umit command creator wizards.""",
       zipfile=None,
       cmdclass = {"py2exe":umit_py2exe},
       windows = [{"script": "management_console.pyw",
-                  "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]}],
+                  "icon_resources" : [(1, os.path.join("share", "icons", "umit", "umit_48.ico"))]}],
       console = [{"script": "umitweb.py",
-                  "icon_resources" : [(1, os.path.join("share", "icons", "umit_48.ico"))]}],
+                  "icon_resources" : [(1, os.path.join("share", "icons", "umit", "umit_48.ico"))]}],
       options = {"py2exe":{"compressed": 1,
                            "optimize": 2,
                            "packages": "encodings",

@@ -35,7 +35,7 @@ from umitCore.Version import VERSION
 # Ex: python setup.py install --prefix=/tmp/umit
 # Will create the directory /tmp/umit with the following directories
 pixmaps_dir = os.path.join('share', 'pixmaps')
-icons_dir = os.path.join('share', 'icons')
+icons_dir = os.path.join('share', 'icons', 'umit')
 locale_dir = os.path.join('share', 'umit', 'locale')
 config_dir = os.path.join('share', 'umit', 'config')
 docs_dir = os.path.join('share', 'umit', 'docs')
@@ -64,8 +64,8 @@ data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.svg')) +
 
                (misc_dir, glob(os.path.join(misc_dir, '*.dmp'))), 
 
-               (icons_dir, glob(os.path.join('share', 'icons', '*.ico'))+
-                           glob(os.path.join('share', 'icons', '*.png'))),
+               (icons_dir, glob(os.path.join('share', 'icons', 'umit', '*.ico'))+
+                           glob(os.path.join('share', 'icons', 'umit', '*.png'))),
 
                (docs_dir, glob(os.path.join(docs_dir, '*.html'))+
                           glob(os.path.join(docs_dir,
