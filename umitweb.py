@@ -31,7 +31,7 @@ except ImportError:
 ######################################
 # Setting the umit home directory
 
-from umitCore.Paths import Path
+from umitWeb.WebPaths import WPath as Path
 Path.set_umit_conf(split(sys.argv[0])[0])
 
 ######################################
@@ -39,7 +39,7 @@ Path.set_umit_conf(split(sys.argv[0])[0])
 from umitWeb.Server import UmitWebServer
 
 def main():
-    if sys.platform in ["linux" "darwin"]:
+    if sys.platform in ["linux", "darwin"]:
         if os.getuid() != 0:
             raise Exception, "Server MUST run as root."
         

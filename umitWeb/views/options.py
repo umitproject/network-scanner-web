@@ -21,7 +21,7 @@
 from umitWeb.Auth import authenticate, ERROR
 from umitCore.UmitConf import CommandProfile
 from umitCore.NmapOptions import NmapOptions
-from umitCore.Paths import Path
+from umitWeb.WebPaths import WPath as Path
 from umitWeb.Http import HttpResponse, HttpRequest
 from umitWeb.ProfileParser import ProfileEditorParser, WizardParser
 

@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from umitCore.UmitConf import NmapOutputHighlight
-from umitCore.Paths import Path
+from umitWeb.WebPaths import WPath as Path
 from umitWeb.WebLogger import getLogger
 
 class JsOutputHighlight(NmapOutputHighlight):

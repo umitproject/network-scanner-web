@@ -19,9 +19,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from os.path import dirname, join
-from umitCore.Paths import Path
-from umitCore.NmapOptions import NmapOptions
 from umitCore.BasePaths import base_paths
+from umitWeb.WebPaths import WPath as Path
+from umitCore.NmapOptions import NmapOptions
 from xml.dom import minidom
 
 class WizardParser:

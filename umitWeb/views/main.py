@@ -26,7 +26,7 @@ from umitWeb.WebConf import JsOutputHighlight
 from umitWeb.Http import HttpResponse, Http404, HttpResponseRedirect
 from umitWeb.WebLogger import getLogger
 from umitWeb.Auth import authenticate, ERROR
-from umitCore.Paths import Path
+from umitWeb.WebPaths import WPath as Path
 from umitWeb.Security import Context
 import mimetypes
 

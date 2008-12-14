@@ -27,7 +27,8 @@ from datetime import datetime, timedelta
 from Cookie import SimpleCookie
 from umitWeb.WebLogger import getLogger
 from umitCore.I18N import _
-from umitCore.Paths import Path
+#from umitCore.Paths import Path
+from umitWeb.WebPaths import WPath as Path
 from types import StringTypes
 from StringIO import StringIO
 

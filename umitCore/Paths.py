@@ -34,11 +34,6 @@ from umitCore.BasePaths import base_paths, HOME
 from umitCore.BasePaths import CONFIG_DIR, LOCALE_DIR, MISC_DIR
 from umitCore.BasePaths import ICONS_DIR, PIXMAPS_DIR, DOCS_DIR
 
-UMIT_ICON = join("share", "icons", "umit", "umit_48.ico")
-
-
-MEDIA_DIR = join("share", "umit", "umitweb_media")
-TEMPLATES_DIR = join("share", "umit", "templates")
 
 #######
 # Paths
@@ -52,20 +47,14 @@ class Paths(object):
                  "pixmaps_dir",
                  "icons_dir",
                  "misc_dir",
-                 "docs_dir",
-                 "umit_icon",
-                 "templates_dir",
-                 "media_dir"]
+                 "docs_dir"]
 
     config_files_list = ["config_file",
                          "profile_editor",
                          "wizard",
                          "scan_profile",
                          "options",
-                         "umit_version",
-                         "webconfig_file",
-                         "security_file",
-                         "umitdb_web"]
+                         "umit_version"]
 
     empty_config_files_list = ["target_list",
                                "recent_scans",
@@ -163,9 +152,6 @@ user home: %s" % config_file)
         self.icons_dir = ICONS_DIR
         self.misc_dir = MISC_DIR
         self.docs_dir = DOCS_DIR
-        self.umit_icon = UMIT_ICON
-        self.media_dir = MEDIA_DIR
-        self.templates_dir = TEMPLATES_DIR
 
         log.debug(">>> Config file: %s" % config_file)
         log.debug(">>> Locale: %s" % self.locale_dir)
@@ -269,8 +255,6 @@ def create_user_dir(config_file, user_home):
     copy_config_file("scan_profile.usp", main_dir, user_dir)
     copy_config_file("umit_version", main_dir, user_dir)
     copy_config_file("wizard.xml", main_dir, user_dir)
-    copy_config_file("umitweb.conf", main_dir, user_dir)
-    copy_config_file("security.xml", main_dir, user_dir)
 
     return dict(user_dir = user_dir,
                 config_dir = user_dir,

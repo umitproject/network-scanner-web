@@ -26,7 +26,7 @@ from xml.sax.handler import ContentHandler
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesImpl as Attributes
 from umitWeb.WebLogger import getLogger
-from umitCore.Paths import Path
+from umitWeb.WebPaths import WPath as Path
 
 #SECURITY_FILE = os.path.join(os.path.dirname(__file__), os.pardir , "config", "security.xml")
 SECURITY_FILE = Path.security_file

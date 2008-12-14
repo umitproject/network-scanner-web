@@ -16,7 +16,7 @@ from higwidgets.higwindows import HIGMainWindow
 ######################################
 # Setting the umit home directory
 
-from umitCore.Paths import Path
+from umitWeb.WebPaths import WPath as Path
 Path.set_umit_conf(split(sys.argv[0])[0])
 
 ######################################
