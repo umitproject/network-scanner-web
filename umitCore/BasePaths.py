@@ -46,8 +46,6 @@ PIXMAPS_DIR = os.path.join(main_dir, "share", "pixmaps", "umit")
 DOCS_DIR = os.path.join(main_dir, "share", "doc", "umit")
 
 base_paths = dict(config_file = 'umit.conf',
-                  webconfig_file = 'umitweb.conf',
-                  security_file = 'security.xml',
                   config_dir = '.umit',
                   user_dir = os.path.join(HOME, '.umit'),
                   media_dir = os.path.join('share', 'umit', 'umitweb_media'),
@@ -72,7 +70,6 @@ base_paths = dict(config_file = 'umit.conf',
                                              HOME],
                   i18n_search_sequence = [os.path.join(CURRENT_DIR, LOCALE_DIR), HOME],
                   umitdb = "umit.db",
-                  umitdb_web = "umitweb.db",
 
                   services = "nmap-services",
                   services_dump = "services.dmp",

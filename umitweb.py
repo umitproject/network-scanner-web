@@ -39,13 +39,14 @@ Path.set_umit_conf(split(sys.argv[0])[0])
 from umitWeb.Server import UmitWebServer
 
 def main():
-    if sys.platform in ["linux", "darwin"]:
-        if os.getuid() != 0:
-            raise Exception, "Server MUST run as root."
+    if Path.web_requires_root in ["true", "on", "1"]:
+        if sys.platform in ["linux", "darwin"]:
+            if os.getuid() != 0:
+                raise Exception, "Server MUST run as root."
         
     server = UmitWebServer()
     try:
-        print "UmitWebServer started on 0.0.0.0:8059"
+        print "UmitWebServer started on %s:%d" % (Path.web_server_address, int(Path.web_server_port))
         server.run()
     except KeyboardInterrupt:
         print "Stopping..."

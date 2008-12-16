@@ -33,6 +33,7 @@ from umitWeb.Http import HttpRequest, Http404, HttpError, HttpResponse
 from umitWeb.Database import SessionData
 from umitWeb.WebLogger import getLogger
 from umitWeb.Security import Context
+from umitWeb.WebPaths import WPath as Path
 from threading import Thread
 
 
@@ -259,7 +260,7 @@ class UmitWebServer(HTTPServer):
     currentInstance = None
     
     def __init__(self):
-        HTTPServer.__init__(self, ("0.0.0.0", 8059), UmitRequestHandler)
+        HTTPServer.__init__(self, (Path.web_server_address, int(Path.web_server_port)), UmitRequestHandler)
         UmitWebServer.currentInstance = self
         
     def finish_request(self, *args, **kwargs):

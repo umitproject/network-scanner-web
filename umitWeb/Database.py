@@ -23,6 +23,7 @@ import os
 import pickle
 from types import ListType
 from traceback import print_exc
+from umitWeb.WebPaths import WPath as Path
 
 try:
     from sqlite3 import dbapi2 as dbmodule
@@ -31,8 +32,13 @@ except ImportError:
     from pysqlite2 import dbapi2 as dbmodule
     import pysqlite2 as sqlite
 
-#Temporary - waiting instructions about UmitConf
-__connection__ = dbmodule.connect(os.path.join("web.db"))
+try:
+    webdb = Path.web_db
+except:
+    webdb = os.path.join(Path.config_dir, "web.db")
+    Path.web_db = webdb
+    
+__connection__ = dbmodule.connect(Path.web_db)
 
 
 class DBError(Exception):

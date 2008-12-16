@@ -16,19 +16,23 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from os.path import join, split, exists
-from umitCore.BasePaths import base_paths, HOME
+from os.path import join, split, exists, dirname
+import re
+from umitCore.BasePaths import base_paths, HOME, CONFIG_DIR
 from umitCore.Paths import Paths, Path, copy_config_file
 
 MEDIA_DIR = join("share", "umit", "umitweb_media")
 TEMPLATES_DIR = join("share", "umit", "templates")
 
 base_paths.update(dict(webconfig_file='umitweb.conf',
-                       security_file='security.xml'))
+                       config_file='umitweb.conf',
+                       security_file='security.xml',
+                       web_db=join('share', 'config', 'web.db')))
                        
 class WebPaths(Paths):
     templates_dir = TEMPLATES_DIR
     media_dir = MEDIA_DIR
+    web_section = "web"
     
     def __init__(self):
         Paths.__init__(self)
@@ -40,7 +44,13 @@ class WebPaths(Paths):
         self.config_files_list += [
             "webconfig_file",
             "security_file",
-            "umitdb_web"
+            "web_db"
+        ]
+        
+        self.web_settings = [
+            "web_server_port",
+            "web_server_address",
+            "web_requires_root"
         ]
     
     def set_umit_conf(self, base_dir):
@@ -49,11 +59,24 @@ class WebPaths(Paths):
         if not exists(join(self.config_dir, "security.xml")) or \
            not exists(join(self.config_dir, "umitweb.conf")):
            create_web_files(self.config_file, HOME)
+           
+    def __getattr__(self, name):
+        if self.config_file_set:
+            try:
+                attr = Paths.__getattr__(self, name)
+                return attr
+            except NameError, e:
+                if name in self.web_settings:
+                    return self.config_parser.get(self.web_section, re.sub(r"^web_", "", name))
+                else:
+                    raise e
+        else:
+            raise Exception("Must set config file location first")
 
 
 def create_web_files(config_file, user_home):
     user_dir = join(user_home, base_paths['config_dir'])
-    main_dir = split(config_file)[0]
+    main_dir = join(dirname(__file__), CONFIG_DIR)
     copy_config_file("security.xml", main_dir, user_dir)
     copy_config_file("umitweb.conf", main_dir, user_dir)
 
