@@ -70,4 +70,5 @@ patterns = (
     (r'^media/js/output_highlight.js$', 'umitWeb.views.main.output_highlight'),
     (r'^media/js/diff_colors.js$', 'umitWeb.views.compare_results.diff_colors'),
     (r'^media/(?P<path>.*)$', 'umitWeb.views.main.serve_media'),
+    (r'^docs/(?P<path>.*)$', 'umitWeb.views.main.serve_docs')
 )

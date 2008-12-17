@@ -86,6 +86,29 @@ def serve_media(req, path):
     return response
 
 
+def serve_docs(req, path):
+    response = HttpResponse()
+    
+    filename = join(Path.docs_dir, *(path.split("/")))
+    
+    if not exists(filename):
+        raise Http404
+        
+    response['Content-type'] = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+    response['Content-type'] += "; charset=utf-8"
+    cntFile = None
+    if sys.platform == 'win32':
+        if response['Content-type'].startswith("text"):
+            cntFile = open(filename, 'r')
+        else:
+            cntFile = open(filename, 'rb')
+    else:
+        cntFile = open(filename, 'r')
+        
+    response.write(cntFile.read())
+    return response
+    
+
 def show_favicon(req):
     return serve_media(req, "images/favicon.ico")
 

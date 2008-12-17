@@ -34,7 +34,7 @@ from distutils import log, dir_util
 from glob import glob
 from stat import *
 
-from umitCore.Version import VERSION
+from umitWeb.Version import VERSION
 from utils import msgfmt
 # Directories for POSIX operating systems
 # These are created after a "install" or "py2exe" command
@@ -193,7 +193,7 @@ print
         os.chmod(uninstaller_filename, mode)
 
     def set_modules_path(self):
-        umit = os.path.join(self.install_scripts, "umitweb")
+        umit = os.path.join(self.install_scripts, "umitwebserver")
         modules = self.install_lib
 
         re_sys = re.compile("^import sys$")
@@ -310,22 +310,22 @@ class umit_sdist(sdist):
     
     def finish_banner(self):
         print 
-        print "%s The packages for Umit %s are in ./dist %s" % \
+        print "%s The packages for UmitWeb %s are in ./dist %s" % \
               ("#" * 10, VERSION, "#" * 10)
         print
 
 ##################### Umit banner ########################
 print
-print "%s Umit for Linux %s %s" % ("#" * 10, VERSION, "#" * 10)
+print "%s UmitWeb for Linux %s %s" % ("#" * 10, VERSION, "#" * 10)
 print
 ##########################################################
 
-setup(name = 'umit',
+setup(name = 'UmitWeb',
       license = 'GNU GPL (version 2 or later)',
       url = 'http://www.umitproject.org',
       download_url = 'http://www.umitproject.org',
-      author = 'Adriano Monteiro & Cleber Rodrigues',
-      author_email = 'py.adriano@gmail.com, cleber@globalred.com.br, rodolfo.ueg@umitproject.org',
+      author = 'Adriano Monteiro, Cleber Rodrigues, Rodolfo Carvalho',
+      author_email = 'py.adriano@gmail.com, cleber@globalred.com.br, rodolfo@umitproject.org',
       maintainer = 'Adriano Monteiro',
       maintainer_email = 'adriano@gmail.com',
       description = """Umit is a network scanning frontend, developed in \
@@ -338,7 +338,7 @@ easier network scanning or even compare scan results to easily see any \
 changes. A regular user will also be able to construct powerful scans with \
 Umit command creator wizards.""",
       version = VERSION,
-      scripts = ['umitweb.py'],
+      scripts = ['umitwebserver'],
       packages = ['', 'umitCore', 'umitWeb', 'umitWeb.views', 'umitWeb.views.html'],
       data_files = data_files,
       cmdclass = {"install":umit_install,
