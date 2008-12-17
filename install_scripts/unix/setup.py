@@ -4,6 +4,7 @@
 # Copyright (C) 2007-2008 Adriano Monteiro Marques
 #
 # Author: Adriano Monteiro Marques <adriano@umitproject.org>
+#         Rodolfo da Silva Carvalho <rodolfo@umitproject.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ data_files = [ (pixmaps_dir, glob(os.path.join(pixmaps_dir, '*.svg')) +
 			     glob(os.path.join(pixmaps_dir, '*.xpm')) +
                              glob(os.path.join(pixmaps_dir, 'umit.o*'))),
 
-               (config_dir, [os.path.join(config_dir, 'umit.conf')] +
+               (config_dir, [os.path.join(config_dir, 'umitweb.conf')] +
                             [os.path.join(config_dir, 'scan_profile.usp')] +
                             [os.path.join(config_dir, 'umit_version')] +
                             glob(os.path.join(config_dir, '*.xml'))+
@@ -192,7 +193,7 @@ print
         os.chmod(uninstaller_filename, mode)
 
     def set_modules_path(self):
-        umit = os.path.join(self.install_scripts, "umitweb.py")
+        umit = os.path.join(self.install_scripts, "umitweb")
         modules = self.install_lib
 
         re_sys = re.compile("^import sys$")
