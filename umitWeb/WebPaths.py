@@ -21,8 +21,8 @@ import re
 from umitCore.BasePaths import base_paths, HOME, CONFIG_DIR
 from umitCore.Paths import Paths, Path, copy_config_file
 
-MEDIA_DIR = join("share", "umit", "umitweb_media")
-TEMPLATES_DIR = join("share", "umit", "templates")
+MEDIA_DIR = join(CONFIG_DIR, "..", "umitweb_media")
+TEMPLATES_DIR = join(CONFIG_DIR, "..", "templates")
 
 base_paths.update(dict(webconfig_file='umitweb.conf',
                        config_file='umitweb.conf',

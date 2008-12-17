@@ -18,8 +18,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from os.path import join
 from umitCore.UmitLogging import Log, LOGLEVEL
 from logging import FileHandler, ERROR, DEBUG
+from umitWeb.WebPaths import WPath as Path
 
 class WebLogger(Log):
     
@@ -28,7 +30,7 @@ class WebLogger(Log):
     def __init__(self, name, level=0):
         Log.__init__(self, name, level)
         del self.handlers[:]
-        handler = FileHandler("umitweb.log")
+        handler = FileHandler(join(Path.config_dir, "umitweb.log"))
         handler.setFormatter(self.formatter)
         
         self.addHandler(handler)
