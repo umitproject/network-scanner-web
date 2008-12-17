@@ -230,7 +230,7 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(response.data)
                 
         except HttpError, e:
-            self.logger.error("Status code: %s - Message: %s", (str(e.error_code), e.message))
+            self.logger.error("Status code: %s - Message: %s", str(e.error_code), e.message)
             self.send_error(e.error_code, e.message)
         except Exception, e:
             print_exc()
