@@ -83,6 +83,9 @@ def check(req, resource_id):
     
     if nmapCommand is None:
         raise Http404
+    elif isinstance(nmapCommand, Exception):
+        server.currentInstance.removeResource(resource_id)
+        raise Http500("Nmap command raised an exception!\n%s" % str(nmapCommand))
     
     try:
         output = nmapCommand.get_output()

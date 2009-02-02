@@ -258,6 +258,7 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
 class UmitWebServer(HTTPServer):
     _resourcePool = {}
     currentInstance = None
+    logger = getLogger("UmitWebServer")
     
     def __init__(self):
         HTTPServer.__init__(self, (Path.web_server_address, int(Path.web_server_port)), UmitRequestHandler)
@@ -299,7 +300,6 @@ class UmitWebServer(HTTPServer):
         if resourceID in self._resourcePool.keys():
             if hasattr(self._resourcePool[resourceID], eventName):
                 target = getattr(self._resourcePool[resourceID], eventName)
-                #target()
                 th = Thread(target=target)
                 th.start()
             return True
