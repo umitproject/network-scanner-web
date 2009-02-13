@@ -28,6 +28,15 @@ logger = getLogger(__name__)
 
 #decorator
 def authenticate(destination=None, redirect_page=None):
+    """``authenticate`` is a decorator for each view that needs authentication.
+    
+    Parameters:
+    
+    * ``destination`` -- the argument that determines if the page will be redirected to another location (0), or a forbidden page (error 403) will be displayed (1).
+    * ``redirect_page`` -- the page that will be followed by if the user is not authenticated.
+    
+    
+    """
     destination = destination or REDIRECT
     redirect_page = redirect_page or "/login/"
     def _ret_function(func):
@@ -44,6 +53,10 @@ def authenticate(destination=None, redirect_page=None):
     return _ret_function
 
 def need_superuser():
+    """``need_superuser`` is a decorator for each view that needs superuser authorization.
+    It raises a Http403 error if the user is not allowed to access the page.
+    
+    """
     def _ret_function(func):
         def _check_perms(req, *args, **kwargs):
             if req.user and req.user.superuser:

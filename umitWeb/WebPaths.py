@@ -82,3 +82,4 @@ def create_web_files(config_file, user_home):
 
 
 WPath = WebPaths()
+WPath.set_umit_conf("")

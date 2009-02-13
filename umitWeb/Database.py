@@ -46,6 +46,25 @@ class DBError(Exception):
 
 
 class Model(object):
+    """This is a basic representation of a Table in UmitWeb database. It cannot be directly instantiated.
+    
+    To create a model, you need to do the following steps:
+    
+    * Create a class inheriter from `Model`
+    * Overrides `_sqlfields` and `_table` attributes
+    * Write a `save` method.
+    
+    
+    Example:
+    
+    >>> class SampleModel(Model):
+    ...    _sqlfields = [ 
+    ...        "a_field VARCHAR(32) NOT NULL", 
+    ...        "another_field INT DEFAULT -1"
+    ...    ]
+    ...    _table = "samples"
+    
+    """
     _sqlfields = []
     _table = None
     _id_field = "id"
@@ -76,16 +95,14 @@ class Model(object):
 
     @classmethod
     def get(self, id):
-        """Get a single object, given its id
-        """
+        """Get a single object, given its id."""
         cursor = __connection__.cursor()
         cursor.execute("SELECT * FROM %s where %s=?" % (self._table, self._id_field), (id,))
         return self._process_result(cursor, cursor.fetchall())
 
     @classmethod
     def get_list(self, **params):
-        """Get a list of objects that match with params.
-        """
+        """Get a list of objects that match with params."""
         operation_patterns = (
             (r"^(?P<field>.+)__gt$", "%s > %s"),
             (r"^(?P<field>.+)__gte$", "%s >= ?"),
@@ -122,6 +139,7 @@ class Model(object):
             return [result]
 
     def delete(self):
+        """Removes the current object from the database."""
         cursor = self._connection.cursor()
         cursor.execute("DELETE FROM %s WHERE %s=?" % (self._table, self._id_field), self.id)
         self._connection.commit()
@@ -130,9 +148,14 @@ class Model(object):
         cursor = self._connection.cursor()
         creation_sql = "CREATE TABLE %s(%s)" % (self._table, ",\n".join(self._sqlfields))
         cursor.execute(creation_sql)
+        
+    def save(self):
+        raise DBError("Not Implemented.")
     
 
 class SessionData(Model):
+    """Model for handle data stored in http sessions."""
+    
     _sqlfields = [
         "id CHAR(32) not null",
         "pickled_data BLOB",

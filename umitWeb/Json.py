@@ -4,6 +4,7 @@ from umitCore.NmapParser import HostInfo, NmapParser
 
 class JsonParser(object):
     """JsonParser: a general-purpose JSON parser.
+    
     This class and its subclasses are used to convert objects
     to JSON format, for use in the web app. More information 
     about JSON: http://www.json.org

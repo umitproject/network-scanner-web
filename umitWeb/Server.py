@@ -38,7 +38,10 @@ from threading import Thread
 
 
 class URLResolver(object):
-    """A class to resolve URLs. I works anylsing the path passed to the server.
+    """A class to resolve URLs.
+    
+    It works anylsing the path passed to the server.
+    
     UmitWeb has a urls module that contains URL patterns (like in django framework
     - http://www.djangoproject.com). Each pattern is assinged with one function.
     This function is executed and the result (an instance of HttpResponse) is sent
@@ -53,8 +56,12 @@ class URLResolver(object):
     def resolve(self, request):
         """Resolve the path and executes the assigned function. if the path wasn't
         found in the urls module, this method raises a Http404 error.
+        
         Parameters:
-        request -> and instance of HttpRequest.
+        
+        * ``request`` -- and instance of HttpRequest.
+        
+        
         """
         path = request.get_path()[1:]
         found = False
@@ -81,10 +88,14 @@ class URLResolver(object):
 
 class SessionWrapper(object):
     """This class works like a UserDict.
+    
     Example:
-    >>> session_obj['a-key'] = 'other value'
-    to clear the attribute, simply:
-    >>> del session_obj['a-key']
+    
+    >>> session = SessionWrapper()
+    >>> session['a-key'] = 'other value'
+    # to clear the attribute, simply:
+    >>> del session['a-key']
+    
     """
     user = property(lambda self: self.get("umit_user"))
     def __init__(self, sessid=None):
@@ -100,16 +111,14 @@ class SessionWrapper(object):
                 self.modified = True
 
     def get_new_sessid(self):
-        """Generates a new session ID
-        """
+        """Generates a new session ID."""
         junk = "çoa^wer098~73°0£24q¢ßðæ3w4w98948512397&*@#$!@#*()"
         return md5.new(str(random.randint(0, sys.maxint-1)) \
                                   + str(random.randint(1, sys.maxint-1)//2) \
                                   + junk).hexdigest()
     
     def get_sessid(self):
-        """Return the ID of the session
-        """
+        """Return the ID of the session"""
         return self._session.id
 
     def __setitem__(self, name, value):
@@ -139,8 +148,7 @@ class SessionWrapper(object):
         self._session.save()
         
     def destroy(self):
-        """Destroy the current session
-        """
+        """Destroy the current session."""
         self._session.delete()
         self._session = None
         self.modified = False
@@ -148,8 +156,7 @@ class SessionWrapper(object):
         
     @classmethod
     def clear(self):
-        """Class method to clear all data in the database
-        """
+        """Class method to clear all data in the database."""
         sessions = SessionData.get_list()
         if sessions:
             for session in sessions:
@@ -157,8 +164,7 @@ class SessionWrapper(object):
     
 
 class UmitRequestHandler(BaseHTTPRequestHandler):
-    """Custom HTTP Request Handler for UmitWeb
-    """
+    """Custom HTTP Request Handler for UmitWeb"""
 
     COOKIE_SESSION_NAME = "umitsessid"
     logger = getLogger("UmitRequestHandler")
@@ -168,13 +174,11 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
     
     def do_GET(self):
-        """Processor for HTTP GET command. A shortcut for process_request()
-        """
+        """Processor for HTTP GET command. A shortcut for process_request()."""
         self._process_request()
 
     def do_POST(self):
-        """Processor for HTTP POST command. A shortcut for process_request()
-        """
+        """Processor for HTTP POST command. A shortcut for process_request()"""
         self._process_request()
         
     def send_redirect(self, path):
@@ -184,7 +188,8 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
 
     def _process_request(self):
         """Process the request and writes the response back to the client.
-        If a HttpError occurs, the response is sent as a HTTP Error.
+        
+        If a HttpError occurs, the response is sent as a ``HTTPError``.
         """
         try:
             request = HttpRequest(self)

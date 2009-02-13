@@ -32,7 +32,9 @@ except ImportError:
 # Setting the umit home directory
 
 from umitWeb.WebPaths import WPath as Path
-Path.set_umit_conf(split(sys.argv[0])[0])
+
+#Path.set_umit_conf(split(sys.argv[0])[0])
+print "setting umit_conf to", Path.config_dir
 
 ######################################
 

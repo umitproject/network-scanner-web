@@ -1,59 +1,59 @@
-"""
-Module for manipulating WinNT, Win2k & WinXP services. 
+"""Module for manipulating WinNT, Win2k & WinXP services. 
 Requires the win32all package which can be retrieved 
 from => http://starship.python.net/crew/mhammond
+
 """
 from sys import exit
-import time, win32api, win32con, win32service
-wa, wc, ws = win32api, win32con, win32service
+try:
+    import time, win32api, win32con, win32service
+    wa, wc, ws = win32api, win32con, win32service
+except ImportError:
+    pass
 
 class WindowsService:
-    """
-    The WService Class is used for controlling WinNT, Win2k & WinXP like
+    """The WService Class is used for controlling WinNT, Win2k & WinXP like
     services. Just pass the name of the service you wish to control to the
-    class instance and go from there. For example, if you want to control 
-    the Workstation service try this:
+    class instance and go from there. 
+    
+    For example, if you want to control the Workstation service try this:
      
-        import WService
-        workstation = WService.WService("Workstation")
-        workstation.start()
-        workstation.fetchstatus("running", 10)
-        workstation.stop()
-        workstation.fetchstatus("stopped")
+    >>> from umitWeb import WindowsService
+    >>> workstation = WindowsService.WindowsService("Workstation")
+    >>> workstation.start()
+    >>> workstation.fetchstatus("running", 10)
+    >>> workstation.stop()
+    >>> workstation.fetchstatus("stopped")
 
     Creating an instance of the WService class is done by passing the name of
     the service as it appears in the Management Console or the short name as
     it appears in the registry. Mixed case is ok.
-        cvs = WService.WService("CVS NT Service 1.11.1.2 (Build 41)")        
-            or
-        cvs = WService.WService("cvs")
+    
+    >>> cvs = WindowsService.WindowsService("CVS NT Service 1.11.1.2 (Build 41)")        
+    # or
+    >>> cvs = WindowsService.WindowsService("cvs")
 
     If needing remote service control try this:
-        cvs = WService.WService("cvs", r"\\CVS_SERVER")
-            or
-        cvs = WService.WService("cvs", "\\\\CVS_SERVER")  
+    
+    >>> cvs = WindowsService.WindowsService("cvs", r"\\CVS_SERVER")
+    # or
+    >>> cvs = WindowsService.WindowsService("cvs", "\\\\CVS_SERVER")  
         
-    The WService Class supports these methods:
+    The WindowsService Class supports these methods:
         
-        start:          Starts service.
-        stop:           Stops service.
-        restart:        Stops and restarts service.
-        pause:          Pauses service (Only if service supports feature).
-        resume:         Resumes service that has been paused.
-        status:         Queries current status of service.
-        fetchstatus:    Continually queries service until requested status(STARTING, RUNNING,
-                            STOPPING & STOPPED) is met or timeout value(in seconds) reached.
-                            Default timeout value is infinite.                              
-        infotype:       Queries service for process type. (Single, shared and/or 
-                            interactive process)
-        infoctrl:       Queries control information about a running service.
-                            i.e. Can it be paused, stopped, etc?
-        infostartup:    Queries service Startup type. (Boot, System, 
-                            Automatic, Manual, Disabled)
-        setstartup      Changes/sets Startup type. (Boot, System, 
-                            Automatic, Manual, Disabled)                    
-        getname:        Gets the long and short service names used by Windows.
-                            (Generally used for internal purposes)
+    * ``start`` -- Starts service.
+    * ``stop`` -- Stops service.
+    * ``restart`` -- Stops and restarts service.
+    * ``pause`` -- Pauses service (Only if service supports feature).
+    * ``resume`` -- Resumes service that has been paused.
+    * ``status`` -- Queries current status of service.
+    * ``fetchstatus`` -- Continually queries service until requested status(STARTING, RUNNING, STOPPING & STOPPED) is met or timeout value(in seconds) reached. Default timeout value is infinite.
+    * ``infotype`` -- Queries service for process type. (Single, shared and/or interactive process)
+    * ``infoctrl`` -- Queries control information about a running service. i.e. Can it be paused, stopped, etc?
+    * ``infostartup`` -- Queries service Startup type. (Boot, System, Automatic, Manual, Disabled)
+    * ``setstartup`` -- Changes/sets Startup type. (Boot, System, Automatic, Manual, Disabled)                    
+    * ``getname`` -- Gets the long and short service names used by Windows. (Generally used for internal purposes)
+    
+                          
     """    
         
     def __init__(self, service, machinename=None, dbname=None):

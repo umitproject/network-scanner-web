@@ -5,9 +5,12 @@ from os.path import join, split
 
 sys.path += ["."]
 
-import win32api as wa
-import win32con as wc
-import win32service as ws
+try:
+    import win32api as wa
+    import win32con as wc
+    import win32service as ws
+except:
+    pass
 from umitWeb.WindowsService import WindowsService
 
 from higwidgets.higwindows import HIGMainWindow

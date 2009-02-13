@@ -59,6 +59,7 @@ def new(req):
     command = re.sub(r"[\\;|`&]", "", req.POST['command'])
     if req.session.user.is_permitted(command):
         try:
+            nmap_version = os.system("nmap --version")
             nmapCommand = NmapCommand(command)
             resourceID = server.currentInstance.addResource(nmapCommand)
             server.currentInstance.fireResourceEvent(resourceID, "run_scan")

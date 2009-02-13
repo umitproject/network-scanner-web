@@ -192,10 +192,15 @@ class HttpRequest(object):
 
 
 class HttpResponse(object):
-    """A class to represent a HTTP Response to be sent back to the web browser (client)
-    It is possible to set response headers with the __setitem__ method. For example:
-    response['Content-type'] = 'text/html'
-    response['Content-disposition'] = 'attachment; filename=xyz.html'
+    """A class to represent a HTTP Response to be sent back to the web browser (client).
+    
+    It is possible to set response headers working like a dict, with the ``__setitem__`` method.
+    
+    Example:
+    
+    >>> response['Content-type'] = 'text/html'
+    >>> response['Content-disposition'] = 'attachment; filename=xyz.html'
+    
     """
 
     logger = getLogger("HttpResponse")
@@ -212,8 +217,7 @@ class HttpResponse(object):
         self.data += data
         
     def loadTemplate(self, template):
-        """Load a template given its filename
-        """
+        """Load a template given its filename (relative to ``Path.templates_dir``)."""
         template_dir = Path.templates_dir
         template = template.split("/")
         tpl_path = os.path.join(template_dir, *template)
@@ -247,8 +251,8 @@ class HttpResponse(object):
 
 
 class HttpResponseRedirect(HttpResponse):
-    """Return a 303 HTTP Response (See other)
-    """
+    """A standard redirect HTTP Response -- ``303 (See other)``"""
+    
     def __init__(self, url):
         HttpResponse.__init__(self)
         self.code = 303
