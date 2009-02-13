@@ -58,7 +58,7 @@ class WebPaths(Paths):
         Path.set_umit_conf(base_dir)
         if not exists(join(self.config_dir, "security.xml")) or \
            not exists(join(self.config_dir, "umitweb.conf")):
-           create_web_files(self.config_file, HOME)
+            create_web_files(self.config_file, HOME)
            
     def __getattr__(self, name):
         if self.config_file_set:

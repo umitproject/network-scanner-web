@@ -21,7 +21,7 @@
 from types import *
 from umitWeb.Http import HttpResponse, Http404, Http500, Http403, HttpError
 from umitWeb.Auth import authenticate, ERROR
-from umitWeb.Server import UmitWebServer as server
+from umitWeb.Server import UmitWebServer, ServerThread
 from umitWeb.WebLogger import getLogger
 from umitWeb.Json import ScanJsonParser
 from umitCore.NmapCommand import NmapCommand
@@ -40,7 +40,7 @@ from threading import Thread
 from time import time
 import datetime
 
-
+server = UmitWebServer
 logger = getLogger(__name__)
 
 @authenticate()
@@ -61,8 +61,11 @@ def new(req):
         try:
             nmap_version = os.system("nmap --version")
             nmapCommand = NmapCommand(command)
-            resourceID = server.currentInstance.addResource(nmapCommand)
-            server.currentInstance.fireResourceEvent(resourceID, "run_scan")
+            instance = server.currentInstance
+            resourceID = instance.addResource(nmapCommand)
+            assert isinstance(instance, UmitWebServer)
+            th = server.currentInstance.fireResourceEvent(resourceID, "run_scan")
+            #instance.updateResource(resourceID, [nmapCommand, th])
             
             req.session['command_' + resourceID] = command
             req.session['profile_' + resourceID] = req.POST['profile_name']
@@ -81,18 +84,30 @@ def check(req, resource_id):
     response['Content-type'] = "text/javascript"
     
     nmapCommand = server.currentInstance.getResource(resource_id)
+    server_thread = None
+    if isinstance(nmapCommand, list):
+        nmapCommand, server_thread = nmapCommand
+        assert isinstance(server_thread, ServerThread)
     
+    assert isinstance(nmapCommand, NmapCommand)
     if nmapCommand is None:
         raise Http404
-    elif isinstance(nmapCommand, Exception):
+    
+    if server_thread and len(server_thread.exceptions) > 0:
         server.currentInstance.removeResource(resource_id)
-        raise Http500("Nmap command raised an exception!\n%s" % str(nmapCommand))
+        raise Http500("Nmap command raised an exception!\n%s" % \
+                      "\n".join(str(e) for e in server_thread.exceptions))
     
     try:
         output = nmapCommand.get_output()
+        error = nmapCommand.get_error()
         if nmapCommand.scan_state():
+            if error:
+                raise Http500(error)
+            
             response.write("{'result': 'OK', 'status': 'RUNNING', " + \
-                           "'output': {'text': '%s'}}" % output.replace("'", "\\'").replace("\n", "\\n' + \n'"))
+                           "'output': {'text': '%s'}}" % \
+                           output.replace("'", "\\'").replace("\n", "\\n' + \n'"))
         else:
             profile = CommandProfile()
             parser = NmapParser()
@@ -123,11 +138,7 @@ def check(req, resource_id):
             parser.write_xml(fresult)
             req.session['scan_result_' + resource_id] = open(fname, 'r').read()
     except Exception, e:
-        if "running" in str(e).lower():
-            response.write("{'result': 'OK', 'status': 'RUNNING', " + \
-                           "'output': {'text': ''}}")
-        else:
-            raise Http500("Nmap command raised an exception!\n%s" % str(e))
+        raise Http500("Nmap command raised an exception!\nCheck if nmap is installed, and if you have it in your PATH.")
     return response
 
 

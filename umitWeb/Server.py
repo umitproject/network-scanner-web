@@ -260,6 +260,22 @@ class UmitRequestHandler(BaseHTTPRequestHandler):
             request.session = SessionWrapper(request.COOKIES[self.COOKIE_SESSION_NAME].value)
 
 
+class ServerThread(Thread):
+    logger = getLogger("Thread")
+    def __init__(self, child_process=None):
+        Thread.__init__(self)
+        self.child_process = child_process
+        self.exceptions = []
+        
+    def run(self):
+        if callable(self.child_process):
+            try:
+                self.child_process()
+            except Exception, e:
+                self.logger.critical(">>> Exception during child_process execution: %s" % str(e))
+                self.exceptions.append(e)
+
+
 class UmitWebServer(HTTPServer):
     _resourcePool = {}
     currentInstance = None
@@ -305,9 +321,9 @@ class UmitWebServer(HTTPServer):
         if resourceID in self._resourcePool.keys():
             if hasattr(self._resourcePool[resourceID], eventName):
                 target = getattr(self._resourcePool[resourceID], eventName)
-                th = Thread(target=target)
+                th = ServerThread(target)
                 th.start()
-            return True
+            return th
         return False
         
     def run(self):

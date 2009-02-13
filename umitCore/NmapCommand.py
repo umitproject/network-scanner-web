@@ -43,12 +43,12 @@ from umitCore.I18N import _, enc
 # shell_state = False is needed to run correctly at Linux
 shell_state = (sys.platform == "win32")
 
-#nmap_command_path = "nmap"
+nmap_command_path = "nmap"
 # Don't need the line below anymore
-if sys.platform == "win32":
-   nmap_command_path = os.path.join(os.path.split(os.path.abspath(\
-                                      sys.executable))[0], "Nmap", "nmap.exe")
-else: nmap_command_path = "nmap"
+#if sys.platform == "win32":
+#    nmap_command_path = os.path.join(os.path.split(os.path.abspath(\
+#        sys.executable))[0], "Nmap", "nmap.exe")
+#else: nmap_command_path = "nmap"
 
 log.debug(">>> Platform: %s" % sys.platform)
 log.debug(">>> Nmap command path: %s" % nmap_command_path)
