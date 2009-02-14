@@ -34,24 +34,27 @@ class WebPaths(Paths):
     media_dir = MEDIA_DIR
     web_section = "web"
     
-    def __init__(self):
-        Paths.__init__(self)
-        self.hardcoded += [
-            "templates_dir",
-            "media_dir"
-        ]
+    #def __init__(self):
+    #    Paths.__init__(self)
+    hardcoded = Paths.hardcoded + [
+        "templates_dir",
+        "media_dir"
+    ]
         
-        self.config_files_list += [
-            "webconfig_file",
-            "security_file",
-            "web_db"
-        ]
+    config_files_list = Paths.config_files_list + [
+        "webconfig_file",
+        "security_file",
+        "web_db"
+    ]
         
-        self.web_settings = [
-            "web_server_port",
-            "web_server_address",
-            "web_requires_root"
-        ]
+    web_settings = [
+        "web_server_port",
+        "web_server_address",
+        "web_requires_root",
+        "web_server_auto_start",
+        "web_server_auto_start_console",
+        "web_console_path"
+    ]
     
     def set_umit_conf(self, base_dir):
         Paths.set_umit_conf(self, base_dir)
@@ -72,6 +75,12 @@ class WebPaths(Paths):
                     raise e
         else:
             raise Exception("Must set config file location first")
+        
+    def __setattr__(self, name, value):
+        if name in self.web_settings:
+            self.config_parser.set(self.web_section, name.strip("web_"), value)
+        else:
+            super(Paths, self).__setattr__(name, value)
 
 
 def create_web_files(config_file, user_home):

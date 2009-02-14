@@ -2,15 +2,14 @@ import gtk
 import sys
 import gobject
 from os.path import join, split
+from umitWeb.WebPaths import WPath as Path
+import _winreg
+import webbrowser
+#sys.path += ["."]
 
-sys.path += ["."]
-
-try:
-    import win32api as wa
-    import win32con as wc
-    import win32service as ws
-except:
-    pass
+import win32api as wa
+import win32con as wc
+import win32service as ws
 from umitWeb.WindowsService import WindowsService
 
 from higwidgets.higwindows import HIGMainWindow
@@ -41,6 +40,7 @@ class UmitServiceManager(HIGMainWindow):
 
         self.notebook.append_page(self.vbox, gtk.Label("Status"))
         self.notebook.append_page(self.service_table, gtk.Label("Service Configuration"))
+        self.notebook.set_current_page(0)
         
         self.add(self.notebook)
         
@@ -57,6 +57,7 @@ class UmitServiceManager(HIGMainWindow):
         self.set_position(gtk.WIN_POS_CENTER)
         
         gobject.idle_add(self.check_service_status().next)
+        self.check_preferences()
         self.connect ('delete-event', self._exit_cb)
         
     def check_service_status(self):
@@ -65,7 +66,13 @@ class UmitServiceManager(HIGMainWindow):
             self.set_button_status()
             self.set_umit_status()
             yield True
-            
+    
+    def check_preferences(self):
+        self.port_entry.set_value(int(Path.web_server_port))
+        self.address_entry.set_text(Path.web_server_address)
+        self.service_status_checkbutton.set_active(Path.web_server_auto_start in ["on", "true", "1"])
+        self.console_checkbutton.set_active(Path.web_server_auto_start_console in ["on", "true", "1"])
+    
     def set_button_status(self):
         self.start_button.set_property("sensitive", not (self.umit_status == "RUNNING"))
         self.menuitem_start.set_property("sensitive", not (self.umit_status == "RUNNING"))
@@ -86,7 +93,12 @@ class UmitServiceManager(HIGMainWindow):
         
     def _exit_cb(self, widget=None, extra=None):
         self.status_icon.set_visible(False)
-        gtk.main_quit()
+        if extra == True:
+            gtk.main_quit()
+        else:
+            self.hide_all()
+            self.status_icon.set_visible(True)
+            return True
         
     def _create_widgets(self):
         self.service_table.set_border_width(5)
@@ -128,6 +140,7 @@ class UmitServiceManager(HIGMainWindow):
         self.status_icon.set_from_file(join(Path.icons_dir, "umit_16.ico"))
         
         self.popup_menu = gtk.Menu()
+        self.menuitem_open = gtk.MenuItem("Open UmitWeb")
         self.menuitem_show = gtk.MenuItem("Show management console")        
         self.menuitem_start = gtk.MenuItem("Start service")
         self.menuitem_stop = gtk.MenuItem("Stop service")
@@ -136,12 +149,8 @@ class UmitServiceManager(HIGMainWindow):
 
         self.port_entry = gtk.SpinButton(climb_rate=1, digits=0)
         self.port_entry.set_range(1, 65535)
-        #FIXME: Add WebConf configuration data here
-        self.port_entry.set_value(8059)
 
         self.address_entry = gtk.Entry()
-        #FIXME: Add WebConf configuration data here
-        self.address_entry.set_text("0.0.0.0")
 
         self.service_status_checkbutton = gtk.CheckButton("Start UmitWeb Service at Startup")
         self.console_checkbutton = gtk.CheckButton("Start Management Console at Startup")
@@ -168,12 +177,14 @@ class UmitServiceManager(HIGMainWindow):
         self.vbox.pack_start(self.hbox)
         self.vbox.pack_start(self.status_bar, expand=False)
         
-        self.popup_menu.attach(self.menuitem_show, 0, 1, 0, 1)
-        self.popup_menu.attach(self.menuitem_start, 0, 1, 1, 2)
-        self.popup_menu.attach(self.menuitem_stop, 0, 1, 2, 3)
-        self.popup_menu.attach(self.menuitem_restart, 0, 1, 3, 4)
-        self.popup_menu.attach(gtk.SeparatorMenuItem(), 0, 1, 4, 5)
-        self.popup_menu.attach(self.menuitem_exit, 0, 1, 5, 6)
+        self.popup_menu.attach(self.menuitem_open, 0, 1, 0, 1)
+        self.popup_menu.attach(gtk.SeparatorMenuItem(), 0, 1, 1, 2)
+        self.popup_menu.attach(self.menuitem_show, 0, 1, 2, 3)
+        self.popup_menu.attach(self.menuitem_start, 0, 1, 3, 4)
+        self.popup_menu.attach(self.menuitem_stop, 0, 1, 4, 5)
+        self.popup_menu.attach(self.menuitem_restart, 0, 1, 5, 6)
+        self.popup_menu.attach(gtk.SeparatorMenuItem(), 0, 1, 6, 7)
+        self.popup_menu.attach(self.menuitem_exit, 0, 1, 7, 8)
 
         self.service_table.attach(gtk.Label("Address:"), 0, 1, 0, 1, gtk.FILL)
         self.service_table.attach(self.address_entry, 1, 2, 0, 1)
@@ -192,9 +203,16 @@ class UmitServiceManager(HIGMainWindow):
             btn = getattr(self, "%s_button" % name)
             btn.connect("clicked", self.change_service_status, [name])
         self.restart_button.connect("clicked", self.change_service_status, ["stop", "start"])
+        self.apply_button.connect("clicked", self.apply_preferences)
         
-        self.menuitem_exit.connect("activate", self._exit_cb)
+        self.menuitem_exit.connect("activate", self._exit_cb, True)
         self.menuitem_show.connect("activate", lambda widget: self.show_all())
+        
+        host = Path.web_server_address
+        port = Path.web_server_port
+        if host in ["0.0.0.0", "127.0.0.1"]:
+            host = "localhost"
+        self.menuitem_open.connect("activate", lambda widget: webbrowser.open_new("http://%s:%s/" % (host, port)))
         self.menuitem_start.connect("activate", self.change_service_status, ["start"])
         self.menuitem_stop.connect("activate", self.change_service_status, ["stop"])
         self.menuitem_restart.connect("activate", self.change_service_status, ["stop", "start"])
@@ -208,6 +226,57 @@ class UmitServiceManager(HIGMainWindow):
         if self.service_manager:
             for method in methods:
                 getattr(self.service_manager, method)()
+                
+    def apply_preferences(self, widget):
+        Path.web_server_port = self.port_entry.get_text()
+        Path.web_server_address = self.address_entry.get_text()
+        
+        if self.service_status_checkbutton.get_active():
+            Path.web_server_auto_start = "true"
+        else:
+            Path.web_server_auto_start = "false"
+        
+        if self.console_checkbutton.get_active():
+            Path.web_server_auto_start_console = "true"
+        else:
+            Path.web_server_auto_start_console = "false"
+
+        #Apply on Windows registry
+        startup_console_key = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"
+        run_key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, startup_console_key, 0, _winreg.KEY_ALL_ACCESS)
+        
+        try:
+            console_running = _winreg.QueryValueEx(run_key, "Umit Management Console")[0]
+            Path.web_console_path = console_running
+        except:
+            console_running = False
+        
+        if (not console_running) and self.console_checkbutton.get_active():
+            #FIXME: Add full path to the entry
+            _winreg.SetValueEx(run_key, "Umit Management Console", 0, _winreg.REG_SZ, Path.web_console_path)
+            
+        elif console_running and (not self.console_checkbutton.get_active()):
+            _winreg.DeleteValue(run_key, "Umit Management Console")
+        run_key.Close()
+        
+        if self.service_status_checkbutton.get_active():
+            self.service_manager.setstartup("automatic")
+            if self.service_manager.status() == "STOPPED":
+                self.service_manager.start()
+        else:
+            self.service_manager.setstartup("manual")
+            if self.service_manager.status() == "RUNNING":
+                self.service_manager.stop()
+        Path.config_parser.save_changes()
+        dialog = gtk.Dialog("Umit Management Console", self, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                           (gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+        dialog.set_default_response(gtk.RESPONSE_ACCEPT)
+        l = gtk.Label("Preferences Applied Successfully!")
+        dialog.set_border_width(5)
+        dialog.vbox.pack_start(l)
+        dialog.show_all()
+        dialog.run()
+        dialog.destroy()
     
     def show_main_window(self, widget):
         if self.get_property("visible"):
