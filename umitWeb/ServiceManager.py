@@ -5,13 +5,8 @@ from os.path import join, split
 from umitWeb.WebPaths import WPath as Path
 import _winreg
 import webbrowser
-#sys.path += ["."]
 
-import win32api as wa
-import win32con as wc
-import win32service as ws
 from umitWeb.WindowsService import WindowsService
-
 from higwidgets.higwindows import HIGMainWindow
 
 
@@ -26,6 +21,7 @@ Path.set_umit_conf(split(sys.argv[0])[0])
 class UmitServiceManager(HIGMainWindow):
     def __init__(self):
         HIGMainWindow.__init__(self)
+        self._old_umit_status = "Not Set"
         self.vbox = gtk.VBox()
         self.service_table = gtk.Table(5, 2)
         self.notebook = gtk.Notebook()
@@ -56,16 +52,20 @@ class UmitServiceManager(HIGMainWindow):
         self.set_resizable(False)
         self.set_position(gtk.WIN_POS_CENTER)
         
-        gobject.idle_add(self.check_service_status().next)
+        gobject.timeout_add(1000, self.check_service_status)
+        #gobject.idle_add(self.check_service_status)
         self.check_preferences()
-        self.connect ('delete-event', self._exit_cb)
+        self.connect('delete-event', self._exit_cb)
         
     def check_service_status(self):
-        while self.service_manager:
+        if self.service_manager is not None:
             self.umit_status = self.service_manager.status()
-            self.set_button_status()
-            self.set_umit_status()
-            yield True
+            if self.umit_status != self._old_umit_status:
+                self.set_button_status()
+                self.set_umit_status()
+            self._old_umit_status = self.umit_status
+            return True
+        return False
     
     def check_preferences(self):
         self.port_entry.set_value(int(Path.web_server_port))
@@ -84,7 +84,8 @@ class UmitServiceManager(HIGMainWindow):
         self.menuitem_stop.set_property("sensitive", not (self.umit_status == "STOPPED"))
         
     def set_umit_status(self):
-        self.ctx = self.status_bar.push(0, "UMIT - " + self.umit_status)
+        self.status_bar.pop(self._sbar_ctx)
+        self.status_bar.push(self._sbar_ctx, "UMIT - " + self.umit_status)
         self.status_icon.set_tooltip("UMIT - " + self.umit_status)
         if self.umit_status == "STOPPED":
             self.status_icon.set_from_file(join(Path.icons_dir, "umit_16_deactivated.ico"))
@@ -155,6 +156,8 @@ class UmitServiceManager(HIGMainWindow):
         self.service_status_checkbutton = gtk.CheckButton("Start UmitWeb Service at Startup")
         self.console_checkbutton = gtk.CheckButton("Start Management Console at Startup")
         self.apply_button = gtk.Button("Apply Changes")
+        
+        self._sbar_ctx = self.status_bar.get_context_id("Umit Status")
         
     
     def _pack_widgets(self):

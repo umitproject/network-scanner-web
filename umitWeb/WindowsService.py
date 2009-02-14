@@ -4,11 +4,9 @@ from => http://starship.python.net/crew/mhammond
 
 """
 from sys import exit
-try:
-    import time, win32api, win32con, win32service
-    wa, wc, ws = win32api, win32con, win32service
-except ImportError:
-    pass
+
+import time, win32api, win32con, win32service
+wa, wc, ws = win32api, win32con, win32service
 
 class WindowsService:
     """The WService Class is used for controlling WinNT, Win2k & WinXP like
