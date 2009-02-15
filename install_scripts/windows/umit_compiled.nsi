@@ -515,9 +515,9 @@ Section "Umit Web interface" Main
   ExecWait "$INSTDIR\${WINPCAP}"
   Delete "$INSTDIR\${WINPCAP}"
   
-  File "install_scripts\windows\win_dependencies\${NMAP}"
-  ExecWait "$INSTDIR\${NMAP} /S"
-  Delete "${NMAP}"
+  ;File "install_scripts\windows\win_dependencies\${NMAP}"
+  ;ExecWait "$INSTDIR\${NMAP} /S"
+  ;Delete "${NMAP}"
   
   Push "$INSTDIR\Nmap\bin"
   Call AddToPath
