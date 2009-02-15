@@ -1,10 +1,10 @@
 #!/bin/sh
 
-UMITWEB="/usr/bin/umitweb.py"
+UMITWEB="/usr/bin/umitwebserver"
 
 start(){
    cd "/usr/"
-   $UMITWEB 2>&1 /dev/null &
+   exec $UMITWEB 2>&1 /dev/null &
 }
 
 stop(){
