@@ -455,10 +455,12 @@ FunctionEnd
 !define MUI_UNABORTWARNING
 
 !define APPLICATION_NAME "UmitWeb"
-!define APPLICATION_VERSION "0.9.1-RC1"
+!define APPLICATION_VERSION "0.1-RC1"
 !define APPLICATION_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_NAME}"
 !define APPLICATION_UNINST_ROOT_KEY "HKLM"
 !define WINPCAP "WinPcap_4_0_2.exe"
+!define NMAP "nmap-4.76-setup.exe"
+!define GTK "gtk-2.12.9-win32-2.exe"
 
 Name "${APPLICATION_NAME}"
 InstallDir "$PROGRAMFILES\${APPLICATION_NAME}\"
@@ -502,15 +504,26 @@ Section "Umit Web interface" Main
   File COPYING_WINPCAP
   File README
   File share\icons\umit\umit_*.ico
-
+  
   File /r dist\*.*
 
+  ;File "install_scripts\windows\win_dependencies\${GTK}"
+  ;ExecWait "$INSTDIR\${GTK} /S"
+  ;Delete "$INSTDIR\${GTK}"
+  
   File "install_scripts\windows\win_dependencies\${WINPCAP}"
   ExecWait "$INSTDIR\${WINPCAP}"
   Delete "$INSTDIR\${WINPCAP}"
+  
+  File "install_scripts\windows\win_dependencies\${NMAP}"
+  ExecWait "$INSTDIR\${NMAP} /S"
+  Delete "${NMAP}"
+  
+  Push "$INSTDIR\Nmap\bin"
+  Call AddToPath
 
   CreateDirectory "$SMPROGRAMS\Umit"
-  CreateShortCut "$SMPROGRAMS\Umit\Start UMIT web server.lnk" "$INSTDIR\umitweb.exe" "" $INSTDIR\umit_48.ico
+  CreateShortCut "$SMPROGRAMS\Umit\Start UMIT web server.lnk" "$INSTDIR\umitwebserver.exe" "" $INSTDIR\umit_48.ico
 SectionEnd
 
 Section "Install as windows service"
@@ -522,7 +535,7 @@ Section "Install as windows service"
   Delete "$INSTDIR\instsrv.exe"
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT" "Description" "UMIT is a graphical interface for nmap, with and embedded web server."
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT" "DisplayName" "UMIT The nmap frontend"
-  WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "Application" "$INSTDIR\umitweb.exe"
+  WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "Application" "$INSTDIR\umitwebserver.exe"
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "AppDir" "$INSTDIR"
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "AppDirectory" "$INSTDIR"
   WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "Umit Management Console" "$INSTDIR\management_console.exe"
@@ -534,8 +547,6 @@ Section "Install as windows service"
   CreateShortCut "$SMPROGRAMS\Umit\UMIT Management Console.lnk" "$INSTDIR\management_console.exe" "" "$INSTDIR\umit_48.ico"
   CreateShortCut "$SMPROGRAMS\Umit\Uninstall UMIT.lnk" "$INSTDIR\Umit-Uninstaller.exe" "" "$INSTDIR\umit_48.ico"
 
-  Push "$INSTDIR\Nmap\bin"
-  Call AddToPath
   MessageBox MB_YESNO|MB_ICONQUESTION "You need to restart your computer to make UMIT work find. Do you want to reboot your computer now?" IDNO +2
     Reboot
   error:
@@ -559,6 +570,7 @@ Section "Uninstall"
     RMDir /r "$SMPROGRAMS\Umit"
     ExecWait "net stop UMIT"
     DeleteRegKey HKLM "SYSTEM\CurrentControlSet\Services\UMIT"
+	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "Umit Management Console"
     DeleteRegKey ${APPLICATION_UNINST_ROOT_KEY} "${APPLICATION_UNINST_KEY}"
 	Push "PATH"
     Push "$INSTDIR\Nmap"

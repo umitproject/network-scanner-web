@@ -28,7 +28,9 @@ from py2exe.build_exe import py2exe as build_exe
 from distutils.core import setup
 from glob import glob
 
-from umitCore.Version import VERSION
+sys.path += [os.getcwd()]
+
+from umitWeb.Version import VERSION
 
 ################################################################################
 # Main Variables
@@ -136,7 +138,7 @@ setup(name = 'umit',
       license = 'GNU GPL (version 2 or later)',
       url = 'http://www.umitproject.org',
       download_url = 'http://www.umitproject.org',
-      author = 'Adriano Monteiro & Cleber Rodrigues',
+      author = 'Adriano Monteiro, Cleber Rodrigues, Rodolfo Carvalho',
       author_email = 'adriano@umitproject.org, cleber@globalred.com.br, rodolfo@umitproject.org',
       maintainer = 'Adriano Monteiro',
       maintainer_email = 'adriano@umitproject.org',
@@ -150,7 +152,7 @@ easier network scanning or even compare scan results to easily see any \
 changes. A regular user will also be able to construct powerful scans with \
 Umit command creator wizards.""",
       version = VERSION,
-      scripts = ['umitweb.py'],
+      scripts = ['umitwebserver'],
       packages = ['', 'umitCore', 'umitWeb', 'umitWeb.views',
                   'umitWeb.views.html', 'higwidgets'],
       data_files = data_files,
@@ -158,7 +160,7 @@ Umit command creator wizards.""",
       cmdclass = {"py2exe":umit_py2exe},
       windows = [{"script": "management_console.pyw",
                   "icon_resources" : [(1, os.path.join("share", "icons", "umit", "umit_48.ico"))]}],
-      console = [{"script": "umitweb.py",
+      console = [{"script": "umitwebserver",
                   "icon_resources" : [(1, os.path.join("share", "icons", "umit", "umit_48.ico"))]}],
       options = {"py2exe":{"compressed": 1,
                            "optimize": 2,
@@ -174,6 +176,10 @@ cairo,\
 pangocairo,\
 atk,\
 psyco,\
+win32api, \
+win32con, \
+win32service,\
+_winreg,\
 umitWeb.*,\
 umitWeb.views.*,\
 umitWeb.views.html.*"}})
