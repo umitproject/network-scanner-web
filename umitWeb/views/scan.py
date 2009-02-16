@@ -39,6 +39,7 @@ import md5
 from threading import Thread
 from time import time
 import datetime
+from traceback import print_exc
 
 server = UmitWebServer
 logger = getLogger(__name__)
@@ -98,47 +99,43 @@ def check(req, resource_id):
         raise Http500("Nmap command raised an exception!\n%s" % \
                       "\n".join(str(e) for e in server_thread.exceptions))
     
-    try:
-        output = nmapCommand.get_output()
-        error = nmapCommand.get_error()
-        if nmapCommand.scan_state():
-            if error:
-                raise Http500(error)
-            
-            response.write("{'result': 'OK', 'status': 'RUNNING', " + \
-                           "'output': {'text': '%s'}}" % \
-                           output.replace("'", "\\'").replace("\n", "\\n' + \n'"))
-        else:
-            profile = CommandProfile()
-            parser = NmapParser()
-            parser.set_xml_file(nmapCommand.get_xml_output_file())
-            parser.parse()
+    output = nmapCommand.get_output()
+    error = nmapCommand.get_error()
+    if nmapCommand.scan_state():        
+        response.write("{'result': 'OK', 'status': 'RUNNING', " + \
+                       "'output': {'text': '%s', 'error': '%s'}}" % \
+                       (output.replace("'", "\\'").replace("\n", "\\n' + \n'"),
+                        error.replace("'", "\\'").replace("\n", "\\n' + \n'")))
+    else:
+        profile = CommandProfile()
+        parser = NmapParser()
+        parser.set_xml_file(nmapCommand.get_xml_output_file())
+        parser.parse()
 
-            parser.profile_name = req.session['profile_' + resource_id]
-            parser.target = req.session['target_' + resource_id]
-            parser.nmap_command = req.session['command_' + resource_id]
-            parser.profile = profile.get_command(parser.profile_name)
-            parser.profile_hint = profile.get_hint(parser.profile_name)
-            parser.profile_description = profile.get_description(parser.profile_name)
-            parser.profile_annotation = profile.get_annotation(parser.profile_name)
-            parser.profile_options = profile.get_options(parser.profile_name)
-            try:
-                parser.nmap_output = nmapCommand.get_raw_output()
-            except:
-                parser.nmap_output = "\\n".join(self.scan_result.get_nmap_output().split("\n"))
-            #del parser['nmap']
-            #parsed_scan = #str(__scan_to_json(parser))
-            parsed_scan = ScanJsonParser(parser).parse()
-            text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
-            response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
-                           " {'full': %s, 'plain': '%s'}}" % (parsed_scan, text_out))
-            server.currentInstance.removeResource(resource_id)
-            fname = mktemp()
-            fresult = open(fname, "w", 0)
-            parser.write_xml(fresult)
-            req.session['scan_result_' + resource_id] = open(fname, 'r').read()
-    except Exception, e:
-        raise Http500("Nmap command raised an exception!\nCheck if nmap is installed, and if you have it in your PATH.")
+        parser.profile_name = req.session['profile_' + resource_id]
+        parser.target = req.session['target_' + resource_id]
+        parser.nmap_command = req.session['command_' + resource_id]
+        parser.profile = profile.get_command(parser.profile_name)
+        parser.profile_hint = profile.get_hint(parser.profile_name)
+        parser.profile_description = profile.get_description(parser.profile_name)
+        parser.profile_annotation = profile.get_annotation(parser.profile_name)
+        parser.profile_options = profile.get_options(parser.profile_name)
+        try:
+            parser.nmap_output = nmapCommand.get_raw_output()
+        except:
+            parser.nmap_output = "\\n".join(self.scan_result.get_nmap_output().split("\n"))
+        #del parser['nmap']
+        #parsed_scan = #str(__scan_to_json(parser))
+        parsed_scan = ScanJsonParser(parser).parse()
+        text_out = nmapCommand.get_output().replace("'", "\\'").replace("\n", "\\n' + \n'")
+        response.write("{'result': 'OK', 'status': 'FINISHED', 'output':" + \
+                       " {'full': %s, 'plain': '%s'}}" % (parsed_scan, text_out))
+        server.currentInstance.removeResource(resource_id)
+        fname = mktemp()
+        fresult = open(fname, "w", 0)
+        parser.write_xml(fresult)
+        req.session['scan_result_' + resource_id] = open(fname, 'r').read()
+
     return response
 
 

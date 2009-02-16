@@ -1,5 +1,6 @@
 ; Added Path var
 ; From: http://nsis.sourceforge.net/Path_Manipulation
+
 !ifndef _AddToPath_nsh
 !define _AddToPath_nsh
  
@@ -459,8 +460,6 @@ FunctionEnd
 !define APPLICATION_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_NAME}"
 !define APPLICATION_UNINST_ROOT_KEY "HKLM"
 !define WINPCAP "WinPcap_4_0_2.exe"
-!define NMAP "nmap-4.76-setup.exe"
-!define GTK "gtk-2.12.9-win32-2.exe"
 
 Name "${APPLICATION_NAME}"
 InstallDir "$PROGRAMFILES\${APPLICATION_NAME}\"
@@ -506,22 +505,16 @@ Section "Umit Web interface" Main
   File share\icons\umit\umit_*.ico
   
   File /r dist\*.*
-
-  ;File "install_scripts\windows\win_dependencies\${GTK}"
-  ;ExecWait "$INSTDIR\${GTK} /S"
-  ;Delete "$INSTDIR\${GTK}"
   
   File "install_scripts\windows\win_dependencies\${WINPCAP}"
   ExecWait "$INSTDIR\${WINPCAP}"
   Delete "$INSTDIR\${WINPCAP}"
   
-  ;File "install_scripts\windows\win_dependencies\${NMAP}"
-  ;ExecWait "$INSTDIR\${NMAP} /S"
-  ;Delete "${NMAP}"
-  
-  Push "$INSTDIR\Nmap\bin"
+  Push "$INSTDIR\Nmap"
   Call AddToPath
 
+  WriteINIStr "$INSTDIR\share\umit\config\umitweb.conf" "paths" "nmap_command_path" "$INSTDIR\Nmap\nmap.exe"
+  WriteINIStr "$INSTDIR\share\umit\config\umit.conf" "paths" "nmap_command_path" "$INSTDIR\Nmap\nmap.exe"
   CreateDirectory "$SMPROGRAMS\Umit"
   CreateShortCut "$SMPROGRAMS\Umit\Start UMIT web server.lnk" "$INSTDIR\umitwebserver.exe" "" $INSTDIR\umit_48.ico
 SectionEnd
@@ -539,6 +532,7 @@ Section "Install as windows service"
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "AppDir" "$INSTDIR"
   WriteRegStr HKLM "SYSTEM\CurrentControlSet\Services\UMIT\Parameters" "AppDirectory" "$INSTDIR"
   WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "Umit Management Console" "$INSTDIR\management_console.exe"
+  
   ExecWait "net start UMIT"
   
   ;CreateDirectory "$SMPROGRAMS\Umit"
