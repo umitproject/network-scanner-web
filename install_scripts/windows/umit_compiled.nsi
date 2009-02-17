@@ -541,7 +541,7 @@ Section "Install as windows service"
   CreateShortCut "$SMPROGRAMS\Umit\UMIT Management Console.lnk" "$INSTDIR\management_console.exe" "" "$INSTDIR\umit_48.ico"
   CreateShortCut "$SMPROGRAMS\Umit\Uninstall UMIT.lnk" "$INSTDIR\Umit-Uninstaller.exe" "" "$INSTDIR\umit_48.ico"
 
-  MessageBox MB_YESNO|MB_ICONQUESTION "You need to restart your computer to make UMIT work find. Do you want to reboot your computer now?" IDNO +2
+  MessageBox MB_YESNO|MB_ICONQUESTION "You need to restart your computer to make UMIT work fine. Do you want to reboot your computer now?" IDNO +2
     Reboot
   error:
 SectionEnd
@@ -570,6 +570,6 @@ Section "Uninstall"
     Push "$INSTDIR\Nmap"
     Call un.RemoveFromPath
 
-    MessageBox MB_YESNO|MB_ICONQUESTION "You need to restart your computer to make UMIT totally uninstalled. Do you want to reboot your computer now?" IDNO +2
+    MessageBox MB_YESNO|MB_ICONQUESTION "You need to restart your computer to get UMIT totally uninstalled. Do you want to reboot your computer now?" IDNO +2
       Reboot
 SectionEnd
