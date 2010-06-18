@@ -1,0 +1,262 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="layout.css"/>
+        <link rel="stylesheet" href="style.css"/>
+        <link rel="stylesheet" href="tabber.css"/>
+        <script type="text/javascript" src="js/mootools.v1.11.js"></script>
+        <script type="text/javascript" src="js/common.js"></script>
+        <script type="text/javascript" src="tabber.js"></script>
+    </head>
+    <body>
+        <div id="body">
+            <div id="hosts_services">
+                <ul class="menu">
+                    <li><a href="javascript:void(null)" class="active">Hosts</a></li>
+                    <li><a href="javascript:void(null)">Services</a></li>
+                </ul>
+                <div id="hosts">
+                 <table class="std_table">
+                  <thead>
+                   <tr>
+                    <th width="0">OS</th>
+                    <th width="100%">Host</th>
+                   </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                     <td><img src="img/linux_32.png" width="25"/></td>
+                     <td><a href="#">10.0.0.1</a></td>
+                    </tr>
+                    <tr>
+                     <td><img src="img/unknown_32.png" width="25"/></td>
+                     <td><a href="#">10.0.0.4</a></td>
+                    </tr>
+                  </tbody>
+                 </table>
+                </div>
+                <div id="services" class="hide">
+                </div>
+            </div>
+            <div id="result_tabs">
+                <div class="tabber" class="nmap-output">
+                    <!-- PORTS TAB -->
+                    <div class="tabbertab">
+                        <h3>Ports/hosts</h3>
+                        <div style="overflow:auto; height:350px">
+                        <table class="std_table">
+                            <thead>
+                                <tr>
+                                 <th></th>
+                                 <th>Port</th>
+                                 <th>State</th>
+                                 <th>Service</th>
+                                 <th width="100%">Version</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><img src="img/gtk-yes.png" width="18"/></td>
+                                    <td>21</td>
+                                    <td>open</td>
+                                    <td>ftp</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><img src="img/gtk-yes.png" width="18"/></td>
+                                    <td>80</td>
+                                    <td>open</td>
+                                    <td>http</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                    <!-- ................................................... -->
+                    <!-- PLAIN OUTPUT TAB -->
+                    <div class="tabbertab tabbertabdefault">
+                        <h3>Nmap Output</h3>
+                        <div style="overflow:auto; height:350px">
+                        <div id="nmap-output" class="code">Starting Nmap 4.20 ( <font color="blue"><b><i>http://insecure.org</i></b></font> ) at <b>2007-06-18 22:34 <span style="background-color:green"><font color="yellow">B<font color="blue">R</font>T</font></span></b>
+Machine <b>10.0.0.10</b> MIGHT actually be listening on probe port 80
+Machine <b>10.0.0.2</b> MIGHT actually be listening on probe port 80
+Initiating Connect() Scan at 22:34
+Scanning 2 hosts [1697 ports/host]
+Discovered open port 80/tcp on <b>10.0.0.10</b>
+Discovered open port 80/tcp on <b>10.0.0.2</b>
+Discovered open port 21/tcp on <b>10.0.0.2</b>
+Completed Connect() Scan against <b>10.0.0.10</b> in 0.05s (1 host left)
+Completed Connect() Scan at 22:34,  2.79s elapsed (3394 total ports)
+Host <b>10.0.0.2</b> appears to be up ... good.
+Interesting ports on <b>10.0.0.2</b>:
+<b><u>Not shown:</b></u> 1695 closed ports
+PORT   STATE SERVICE
+<font color="green"><b>21/tcp open  ftp
+80/tcp open  http</b></font>
+
+Host <b>10.0.0.10</b> appears to be up ... good.
+Interesting ports on <b>10.0.0.10</b>:
+<b><u>Not shown:</u></b> 1696 closed ports
+PORT   STATE SERVICE
+<font color="green"><b>80/tcp open  http</b></font>
+&nbsp;
+<b><u>Nmap finished:</u></b> 20 IP addresses (2 hosts up) scanned in 3.248 seconds
+                        </div>
+                        <div id="nmap-output-preferences">
+                        <label><input type="checkbox" checked="checked"/> Enable/Disable Nmap output highlight</label>
+                        <input type="button" value="Preferences"/>
+                        <input type="button" value="Refresh"/>
+                        </div>
+                    </div>
+                    </div>
+                    <!-- ................................................... -->
+                    <!-- HOST DETAILS TAB -->
+                    <div class="tabbertab">
+                        <div style="overflow:auto; height:350px" id="hosts_tab">
+                        <h3>Host Details</h3>
+                        <h4 id="10.0.0.2-switch" class="sw-expanded">
+                          <a href="#" onclick="toggle('10.0.0.2')">10.0.0.2</a>
+                        </h4>
+                        <div id="10.0.0.2-detail" class="frame-div">
+                         <h4 id="10.0.0.2-comment-switch" class="sw-collapsed">
+                            <a href="#" onclick="toggle('10.0.0.2-comment')">
+                                <b>Comments</b>
+                            </a>
+                         </h4>
+                         <div id="10.0.0.2-comment-detail" class="hide frame-div">
+                          <textarea rows="5" cols="60" class="flat-field"></textarea>
+                         </div>
+                         
+                         <h4 id="10.0.0.2-status-switch" class="sw-collapsed">
+                            <a href="#" onclick="toggle('10.0.0.2-status')">
+                                <b>Host Status</b>
+                            </a>
+                         </h4>
+                         <div id="10.0.0.2-status-detail" class="hide frame-div">
+                          <table>
+                           <tr>
+                            <td>State:</td><td>up</td>
+                            <td rowspan="4"><img src="img/unknown_75.png"/></td>
+                           </tr>
+                           <tr>
+                            <td>Open ports:</td><td>2</td>
+                           </tr>
+                           <tr>
+                            <td>Filtered ports:</td><td>0</td>
+                           </tr>
+                           <tr>
+                            <td>Closed ports:</td><td>0</td>
+                           </tr>
+                           <tr>
+                            <td>Scanned ports:</td><td>2</td>
+                            <td rowspan="3"><img src="img/vl_1_75.png"/></td>
+                           </tr>
+                           <tr>
+                            <td>Up time:</td><td>Not available</td>
+                           </tr>
+                           <tr>
+                            <td>Last boot:</td><td>Not available</td>
+                           </tr>
+                          </table>
+                         </div>
+                         
+                         <h4 id="10.0.0.2-addresses-switch" class="sw-collapsed">
+                          <a href="#" onclick="toggle('10.0.0.2-addresses')">
+                            <b>Addresses</b>
+                          </a>
+                         </h4>
+                         <div id="10.0.0.2-addresses-detail" class="hide frame-div">
+                            <table>
+                             <tr>
+                              <td>IPV4:</td><td>10.0.0.2</td>
+                             </tr>
+                             <tr>
+                              <td>IPV6:</td><td></td>
+                             </tr>
+                             <tr>
+                              <td>MAC:</td><td></td>
+                             </tr>
+                            </table>
+                         </div>
+                        </div>
+                     </div>
+                    </div>
+                    <!-- ................................................... -->
+                    <!-- SCAN DETAILS TAB -->
+                    <div class="tabbertab">
+                        <div style="overflow:auto; height:350px">
+                        <h3>Scan Details</h3>
+                        <h4 id="command-info-switch" class="sw-collapsed">
+                            <a href="#" onclick="toggle('command-info')">
+                                <b>Command Info</b>
+                            </a>
+                        </h4>
+                        <div id="command-info-detail" class="frame-div hide">
+                            <table>
+                             <tr>
+                              <td>Command:</td><td>nmap -T Aggressive -v -n 10.0.0.1-20</td>
+                             </tr><tr>
+                              <td>Nmap Version:</td><td>4.20</td>
+                             </tr><tr>
+                              <td>Verbosity level:</td><td>1</td>
+                             </tr><tr>
+                              <td>Debug level:</td><td>0</td>
+                             </tr>
+                            </table>
+                        </div>
+                        <!-- -->
+                        <h4 id="general-info-switch" class="sw-collapsed">
+                            <a href="#" onclick="toggle('general-info')">
+                                <b>General Info</b>
+                            </a>
+                        </h4>
+                        <div id="general-info-detail" class="frame-div hide">
+                         <table>
+                          <tr>
+                           <td>Started on:</td><td>June 18,  2007 - 22:34</td>
+                          </tr><tr>
+                           <td>Finished on:</td><td>June 18,  2007 - 22:34</td>
+                          </tr><tr>
+                           <td>Hosts up:</td><td>2</td>
+                          </tr><tr>
+                           <td>Hosts down:</td><td>18</td>
+                          </tr><tr>
+                           <td>Hosts scanned:</td><td>20</td>
+                          </tr><tr>
+                           <td>Open ports:</td><td>3</td>
+                          </tr><tr>
+                           <td>Filtered ports:</td><td>0</td>
+                          </tr><tr>
+                           <td>Closed ports:</td><td>0</td>
+                          </tr>
+                         </table>
+                        </div>
+                        <!-- -->
+                        <h4 id="scan-info-connect-switch" class="sw-collapsed">
+                            <a href="#" onclick="toggle('scan-info-connect')">
+                                <b>Scan Info - Connect</b>
+                            </a>
+                        </h4>
+                        <div id="scan-info-connect-detail" class="frame-div hide">
+                         <table>
+                          <tr>
+                           <td>Scan type:</td><td>connect</td>
+                          </tr><tr>
+                           <td>Protocol:</td><td>tcp</td>
+                          </tr><tr>
+                           <td># scanned ports:</td><td>1697</td>
+                          </tr><tr>
+                           <td>Services:</td>
+                           <td><div style="overflow:scroll; width:100%; white-space:nowrap; height:40px">
+                                                      1-1027,  1029-1033,  1040,  1050,  1058-1059,  1067-1068,  1076,  1080,  1083-1084,  1103,  1109-1110,  1112, 1127, 1139, 1155, 1178, 1212, 1214, 1220, 1222, 1234, 1241, 1248, 1337, 1346-1381, 1383-1552, 1600, 1650-1652, 1661-1672, 1680, 1720, 1723, 1755, 1761-1764, 1827, 1900, 1935, 1984, 1986-2028, 2030, 2032-2035, 2038, 2040-2049, 2053, 2064-2065, 2067-2068, 2105-2106, 2108, 2111-2112, 2120-2121, 2201, 2232, 2241, 2301, 2307, 2401, 2430-2433, 2500-2501, 2564, 2600-2605, 2627-2628, 2638, 2766, 2784, 2809, 2903, 2998, 3000-3001, 3005-3006, 3049, 3052, 3064, 3086, 3128, 3141, 3264, 3268-3269, 3292, 3306, 3333, 3372, 3389, 3421, 3455-3457, 3462, 3531, 3632, 3689, 3900, 3984-3986, 3999-4000, 4008, 4045, 4132-4133, 4144, 4224, 4321, 4333, 4343, 4444, 4480, 4500, 4557, 4559, 4660, 4672, 4899, 4987, 4998, 5000-5003, 5010-5011, 5050, 5100-5102, 5145, 5190-5193, 5232, 5236, 5300-5305, 5308, 5400, 5405, 5432, 5490, 5510, 5520, 5530, 5540, 5550, 5555, 5631-5632, 5680, 5713-5717, 5800-5803, 5900-5903, 5977-5979, 5997-6009, 6017, 6050, 6101, 6103, 6105-6106, 6110-6112, 6141-6148, 6346, 6400-6401, 6502, 6543-6544, 6547-6548, 6558, 6588, 6666-6668, 6699, 6969, 7000-7010, 7070, 7100, 7200-7201, 7273, 7326, 7464, 7597, 8000, 8007, 8009, 8080-8082, 8443, 8888, 8892, 9090, 9100, 9111, 9152, 9535, 9876, 9991-9992, 9999-10000, 10005, 10082-10083, 11371, 12000, 12345-12346, 13701-13702, 13705-13706, 13708-13718, 13720-13722, 13782-13783, 15126, 16959, 17007, 17300, 18000, 18181-18185, 18187, 19150, 20005, 22273, 22289, 22305, 22321, 22370, 26208, 27000-27010, 27374, 27665, 31337, 32770-32780, 32786-32787, 38037, 38292, 43188, 44334, 44442-44443, 47557, 49400, 54320, 61439-61441, 65301
+                           </div></td>
+                          </tr>
+                         </table>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

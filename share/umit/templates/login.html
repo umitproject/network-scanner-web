@@ -1,0 +1,39 @@
+<html>
+ <head>
+  <title>Umit :: The nmap frontend</title>
+  <link rel="stylesheet" href="/media/css/common.css"/>
+  <link rel="stylesheet" href="/media/css/ajax.css"/>
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
+  <script type="text/javascript" src="/media/js/mootools.v1.11.js"></script>
+  <script type="text/javascript" src="/media/js/common.js"></script>
+  <script type="text/javascript" src="/media/js/login.js"></script>
+ </head>
+ <body>
+ <div id="login-box">
+  <form method="post" action="?json" id="frmLogin">
+   <div style="text-align:center">
+   <img src="/media/images/logo.png"/>
+   <div id="error" class="hide"></div>
+   <div class="hide" align="center" id="spinner" style="height: 29px;">
+    <img src="/media/images/spinner.gif"/>
+   </div>
+   <div id="spacer" style="height: 29px">&nbsp;</div>
+   <table>
+    <tr>
+     <td><label>Login:</label></td>
+     <td align="right"><input type="text" size="30" name="login"/></td>
+    </tr>
+    <tr>
+     <td><label>Password:</label></td>
+     <td align="right"><input type="password" size="28" name="password"/></td>
+    </tr>
+    <tr>
+     <td>&nbsp;</td>
+     <td align="right"><input type="submit" value="Login"/></td>
+    </tr>
+   </table>
+  </form>
+  </div>
+ </div>
+ </body>
+</html>

@@ -1,0 +1,5 @@
+.ajax-loading{
+    padding: 20px 0;
+    height: 20px;
+    background: url("/media/images/spinner.gif") no-repeat center;
+}

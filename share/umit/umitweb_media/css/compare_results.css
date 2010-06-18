@@ -1,0 +1,49 @@
+fieldset{
+    padding:5px;
+}
+
+#result-left{
+    border: #CCC solid 1px;
+    width: 48.5%;
+    float: left;
+    margin-bottom: 10px;
+}
+
+#result-right{
+    border: #CCC solid 1px;
+    width: 48.5%;
+    float: right;
+    margin-bottom: 10px;
+    margin-right: 2%;
+}
+
+#result-main{
+    width: 98%;
+    float: left;
+    margin-bottom: 5px;
+}
+
+#diff-pane{
+    margin: 5px;
+    border: #CCC solid 1px;
+    width: 99%;
+    overflow: auto;
+}
+
+#compare-pane{
+    margin: 0;
+    overflow: auto;
+    width: 100%;
+}
+
+.diff-text{
+    border: 1px solid #CCC;
+    margin: 3px;
+    height: 250px;
+    overflow: auto;
+    padding: 1px;
+}
+
+.code{
+    overflow: auto;
+}

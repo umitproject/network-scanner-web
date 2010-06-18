@@ -1,0 +1,94 @@
+<html>
+<head>
+        <title>Umit :: The nmap frontend</title>
+        <link rel="stylesheet" href="/media/css/common.css"/>
+        <link rel="stylesheet" href="/media/css/ajax.css"/>
+        <link rel="stylesheet" href="/media/css/layout.css"/>
+        <link rel="stylesheet" href="/media/css/preferences.css"/>
+        <link rel="stylesheet" href="/media/css/tabber.css"/>
+        <link rel="stylesheet" href="/media/css/style.css"/>
+        <link rel="stylesheet" href="/media/css/compare_results.css"/>
+        <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
+        <script type="text/javascript" src="/media/js/mootools.v1.11-old.js"></script>
+        <script type="text/javascript" src="/media/js/tabber.js"></script>
+        <script type="text/javascript" src="/media/js/common.js"></script>
+        <script type="text/javascript" src="/media/js/dialog.js"></script>
+        <script type="text/javascript" src="/media/js/diff_colors.js"></script>
+        <script type="text/javascript" src="/media/js/compare_results.js"></script>
+    </head>
+    <body>
+        <div id="body">
+            <div id="options">
+                <ul><li><a href="../"><img src="/media/images/umit_12.png"/>Main page</a></li></ul>
+                <ul><li><a href="/docs/help.html">
+                  <img src="/media/images/compare_results_12.png"/>Help
+                </a></li></ul>
+                <ul><li><a href="/logout/"><img src="/media/images/exit_12.png"/>Logout</a></li></ul>
+            </div>
+            <h2 id="umit-title">The nmap Frontend</h2>
+            <h3>Compare Results</h3>
+            <div id="result-left">
+                <fieldset>
+                   <legend><strong>Scan Result 1:</strong></legend> 
+                   <label for="select-result">Saved result:</label>
+                   <select id="s1-result" style="width:250px"><option value="">---- Select a result ----</option></select>
+                   <span id="spinner1" class="hide"><img src="/media/images/spinner.gif"/></span><br/>
+                   <form action="/scans/upload/" method="post" id="frmScan1" target="iframe-scan1" enctype="multipart/form-data">
+                    <label for="upload-result">Upload result:</label>
+                    <input type="file" size="20" id="u1-result" name="u1-result"/>
+                    <span id="spinner1-file" class="hide"><img src="/media/images/spinner.gif"/></span>
+                   <iframe name="iframe-scan1" id="iframe-scan1" class="hide"></iframe>
+                   </form>
+                </fieldset>
+                <a class="expander" href="javascript:void(null)"><h4 id="scan1-switch" class="sw-collapsed">Scan 1</h4></a>
+                <div class="frame-div hide code diff-text" id="scan1-detail"></div>
+                <span id="scan1-xml" class="hide"></span>
+            </div>
+            <div id="result-right">
+                <fieldset>
+                   <legend><strong>Scan Result 2:</strong></legend> 
+                   <label for="select-result">Saved result:</label>
+                   <select id="s2-result" style="width:250px"><option value="">---- Select a result ----</option></select>
+                   <span id="spinner2" class="hide"><img src="/media/images/spinner.gif"/></span><br/>
+                   <form action="/scans/upload/" method="post" id="frmScan2" target="iframe-scan2" enctype="multipart/form-data">
+                    <label for="upload-result">Upload result:</label>
+                    <input type="file" size="20" id="u2-result" name="u2-result"/>
+                    <span id="spinner2-file" class="hide"><img src="/media/images/spinner.gif"/></span>
+                    <iframe name="iframe-scan2" id="iframe-scan2" class="hide"></iframe>
+                   </form>
+                </fieldset>
+                <a class="expander" href="javascript:void(null)"><h4 id="scan2-switch" class="sw-collapsed">Scan 2</h4></a>
+                <div class="frame-div hide code diff-text" id="scan2-detail"></div>
+                <span id="scan2-xml" class="hide"></span>
+            </div>
+            <div id="result-main">
+                <div class="tabber">
+                    <div class="tabbertab" title="Diff Result (Text Mode)" id="diff-tab">
+                        <div id="diff-pane" class="code"></div>
+                    </div>
+                    <div class="tabbertab" title="Comparision (Comparision Mode)" id="compare-tab">
+                        <div id="compare-pane">
+                         <table id="compare-table" class="std_table">
+                            <thead>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th width="10%">Section</th>
+                                    <th width="17.5%">Property</th>
+                                    <th width="35%">Original value</th>
+                                    <th width="35%">Current value</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                         </table>
+                        </div>
+                    </div>
+                </div>
+                <div style="float:left;width:98%">
+                    <input type="checkbox" id="color-diff"/><label for="color-diff">Enable color diffies</label>&nbsp;&nbsp;&nbsp;
+                    <a href="javascript:void(0)" onclick="viewHTMLDiff()">View standard HTML diff</a>
+                </div>
+            </div>
+            <div id="footer">Copyright (C) 2007 Adriano Monteiro Marques.</div>
+        </div>
+    </body>
+</html>

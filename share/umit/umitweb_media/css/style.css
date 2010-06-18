@@ -1,0 +1,167 @@
+body, table, label{
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+a{
+    text-decoration: none;
+    color: #303030;
+}
+
+a:hover{
+    text-decoration: underline;
+    color: #000;
+}
+
+#umit-title{
+    height: 30px;
+    background-image: url(/media/images/logo.png);
+    background-repeat: no-repeat;
+    padding: 0;
+    margin: 0;
+    margin-top: 20px;
+    padding-left: 190px;
+    padding-top: 65px;
+    width: 98%;
+}
+
+#body{
+    /*border: #DDD solid 2px;*/
+}
+
+#hosts_services .menu{
+    list-style: none;
+    font-size: 12px;
+}
+
+#hosts_services .menu li{
+    display: inline;
+}
+
+#hosts_services .menu li a{
+    color: #303030;
+    text-decoration: none;
+    border: #DDD 1px solid;
+}
+
+#hosts_services .menu li a:hover{
+    background-color: #F8F8F8;
+    color: black;
+}
+
+#hosts_services .menu li a.active{
+    text-decoration: none;
+    border: #DDD 1px solid;
+    background-color: #EFEFEF;
+    font-weight: bold;
+}
+
+.std_table thead tr th{
+    color: #303030;
+    background-image: url(/media/images/th_back.jpg);
+    background-repeat: repeat-x;
+    border-bottom: solid 1px #DDD;
+    border-left: solid 1px #DDD;
+    text-align: left;
+    font-size: 11px;
+}
+
+.std_table tbody tr td{
+    border: 1px solid #DDD;
+}
+
+.code{
+    font-family: monospace;
+    white-space: pre;
+}
+
+.flat-field{
+    border: 1px solid #303030;
+}
+
+.progress-bar{
+    color: white;
+    background-image: url(/media/images/progress.png);
+    background-repeat: no-repeat;
+    background-color: #AAA;
+    height: 14px;
+    width: 180px;
+    font-size: 10pt;
+    font-weight: bold;
+    text-align: center;
+    padding: 0;
+    padding-top: 0px;
+}
+
+h4 {
+    margin: 0;
+    margin-top: 4px;
+    margin-bottom: 2px;
+}
+
+h4 a{
+    color: #303030;
+    text-decoration: none;
+}
+
+h4 a:hover{
+    color: #000;
+    text-decoration: underline;
+}
+
+.sw-expanded{
+    background-image: url(/media/images/minus.png);
+    padding-left: 14px;
+    background-repeat: no-repeat;
+    font-size: 11px;
+}
+
+.sw-collapsed{
+    background-image: url(/media/images/plus.png);
+    padding-left: 14px;
+    font-size: 11px;
+    background-repeat: no-repeat;
+}
+
+.frame-div{
+    padding-left: 14px;
+}
+
+.selected{
+	background-color: #CCC;
+}
+
+.dialog{
+    border: 1px solid #DDD;
+    background: white;
+}
+
+.dialog h2{
+    font-size: 9pt;
+    color: #505050;
+    padding: 2px;
+    margin: 0;
+    margin-bottom: 3px;
+    font-weight: bold;
+    border-bottom: 1px #DDD solid;
+    background-image: url(/media/images/th_back.jpg);
+    background-repeat: repeat-x;
+}
+
+.dialog h2 a{
+    color: #505050;
+    padding: 1px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border: solid #DDD 1px;
+    color: #505050;
+}
+
+.dialog h2 a:hover{
+    text-decoration: none;
+    color: black;
+}
+
+.dark{
+    background-color: #EEEEEE;
+}

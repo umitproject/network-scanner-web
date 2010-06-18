@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script type="text/javascript" src="/media/js/mootools.v1.11.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+        if(window.gecko || window.khtml || window.opera || window.ie){
+            document.write("redirecting the page...")
+            document.close()
+            location = "js/"
+        }else{
+            //location = "html/"
+        document.write("UMIT does not support your browser <b>yet</b>.");
+        //Try to use the <a href="html/">HTML basic interface.</a>
+        }
+        </script>
+        <noscript>
+        UMIT does not support your browser <b>yet</b>.
+        <!--
+        Your browser don't support Javascript.
+        Try to use the <a href="html/">HTML basic interface.</a>-->
+        </noscript>
+    </body>
+</html>
